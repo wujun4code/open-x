@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { Heart, MessageCircle, Share2, Trash2, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import ImageModal from './ImageModal';
 
 const LIKE_POST_MUTATION = gql`
   mutation LikePost($postId: ID!) {
@@ -46,6 +47,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     const [isLiked, setIsLiked] = useState(post.isLiked);
     const [likesCount, setLikesCount] = useState(post.likesCount);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -161,13 +163,25 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
 
                     {/* Post Image */}
                     {post.imageUrl && (
-                        <div className="mb-3 rounded-lg overflow-hidden">
-                            <img
-                                src={post.imageUrl}
-                                alt="Post image"
-                                className="w-full max-h-96 object-cover"
-                            />
-                        </div>
+                        <>
+                            <div
+                                className="mb-3 rounded-lg overflow-hidden cursor-pointer hover:opacity-95 transition-opacity"
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                <img
+                                    src={post.imageUrl}
+                                    alt="Post image"
+                                    className="w-full max-h-96 object-cover"
+                                />
+                            </div>
+
+                            {isModalOpen && (
+                                <ImageModal
+                                    imageUrl={post.imageUrl}
+                                    onClose={() => setIsModalOpen(false)}
+                                />
+                            )}
+                        </>
                     )}
 
                     {/* Interaction Buttons */}
@@ -176,8 +190,8 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         <button
                             onClick={handleLikeToggle}
                             className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${isLiked
-                                    ? 'text-red-600 bg-red-50 hover:bg-red-100'
-                                    : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
+                                ? 'text-red-600 bg-red-50 hover:bg-red-100'
+                                : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
                                 }`}
                         >
                             <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />

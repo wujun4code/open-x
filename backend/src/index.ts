@@ -1,16 +1,13 @@
+import './env'; // Ensure env vars are loaded first
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { typeDefs } from './schema/typeDefs';
 import { resolvers } from './schema/resolvers';
 import { createContext } from './context';
-
-// Load environment variables
-dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 
