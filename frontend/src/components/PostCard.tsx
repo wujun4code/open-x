@@ -5,6 +5,7 @@ import { useMutation, gql } from '@apollo/client';
 import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import ImageModal from './ImageModal';
+import { parseHashtags, getHashtagName } from '@/lib/hashtag';
 
 const LIKE_POST_MUTATION = gql`
   mutation LikePost($postId: ID!) {
@@ -115,6 +116,26 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
+    const renderContent = () => {
+        const segments = parseHashtags(post.content);
+        return segments.map((segment, index) => {
+            if (segment.type === 'hashtag') {
+                const hashtagName = getHashtagName(segment.content);
+                return (
+                    <Link
+                        key={index}
+                        href={`/hashtag/${hashtagName}`}
+                        className="text-blue-500 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {segment.content}
+                    </Link>
+                );
+            }
+            return <span key={index}>{segment.content}</span>;
+        });
+    };
+
     const isOwnPost = currentUserId === post.user.id;
 
     return (
@@ -158,7 +179,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
 
                     {/* Post Text */}
                     <p className="text-gray-900 text-lg mb-3 whitespace-pre-wrap break-words">
-                        {post.content}
+                        {renderContent()}
                     </p>
 
                     {/* Post Image */}

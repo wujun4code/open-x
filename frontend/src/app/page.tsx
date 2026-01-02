@@ -5,6 +5,7 @@ import { useQuery, gql } from '@apollo/client';
 import ProfileCard from '@/components/ProfileCard';
 import CreatePost from '@/components/CreatePost';
 import PostFeed from '@/components/PostFeed';
+import TrendingHashtags from '@/components/TrendingHashtags';
 import Link from 'next/link';
 
 const HELLO_QUERY = gql`
@@ -38,7 +39,7 @@ export default function Home() {
             <div className="container mx-auto px-4 py-8">
                 {isAuthenticated ? (
                     // Authenticated User View
-                    <div className="grid lg:grid-cols-3 gap-8">
+                    <div className="grid lg:grid-cols-4 gap-6">
                         {/* Left Sidebar - Profile */}
                         <div className="lg:col-span-1">
                             <ProfileCard />
@@ -51,6 +52,13 @@ export default function Home() {
 
                             {/* Post Feed */}
                             <PostFeed />
+                        </div>
+
+                        {/* Right Sidebar - Trending */}
+                        <div className="lg:col-span-1 hidden lg:block">
+                            <div className="sticky top-8">
+                                <TrendingHashtags />
+                            </div>
                         </div>
                     </div>
                 ) : (

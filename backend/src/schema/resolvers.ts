@@ -10,6 +10,7 @@ import {
 } from '../utils/validation';
 import { GraphQLError } from 'graphql';
 import { generateUploadUrl } from '../utils/r2';
+import { extractHashtags } from '../utils/hashtag';
 
 // Helper function to require authentication
 function requireAuth(context: Context): string {
@@ -117,6 +118,93 @@ export const resolvers = {
                 skip: offset,
                 orderBy: { createdAt: 'desc' },
             });
+        },
+
+        // Get trending hashtags
+        trendingHashtags: async (_: any, { limit = 10 }: { limit?: number }, context: Context) => {
+            const hashtags = await context.prisma.hashtag.findMany({
+                take: limit,
+                orderBy: {
+                    posts: {
+                        _count: 'desc',
+                    },
+                },
+                include: {
+                    _count: {
+                        select: { posts: true },
+                    },
+                },
+            });
+
+            return hashtags.map((hashtag) => ({
+                id: hashtag.id,
+                name: hashtag.name,
+                postsCount: hashtag._count.posts,
+                createdAt: hashtag.createdAt.toISOString(),
+            }));
+        },
+
+        // Search hashtags by name
+        searchHashtags: async (_: any, { query, limit = 10 }: { query: string; limit?: number }, context: Context) => {
+            const hashtags = await context.prisma.hashtag.findMany({
+                where: {
+                    name: {
+                        contains: query.toLowerCase(),
+                        mode: 'insensitive',
+                    },
+                },
+                take: limit,
+                include: {
+                    _count: {
+                        select: { posts: true },
+                    },
+                },
+                orderBy: {
+                    posts: {
+                        _count: 'desc',
+                    },
+                },
+            });
+
+            return hashtags.map((hashtag) => ({
+                id: hashtag.id,
+                name: hashtag.name,
+                postsCount: hashtag._count.posts,
+                createdAt: hashtag.createdAt.toISOString(),
+            }));
+        },
+
+        // Get posts by hashtag
+        postsByHashtag: async (
+            _: any,
+            { hashtag, limit = 20, offset = 0 }: { hashtag: string; limit?: number; offset?: number },
+            context: Context
+        ) => {
+            const normalizedHashtag = hashtag.toLowerCase().replace(/^#/, '');
+
+            const hashtagRecord = await context.prisma.hashtag.findUnique({
+                where: { name: normalizedHashtag },
+            });
+
+            if (!hashtagRecord) {
+                return [];
+            }
+
+            const postHashtags = await context.prisma.postHashtag.findMany({
+                where: { hashtagId: hashtagRecord.id },
+                take: limit,
+                skip: offset,
+                include: {
+                    post: true,
+                },
+                orderBy: {
+                    post: {
+                        createdAt: 'desc',
+                    },
+                },
+            });
+
+            return postHashtags.map((ph) => ph.post);
         },
     },
 
@@ -236,6 +324,9 @@ export const resolvers = {
             try {
                 validatePostContent(content);
 
+                // Extract hashtags from content
+                const hashtags = extractHashtags(content);
+
                 const post = await context.prisma.post.create({
                     data: {
                         content,
@@ -243,6 +334,28 @@ export const resolvers = {
                         userId,
                     },
                 });
+
+                // Create or link hashtags
+                for (const hashtagName of hashtags) {
+                    // Find or create hashtag
+                    let hashtag = await context.prisma.hashtag.findUnique({
+                        where: { name: hashtagName },
+                    });
+
+                    if (!hashtag) {
+                        hashtag = await context.prisma.hashtag.create({
+                            data: { name: hashtagName },
+                        });
+                    }
+
+                    // Link hashtag to post
+                    await context.prisma.postHashtag.create({
+                        data: {
+                            postId: post.id,
+                            hashtagId: hashtag.id,
+                        },
+                    });
+                }
 
                 return post;
             } catch (error) {
@@ -625,6 +738,15 @@ export const resolvers = {
         post: async (parent: any, _: any, context: Context) => {
             return context.prisma.post.findUnique({
                 where: { id: parent.postId },
+            });
+        },
+    },
+
+    // Field resolvers for Hashtag type
+    Hashtag: {
+        postsCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.postHashtag.count({
+                where: { hashtagId: parent.id },
             });
         },
     },

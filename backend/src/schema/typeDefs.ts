@@ -8,6 +8,11 @@ export const typeDefs = `#graphql
     posts(limit: Int, offset: Int): [Post!]!
     userPosts(userId: ID!, limit: Int, offset: Int): [Post!]!
     feed(limit: Int, offset: Int): [Post!]!
+    
+    # Hashtags
+    trendingHashtags(limit: Int): [Hashtag!]!
+    searchHashtags(query: String!, limit: Int): [Hashtag!]!
+    postsByHashtag(hashtag: String!, limit: Int, offset: Int): [Post!]!
   }
 
   type Mutation {
@@ -119,5 +124,12 @@ export const typeDefs = `#graphql
     uploadUrl: String!
     publicUrl: String!
     key: String!
+  }
+
+  type Hashtag {
+    id: ID!
+    name: String!
+    postsCount: Int!
+    createdAt: String!
   }
 `;
