@@ -17,13 +17,13 @@ export default function TrendingHashtags() {
 
     if (loading) {
         return (
-            <div className="bg-gray-800 rounded-2xl p-4">
-                <h2 className="text-xl font-bold mb-4">Trending</h2>
+            <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-lg">
+                <h2 className="text-xl font-bold mb-4 text-gray-900">Trending</h2>
                 <div className="space-y-4">
                     {[...Array(5)].map((_, i) => (
                         <div key={i} className="animate-pulse">
-                            <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                            <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                         </div>
                     ))}
                 </div>
@@ -38,21 +38,21 @@ export default function TrendingHashtags() {
     }
 
     return (
-        <div className="bg-gray-800 rounded-2xl p-4">
-            <h2 className="text-xl font-bold mb-4">Trending</h2>
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-lg sticky top-24">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Trending</h2>
             <div className="space-y-4">
                 {hashtags.map((hashtag, index) => (
                     <Link
                         key={hashtag.id}
                         href={`/hashtag/${hashtag.name}`}
-                        className="block hover:bg-gray-700 -mx-4 px-4 py-2 transition-colors"
+                        className="block hover:bg-gray-50 -mx-4 px-4 py-2 transition-colors rounded-lg"
                     >
                         <div className="flex items-start justify-between">
                             <div className="flex-1">
                                 <div className="text-xs text-gray-500 mb-1">
                                     {index + 1} · Trending
                                 </div>
-                                <div className="font-bold text-white">
+                                <div className="font-bold text-gray-900">
                                     #{hashtag.name}
                                 </div>
                                 <div className="text-xs text-gray-500 mt-1">

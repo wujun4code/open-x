@@ -52,14 +52,14 @@ export default function ProfileCard() {
     return (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-24">
             {/* Compact Header with gradient */}
-            <div className="h-16 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+            <div className="h-16 bg-gradient-to-r from-blue-600 to-purple-600"></div>
 
             {/* Profile Content */}
             <div className="px-4 pb-4">
                 {/* Avatar */}
                 <div className="flex justify-center -mt-8 mb-3">
                     <Link href="/profile">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full border-4 border-white flex items-center justify-center shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full border-4 border-white flex items-center justify-center shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
                             {user.avatar ? (
                                 <img src={user.avatar} alt={user.name || user.username} className="w-full h-full rounded-full object-cover" />
                             ) : (

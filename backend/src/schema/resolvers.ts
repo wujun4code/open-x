@@ -122,7 +122,23 @@ export const resolvers = {
 
         // Get trending hashtags
         trendingHashtags: async (_: any, { limit = 10 }: { limit?: number }, context: Context) => {
+            // Calculate date 30 days ago for time-based trending
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            // Get hashtags with posts from the last 30 days
             const hashtags = await context.prisma.hashtag.findMany({
+                where: {
+                    posts: {
+                        some: {
+                            post: {
+                                createdAt: {
+                                    gte: thirtyDaysAgo,
+                                },
+                            },
+                        },
+                    },
+                },
                 take: limit,
                 orderBy: {
                     posts: {

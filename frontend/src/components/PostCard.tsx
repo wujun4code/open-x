@@ -125,7 +125,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     <Link
                         key={index}
                         href={`/hashtag/${hashtagName}`}
-                        className="text-blue-500 hover:underline"
+                        className="text-blue-600 hover:underline"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {segment.content}
@@ -143,7 +143,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
             <div className="flex space-x-4">
                 {/* User Avatar */}
                 <Link href={`/profile`} className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
                         {post.user.avatar ? (
                             <img src={post.user.avatar} alt={post.user.name || post.user.username} className="w-full h-full rounded-full object-cover" />
                         ) : (

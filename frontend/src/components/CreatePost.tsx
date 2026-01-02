@@ -176,7 +176,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                 <div className="flex space-x-4">
                     {/* User Avatar */}
                     <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
                             {user?.name?.[0] || user?.username?.[0] || 'U'}
                         </div>
                     </div>
@@ -237,10 +237,10 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                                 {/* Character Counter */}
                                 <div
                                     className={`text-sm font-medium ${isOverLimit
-                                            ? 'text-red-600'
-                                            : isNearLimit
-                                                ? 'text-orange-600'
-                                                : 'text-gray-500'
+                                        ? 'text-red-600'
+                                        : isNearLimit
+                                            ? 'text-orange-600'
+                                            : 'text-gray-500'
                                         }`}
                                 >
                                     {remainingChars}
