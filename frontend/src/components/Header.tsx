@@ -156,49 +156,49 @@ export default function Header() {
                                 <div className="relative pl-3 border-l border-gray-200 dark:border-dark-700" ref={dropdownRef}>
                                     <button
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                     >
                                         <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                                             {user?.name?.[0] || user?.username?.[0] || 'U'}
                                         </div>
-                                        <span className="text-sm font-medium text-gray-700">{user?.name || user?.username}</span>
-                                        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.name || user?.username}</span>
+                                        <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                                     </button>
 
                                     {/* Dropdown Menu */}
                                     {isDropdownOpen && (
-                                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                                            <div className="px-4 py-3 border-b border-gray-100">
-                                                <p className="text-sm font-semibold text-gray-900">{user?.name || user?.username}</p>
-                                                <p className="text-xs text-gray-500">@{user?.username}</p>
+                                        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
+                                            <div className="px-4 py-3 border-b border-gray-100 dark:border-dark-700">
+                                                <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.name || user?.username}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">@{user?.username}</p>
                                             </div>
 
                                             <Link
                                                 href="/profile"
                                                 onClick={() => setIsDropdownOpen(false)}
-                                                className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                                className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                             >
-                                                <User className="w-5 h-5 text-gray-600" />
-                                                <span className="text-sm font-medium text-gray-700">View Profile</span>
+                                                <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">View Profile</span>
                                             </Link>
 
                                             <Link
                                                 href="/settings"
                                                 onClick={() => setIsDropdownOpen(false)}
-                                                className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                                className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                             >
-                                                <Settings className="w-5 h-5 text-gray-600" />
-                                                <span className="text-sm font-medium text-gray-700">Settings</span>
+                                                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Settings</span>
                                             </Link>
 
-                                            <div className="border-t border-gray-100 my-2"></div>
+                                            <div className="border-t border-gray-100 dark:border-dark-700 my-2"></div>
 
                                             <button
                                                 onClick={handleLogout}
-                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors"
+                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                             >
-                                                <LogOut className="w-5 h-5 text-red-600" />
-                                                <span className="text-sm font-medium text-red-600">Logout</span>
+                                                <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                                <span className="text-sm font-medium text-red-600 dark:text-red-400">Logout</span>
                                             </button>
                                         </div>
                                     )}
@@ -208,7 +208,7 @@ export default function Header() {
                             <>
                                 <Link
                                     href="/auth"
-                                    className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                                    className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-dark-700 rounded-lg transition-colors font-medium"
                                 >
                                     <LogIn className="w-5 h-5" />
                                     <span>Sign In</span>

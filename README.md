@@ -373,7 +373,7 @@ npm run dev
 - [ ] **Edit Posts** - Modify posts after publishing (with edit history)
 - [ ] **Post History** - View edit history of posts
 - [ ] **Keyboard Shortcuts** - Power user shortcuts
-- [ ] **Dark/Light Theme Toggle** - Switch between themes
+- [x] **Dark/Light Theme Toggle** - Switch between themes
 - [ ] **Accessibility Features** - Screen reader support, high contrast
 - [ ] **Multi-language Support** - Internationalization
 - [ ] **Progressive Web App** - Installable web app
