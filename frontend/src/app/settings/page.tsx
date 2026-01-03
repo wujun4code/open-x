@@ -68,7 +68,7 @@ export default function SettingsPage() {
     ];
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
             <div className="container mx-auto px-4 py-8 max-w-6xl">
                 {/* Page Header */}
                 <div className="mb-8">
@@ -76,15 +76,15 @@ export default function SettingsPage() {
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                             <SettingsIcon className="w-7 h-7 text-white" />
                         </div>
-                        <h1 className="text-4xl font-bold text-gray-900">Settings</h1>
+                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Settings</h1>
                     </div>
-                    <p className="text-gray-600 text-lg">Manage your account preferences and settings</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">Manage your account preferences and settings</p>
                 </div>
 
                 <div className="grid lg:grid-cols-4 gap-6">
                     {/* Sidebar - Tabs */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sticky top-24">
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-4 sticky top-24">
                             <nav className="space-y-2">
                                 {tabs.map((tab) => {
                                     const Icon = tab.icon;
@@ -93,8 +93,8 @@ export default function SettingsPage() {
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
                                             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab.id
-                                                    ? 'bg-blue-50 text-blue-600'
-                                                    : 'text-gray-700 hover:bg-gray-50'
+                                                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-700'
                                                 }`}
                                         >
                                             <Icon className="w-5 h-5" />
@@ -108,49 +108,49 @@ export default function SettingsPage() {
 
                     {/* Main Content */}
                     <div className="lg:col-span-3">
-                        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-8">
                             {/* Account Settings */}
                             {activeTab === 'account' && (
                                 <div className="space-y-6">
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Account Information</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Account Information</h2>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
                                         <input
                                             type="email"
                                             value={settings.email}
                                             onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
                                         <input
                                             type="text"
                                             value={settings.username}
                                             onChange={(e) => setSettings({ ...settings, username: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Display Name</label>
                                         <input
                                             type="text"
                                             value={settings.name}
                                             onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
                                         <textarea
                                             value={settings.bio}
                                             onChange={(e) => setSettings({ ...settings, bio: e.target.value })}
                                             rows={4}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             placeholder="Tell us about yourself..."
                                         />
                                     </div>
@@ -160,14 +160,14 @@ export default function SettingsPage() {
                             {/* Privacy Settings */}
                             {activeTab === 'privacy' && (
                                 <div className="space-y-6">
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Privacy Settings</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Privacy Settings</h2>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Profile Visibility</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profile Visibility</label>
                                         <select
                                             value={settings.profileVisibility}
                                             onChange={(e) => setSettings({ ...settings, profileVisibility: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         >
                                             <option value="public">Public</option>
                                             <option value="followers">Followers Only</option>
@@ -175,10 +175,10 @@ export default function SettingsPage() {
                                         </select>
                                     </div>
 
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-700">
                                         <div>
-                                            <p className="font-medium text-gray-900">Show Email on Profile</p>
-                                            <p className="text-sm text-gray-500">Allow others to see your email address</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">Show Email on Profile</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">Allow others to see your email address</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -193,8 +193,8 @@ export default function SettingsPage() {
 
                                     <div className="flex items-center justify-between py-3">
                                         <div>
-                                            <p className="font-medium text-gray-900">Allow Direct Messages</p>
-                                            <p className="text-sm text-gray-500">Let others send you private messages</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">Allow Direct Messages</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">Let others send you private messages</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -212,12 +212,12 @@ export default function SettingsPage() {
                             {/* Notification Settings */}
                             {activeTab === 'notifications' && (
                                 <div className="space-y-6">
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Notification Preferences</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Notification Preferences</h2>
 
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-700">
                                         <div>
-                                            <p className="font-medium text-gray-900">Email Notifications</p>
-                                            <p className="text-sm text-gray-500">Receive notifications via email</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">Email Notifications</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">Receive notifications via email</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -230,10 +230,10 @@ export default function SettingsPage() {
                                         </label>
                                     </div>
 
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-700">
                                         <div>
-                                            <p className="font-medium text-gray-900">Push Notifications</p>
-                                            <p className="text-sm text-gray-500">Receive push notifications</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">Push Notifications</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">Receive push notifications</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -246,10 +246,10 @@ export default function SettingsPage() {
                                         </label>
                                     </div>
 
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-700">
                                         <div>
-                                            <p className="font-medium text-gray-900">Likes</p>
-                                            <p className="text-sm text-gray-500">When someone likes your post</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">Likes</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">When someone likes your post</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -262,10 +262,10 @@ export default function SettingsPage() {
                                         </label>
                                     </div>
 
-                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-dark-700">
                                         <div>
-                                            <p className="font-medium text-gray-900">Comments</p>
-                                            <p className="text-sm text-gray-500">When someone comments on your post</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">Comments</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">When someone comments on your post</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -280,8 +280,8 @@ export default function SettingsPage() {
 
                                     <div className="flex items-center justify-between py-3">
                                         <div>
-                                            <p className="font-medium text-gray-900">New Followers</p>
-                                            <p className="text-sm text-gray-500">When someone follows you</p>
+                                            <p className="font-medium text-gray-900 dark:text-white">New Followers</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">When someone follows you</p>
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
@@ -299,14 +299,14 @@ export default function SettingsPage() {
                             {/* Appearance Settings */}
                             {activeTab === 'appearance' && (
                                 <div className="space-y-6">
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Appearance</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Appearance</h2>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Theme</label>
                                         <select
                                             value={settings.theme}
                                             onChange={(e) => setSettings({ ...settings, theme: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         >
                                             <option value="light">Light</option>
                                             <option value="dark">Dark</option>
@@ -315,11 +315,11 @@ export default function SettingsPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Language</label>
                                         <select
                                             value={settings.language}
                                             onChange={(e) => setSettings({ ...settings, language: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         >
                                             <option value="en">English</option>
                                             <option value="es">Español</option>
@@ -334,32 +334,32 @@ export default function SettingsPage() {
                             {/* Security Settings */}
                             {activeTab === 'security' && (
                                 <div className="space-y-6">
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Security</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Security</h2>
 
                                     <div>
-                                        <h3 className="font-semibold text-gray-900 mb-4">Change Password</h3>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Change Password</h3>
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Password</label>
                                                 <input
                                                     type="password"
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     placeholder="Enter current password"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New Password</label>
                                                 <input
                                                     type="password"
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     placeholder="Enter new password"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm New Password</label>
                                                 <input
                                                     type="password"
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    className="w-full px-4 py-2 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                     placeholder="Confirm new password"
                                                 />
                                             </div>
@@ -369,8 +369,8 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 border-t border-gray-200">
-                                        <h3 className="font-semibold text-gray-900 mb-4">Danger Zone</h3>
+                                    <div className="pt-6 border-t border-gray-200 dark:border-dark-700">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Danger Zone</h3>
                                         <button
                                             onClick={handleLogout}
                                             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center space-x-2"
@@ -383,8 +383,8 @@ export default function SettingsPage() {
                             )}
 
                             {/* Save Button */}
-                            <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
-                                <p className="text-sm text-gray-500">Changes will be saved to your account</p>
+                            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-dark-700 flex items-center justify-between">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Changes will be saved to your account</p>
                                 <button
                                     onClick={handleSave}
                                     disabled={isSaving}

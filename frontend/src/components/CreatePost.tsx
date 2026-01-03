@@ -171,7 +171,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
     const isSubmitting = loading || isUploading;
 
     return (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-6">
             <form onSubmit={handleSubmit}>
                 <div className="flex space-x-4">
                     {/* User Avatar */}
@@ -187,7 +187,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What's happening?"
-                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-lg"
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-lg"
                             rows={3}
                             disabled={isSubmitting}
                         />
@@ -225,7 +225,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                                 <button
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+                                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-dark-700 rounded-lg transition-colors disabled:opacity-50"
                                     title="Add image"
                                     disabled={isSubmitting}
                                 >

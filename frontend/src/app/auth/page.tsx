@@ -102,7 +102,7 @@ export default function AuthPage() {
     const loading = registerLoading || loginLoading;
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950 px-4">
             <div className="max-w-md w-full">
                 {/* Logo/Brand */}
                 <div className="text-center mb-8">
@@ -111,26 +111,26 @@ export default function AuthPage() {
                             <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z" />
                         </svg>
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                         {isLogin ? 'Welcome back' : 'Join Open X'}
                     </h1>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                         {isLogin ? 'Sign in to your account' : 'Create your account to get started'}
                     </p>
                 </div>
 
                 {/* Auth Card */}
-                <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-dark-700">
                     {/* Tabs */}
-                    <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
+                    <div className="flex gap-2 mb-6 bg-gray-100 dark:bg-dark-700 p-1 rounded-lg">
                         <button
                             onClick={() => {
                                 setIsLogin(true);
                                 setError('');
                             }}
                             className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${isLogin
-                                ? 'bg-white text-blue-600 shadow-sm'
-                                : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-white dark:bg-dark-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                                 }`}
                         >
                             Sign In
@@ -141,8 +141,8 @@ export default function AuthPage() {
                                 setError('');
                             }}
                             className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${!isLogin
-                                ? 'bg-white text-blue-600 shadow-sm'
-                                : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-white dark:bg-dark-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                                 }`}
                         >
                             Sign Up
@@ -151,8 +151,8 @@ export default function AuthPage() {
 
                     {/* Error Message */}
                     {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-sm text-red-600">{error}</p>
+                        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                         </div>
                     )}
 
@@ -161,7 +161,7 @@ export default function AuthPage() {
                         {!isLogin && (
                             <>
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Name (optional)
                                     </label>
                                     <input
@@ -170,13 +170,13 @@ export default function AuthPage() {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                                         placeholder="John Doe"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Username
                                     </label>
                                     <input
@@ -186,7 +186,7 @@ export default function AuthPage() {
                                         value={formData.username}
                                         onChange={handleChange}
                                         required={!isLogin}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                                         placeholder="johndoe"
                                     />
                                 </div>
@@ -194,7 +194,7 @@ export default function AuthPage() {
                         )}
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Email
                             </label>
                             <input
@@ -204,13 +204,13 @@ export default function AuthPage() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                                 placeholder="john@example.com"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Password
                             </label>
                             <input
@@ -220,11 +220,11 @@ export default function AuthPage() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                                className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                                 placeholder="••••••••"
                             />
                             {!isLogin && (
-                                <p className="mt-1 text-xs text-gray-500">
+                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                     Min 8 characters, with uppercase, lowercase, and number
                                 </p>
                             )}
@@ -251,14 +251,14 @@ export default function AuthPage() {
 
                     {/* Footer */}
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                             {isLogin ? "Don't have an account? " : 'Already have an account? '}
                             <button
                                 onClick={() => {
                                     setIsLogin(!isLogin);
                                     setError('');
                                 }}
-                                className="text-blue-600 hover:text-blue-700 font-medium"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                             >
                                 {isLogin ? 'Sign up' : 'Sign in'}
                             </button>
@@ -267,9 +267,9 @@ export default function AuthPage() {
                 </div>
 
                 {/* Test Credentials */}
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-xs text-blue-800 font-medium mb-2">💡 Testing Tips:</p>
-                    <ul className="text-xs text-blue-700 space-y-1">
+                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <p className="text-xs text-blue-800 dark:text-blue-400 font-medium mb-2">💡 Testing Tips:</p>
+                    <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
                         <li>• Password must have uppercase, lowercase, and number</li>
                         <li>• Username: 3-20 chars, alphanumeric + underscores</li>
                         <li>• Try creating an account and then logging in!</li>
