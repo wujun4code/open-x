@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Image, Send, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const GENERATE_UPLOAD_URL = gql`
   mutation GenerateUploadUrl($filename: String!, $contentType: String!) {
@@ -27,6 +28,29 @@ const CREATE_POST_MUTATION = gql`
         username
         avatar
       }
+      likesCount
+      commentsCount
+      isLiked
+    }
+  }
+`;
+
+const POSTS_QUERY = gql`
+  query GetPosts($limit: Int, $offset: Int) {
+    posts(limit: $limit, offset: $offset) {
+      id
+      content
+      imageUrl
+      createdAt
+      user {
+        id
+        name
+        username
+        avatar
+      }
+      likesCount
+      commentsCount
+      isLiked
     }
   }
 `;
@@ -36,6 +60,7 @@ interface CreatePostProps {
 }
 
 export default function CreatePost({ onPostCreated }: CreatePostProps) {
+    const t = useTranslations('CreatePost');
     const [content, setContent] = useState('');
     const [user, setUser] = useState<any>(null);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -46,6 +71,31 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
 
     const [generateUploadUrl] = useMutation(GENERATE_UPLOAD_URL);
     const [createPost, { loading }] = useMutation(CREATE_POST_MUTATION, {
+        update(cache, { data }) {
+            if (!data?.createPost) return;
+
+            try {
+                // Read the existing posts from cache
+                const existingPosts: any = cache.readQuery({
+                    query: POSTS_QUERY,
+                    variables: { limit: 20, offset: 0 }
+                });
+
+                // Write the new post to the cache
+                if (existingPosts?.posts) {
+                    cache.writeQuery({
+                        query: POSTS_QUERY,
+                        variables: { limit: 20, offset: 0 },
+                        data: {
+                            posts: [data.createPost, ...existingPosts.posts]
+                        }
+                    });
+                }
+            } catch (error) {
+                // Cache might not exist yet, that's okay
+                console.log('Cache update skipped:', error);
+            }
+        },
         onCompleted: () => {
             setContent('');
             setSelectedImage(null);
@@ -186,7 +236,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            placeholder="What's happening?"
+                            placeholder={t('placeholder')}
                             className="w-full px-4 py-3 border border-gray-200 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-lg"
                             rows={3}
                             disabled={isSubmitting}
@@ -226,7 +276,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
                                     className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-dark-700 rounded-lg transition-colors disabled:opacity-50"
-                                    title="Add image"
+                                    title={t('addImage')}
                                     disabled={isSubmitting}
                                 >
                                     <Image className="w-5 h-5" />
@@ -254,7 +304,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                                 >
                                     <Send className="w-4 h-4" />
                                     <span>
-                                        {isUploading ? 'Uploading...' : loading ? 'Posting...' : 'Post'}
+                                        {isUploading ? t('uploading') : loading ? t('posting') : t('post')}
                                     </span>
                                 </button>
                             </div>

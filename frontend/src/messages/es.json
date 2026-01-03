@@ -36,6 +36,25 @@
             "connected": "¡Backend conectado y respondiendo!"
         }
     },
+    "ProfileCard": {
+        "joined": "Se unió",
+        "posts": "Publicaciones",
+        "followers": "Seguidores",
+        "following": "Siguiendo"
+    },
+    "CreatePost": {
+        "placeholder": "¿Qué está pasando?",
+        "post": "Publicar",
+        "posting": "Publicando...",
+        "uploading": "Subiendo...",
+        "addImage": "Agregar imagen"
+    },
+    "Trending": {
+        "title": "Tendencias",
+        "trending": "Tendencia",
+        "post": "publicación",
+        "posts": "publicaciones"
+    },
     "Auth": {
         "welcomeBack": "Bienvenido de nuevo",
         "join": "Únete a Open X",

@@ -3,6 +3,7 @@
 import { useQuery } from '@apollo/client';
 import { TRENDING_HASHTAGS } from '@/lib/queries';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Hashtag {
     id: string;
@@ -11,6 +12,7 @@ interface Hashtag {
 }
 
 export default function TrendingHashtags() {
+    const t = useTranslations('Trending');
     const { data, loading } = useQuery(TRENDING_HASHTAGS, {
         variables: { limit: 10 },
     });
@@ -18,7 +20,7 @@ export default function TrendingHashtags() {
     if (loading) {
         return (
             <div className="bg-white dark:bg-dark-800 rounded-2xl p-4 border border-gray-100 dark:border-dark-700 shadow-lg">
-                <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Trending</h2>
+                <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{t('title')}</h2>
                 <div className="space-y-4">
                     {[...Array(5)].map((_, i) => (
                         <div key={i} className="animate-pulse">
@@ -39,7 +41,7 @@ export default function TrendingHashtags() {
 
     return (
         <div className="bg-white dark:bg-dark-800 rounded-2xl p-4 border border-gray-100 dark:border-dark-700 shadow-lg sticky top-24">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Trending</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{t('title')}</h2>
             <div className="space-y-4">
                 {hashtags.map((hashtag, index) => (
                     <Link
@@ -50,13 +52,13 @@ export default function TrendingHashtags() {
                         <div className="flex items-start justify-between">
                             <div className="flex-1">
                                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                                    {index + 1} · Trending
+                                    {index + 1} · {t('trending')}
                                 </div>
                                 <div className="font-bold text-gray-900 dark:text-white">
                                     #{hashtag.name}
                                 </div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    {hashtag.postsCount.toLocaleString()} {hashtag.postsCount === 1 ? 'post' : 'posts'}
+                                    {hashtag.postsCount.toLocaleString()} {hashtag.postsCount === 1 ? t('post') : t('posts')}
                                 </div>
                             </div>
                         </div>

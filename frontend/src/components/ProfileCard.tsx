@@ -3,6 +3,7 @@
 import { useQuery, gql } from '@apollo/client';
 import { User, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 const ME_QUERY = gql`
   query Me {
@@ -21,6 +22,7 @@ const ME_QUERY = gql`
 `;
 
 export default function ProfileCard() {
+    const t = useTranslations('ProfileCard');
     const { data, loading, error } = useQuery(ME_QUERY);
 
     if (loading) {
@@ -80,22 +82,22 @@ export default function ProfileCard() {
                 {/* Join Date */}
                 <div className="flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 mb-3">
                     <Calendar className="w-3 h-3 mr-1" />
-                    <span>Joined {joinDate}</span>
+                    <span>{t('joined')} {joinDate}</span>
                 </div>
 
                 {/* Stats */}
                 <div className="flex items-center justify-around py-3 border-t border-gray-100 dark:border-dark-700">
                     <div className="text-center">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.postsCount}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Posts</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{t('posts')}</div>
                     </div>
                     <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.followersCount}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Followers</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{t('followers')}</div>
                     </div>
                     <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.followingCount}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Following</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{t('following')}</div>
                     </div>
                 </div>
             </div>

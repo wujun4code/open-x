@@ -36,6 +36,25 @@
             "connected": "后端已连接并响应！"
         }
     },
+    "ProfileCard": {
+        "joined": "加入于",
+        "posts": "帖子",
+        "followers": "粉丝",
+        "following": "关注"
+    },
+    "CreatePost": {
+        "placeholder": "正在发生什么？",
+        "post": "发布",
+        "posting": "发布中...",
+        "uploading": "上传中...",
+        "addImage": "添加图片"
+    },
+    "Trending": {
+        "title": "趋势",
+        "trending": "趋势",
+        "post": "条帖子",
+        "posts": "条帖子"
+    },
     "Auth": {
         "welcomeBack": "欢迎回来",
         "join": "加入 Open X",

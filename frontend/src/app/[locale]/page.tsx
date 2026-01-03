@@ -50,7 +50,7 @@ export default function Home() {
                         {/* Main Content */}
                         <div className="lg:col-span-2 space-y-6">
                             {/* Create Post */}
-                            <CreatePost onPostCreated={() => window.location.reload()} />
+                            <CreatePost />
 
                             {/* Post Feed */}
                             <PostFeed />

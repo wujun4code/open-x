@@ -36,6 +36,25 @@
             "connected": "Backend is connected and responding!"
         }
     },
+    "ProfileCard": {
+        "joined": "Joined",
+        "posts": "Posts",
+        "followers": "Followers",
+        "following": "Following"
+    },
+    "CreatePost": {
+        "placeholder": "What's happening?",
+        "post": "Post",
+        "posting": "Posting...",
+        "uploading": "Uploading...",
+        "addImage": "Add image"
+    },
+    "Trending": {
+        "title": "Trending",
+        "trending": "Trending",
+        "post": "post",
+        "posts": "posts"
+    },
     "Auth": {
         "welcomeBack": "Welcome back",
         "join": "Join Open X",
