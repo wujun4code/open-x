@@ -1,0 +1,72 @@
+{
+    "Header": {
+        "home": "Inicio",
+        "trending": "Tendencias",
+        "signIn": "Iniciar Sesión",
+        "signUp": "Registrarse",
+        "profile": "Perfil",
+        "settings": "Configuración",
+        "logout": "Cerrar Sesión",
+        "theme": {
+            "light": "Claro",
+            "dark": "Oscuro",
+            "system": "Sistema"
+        }
+    },
+    "Home": {
+        "welcome": "Bienvenido de nuevo",
+        "happening": "¿Qué está pasando?!",
+        "heroTitle": "Bienvenido a Open X",
+        "heroSubtitle": "Una plataforma social moderna construida con tecnología de punta",
+        "getStarted": "Empezar",
+        "signIn": "Iniciar Sesión",
+        "features": {
+            "fast": "Ultrarrápido",
+            "fastDesc": "Construido con Next.js 14 y optimizado para rendimiento",
+            "design": "Diseño Hermoso",
+            "designDesc": "UI moderna con TailwindCSS y animaciones fluidas",
+            "secure": "Seguro y Escalable",
+            "secureDesc": "API GraphQL con autenticación JWT y PostgreSQL"
+        },
+        "apiStatus": {
+            "title": "Estado de API GraphQL",
+            "connecting": "Conectando a la API...",
+            "error": "Error",
+            "backendTip": "Asegúrate que el servidor backend corra en el puerto 4000",
+            "connected": "¡Backend conectado y respondiendo!"
+        }
+    },
+    "Auth": {
+        "welcomeBack": "Bienvenido de nuevo",
+        "join": "Únete a Open X",
+        "signInTitle": "Inicia sesión en tu cuenta",
+        "signUpTitle": "Crea tu cuenta para empezar",
+        "signIn": "Iniciar Sesión",
+        "signUp": "Registrarse",
+        "createAccount": "Crear Cuenta",
+        "processing": "Procesando...",
+        "labels": {
+            "name": "Nombre (opcional)",
+            "username": "Usuario",
+            "email": "Correo",
+            "password": "Contraseña"
+        },
+        "placeholders": {
+            "name": "Juan Pérez",
+            "username": "juanperez",
+            "email": "juan@ejemplo.com",
+            "password": "••••••••"
+        },
+        "passwordHint": "Mín 8 caracteres, mayúscula, minúscula y número",
+        "footer": {
+            "noAccount": "¿No tienes cuenta? ",
+            "hasAccount": "¿Ya tienes cuenta? "
+        },
+        "testTips": {
+            "title": "Tips de Prueba:",
+            "p1": "La contraseña debe tener mayúscula, minúscula y número",
+            "p2": "Usuario: 3-20 caracteres, alfanumérico + guiones bajos",
+            "p3": "¡Intenta crear una cuenta y luego iniciar sesión!"
+        }
+    }
+}

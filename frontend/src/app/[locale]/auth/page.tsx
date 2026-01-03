@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useTranslations } from 'next-intl';
 
 const REGISTER_MUTATION = gql`
   mutation Register($email: String!, $username: String!, $password: String!, $name: String) {
@@ -34,6 +35,7 @@ const LOGIN_MUTATION = gql`
 
 export default function AuthPage() {
     const router = useRouter();
+    const t = useTranslations('Auth');
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
         email: '',
@@ -112,10 +114,10 @@ export default function AuthPage() {
                         </svg>
                     </div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                        {isLogin ? 'Welcome back' : 'Join Open X'}
+                        {isLogin ? t('welcomeBack') : t('join')}
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300">
-                        {isLogin ? 'Sign in to your account' : 'Create your account to get started'}
+                        {isLogin ? t('signInTitle') : t('signUpTitle')}
                     </p>
                 </div>
 
@@ -133,7 +135,7 @@ export default function AuthPage() {
                                 : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                                 }`}
                         >
-                            Sign In
+                            {t('signIn')}
                         </button>
                         <button
                             onClick={() => {
@@ -145,7 +147,7 @@ export default function AuthPage() {
                                 : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                                 }`}
                         >
-                            Sign Up
+                            {t('signUp')}
                         </button>
                     </div>
 
@@ -162,7 +164,7 @@ export default function AuthPage() {
                             <>
                                 <div>
                                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Name (optional)
+                                        {t('labels.name')}
                                     </label>
                                     <input
                                         type="text"
@@ -171,13 +173,13 @@ export default function AuthPage() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                                        placeholder="John Doe"
+                                        placeholder={t('placeholders.name')}
                                     />
                                 </div>
 
                                 <div>
                                     <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Username
+                                        {t('labels.username')}
                                     </label>
                                     <input
                                         type="text"
@@ -187,7 +189,7 @@ export default function AuthPage() {
                                         onChange={handleChange}
                                         required={!isLogin}
                                         className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                                        placeholder="johndoe"
+                                        placeholder={t('placeholders.username')}
                                     />
                                 </div>
                             </>
@@ -195,7 +197,7 @@ export default function AuthPage() {
 
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Email
+                                {t('labels.email')}
                             </label>
                             <input
                                 type="email"
@@ -205,13 +207,13 @@ export default function AuthPage() {
                                 onChange={handleChange}
                                 required
                                 className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                                placeholder="john@example.com"
+                                placeholder={t('placeholders.email')}
                             />
                         </div>
 
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Password
+                                {t('labels.password')}
                             </label>
                             <input
                                 type="password"
@@ -221,11 +223,11 @@ export default function AuthPage() {
                                 onChange={handleChange}
                                 required
                                 className="w-full px-4 py-3 border border-gray-300 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                                placeholder="••••••••"
+                                placeholder={t('placeholders.password')}
                             />
                             {!isLogin && (
                                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                    Min 8 characters, with uppercase, lowercase, and number
+                                    {t('passwordHint')}
                                 </p>
                             )}
                         </div>
@@ -241,10 +243,10 @@ export default function AuthPage() {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Processing...
+                                    {t('processing')}
                                 </span>
                             ) : (
-                                <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+                                <span>{isLogin ? t('signIn') : t('createAccount')}</span>
                             )}
                         </button>
                     </form>
@@ -252,7 +254,7 @@ export default function AuthPage() {
                     {/* Footer */}
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600 dark:text-gray-300">
-                            {isLogin ? "Don't have an account? " : 'Already have an account? '}
+                            {isLogin ? t('footer.noAccount') : t('footer.hasAccount')}
                             <button
                                 onClick={() => {
                                     setIsLogin(!isLogin);
@@ -260,7 +262,7 @@ export default function AuthPage() {
                                 }}
                                 className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                             >
-                                {isLogin ? 'Sign up' : 'Sign in'}
+                                {isLogin ? t('signUp') : t('signIn')}
                             </button>
                         </p>
                     </div>
@@ -268,11 +270,11 @@ export default function AuthPage() {
 
                 {/* Test Credentials */}
                 <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                    <p className="text-xs text-blue-800 dark:text-blue-400 font-medium mb-2">💡 Testing Tips:</p>
+                    <p className="text-xs text-blue-800 dark:text-blue-400 font-medium mb-2">💡 {t('testTips.title')}</p>
                     <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
-                        <li>• Password must have uppercase, lowercase, and number</li>
-                        <li>• Username: 3-20 chars, alphanumeric + underscores</li>
-                        <li>• Try creating an account and then logging in!</li>
+                        <li>• {t('testTips.p1')}</li>
+                        <li>• {t('testTips.p2')}</li>
+                        <li>• {t('testTips.p3')}</li>
                     </ul>
                 </div>
             </div>

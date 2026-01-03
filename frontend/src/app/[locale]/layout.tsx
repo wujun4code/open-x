@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import '../globals.css';
 import { ApolloWrapper } from '@/lib/apollo-client';
 import Header from '@/components/Header';
 import { ThemeProvider } from '@/contexts/ThemeProvider';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,18 +21,25 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
+    params
 }: {
     children: React.ReactNode;
+    params: Promise<{ locale: string }>;
 }) {
+    const { locale } = await params;
+    const messages = await getMessages();
+
     return (
-        <html lang="en">
+        <html lang={locale}>
             <body className={inter.className}>
                 <ThemeProvider>
                     <ApolloWrapper>
-                        <Header />
-                        {children}
+                        <NextIntlClientProvider messages={messages}>
+                            <Header />
+                            {children}
+                        </NextIntlClientProvider>
                     </ApolloWrapper>
                 </ThemeProvider>
             </body>

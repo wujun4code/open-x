@@ -1,0 +1,72 @@
+{
+    "Header": {
+        "home": "首页",
+        "trending": "趋势",
+        "signIn": "登录",
+        "signUp": "注册",
+        "profile": "个人资料",
+        "settings": "设置",
+        "logout": "退出登录",
+        "theme": {
+            "light": "浅色",
+            "dark": "深色",
+            "system": "系统"
+        }
+    },
+    "Home": {
+        "welcome": "欢迎回来",
+        "happening": "正在发生什么？！",
+        "heroTitle": "欢迎来到 Open X",
+        "heroSubtitle": "基于前沿技术构建的现代社交平台",
+        "getStarted": "开始使用",
+        "signIn": "登录",
+        "features": {
+            "fast": "极速体验",
+            "fastDesc": "基于 Next.js 14 构建，极致性能优化",
+            "design": "精美设计",
+            "designDesc": "使用 TailwindCSS 打造的现代 UI 和流畅动画",
+            "secure": "安全可扩展",
+            "secureDesc": "基于 GraphQL API，JWT 认证和 PostgreSQL"
+        },
+        "apiStatus": {
+            "title": "GraphQL API 状态",
+            "connecting": "正在连接 API...",
+            "error": "错误",
+            "backendTip": "请确保后端服务器运行在 4000 端口",
+            "connected": "后端已连接并响应！"
+        }
+    },
+    "Auth": {
+        "welcomeBack": "欢迎回来",
+        "join": "加入 Open X",
+        "signInTitle": "登录您的账户",
+        "signUpTitle": "创建账户以开始",
+        "signIn": "登录",
+        "signUp": "注册",
+        "createAccount": "创建账户",
+        "processing": "处理中...",
+        "labels": {
+            "name": "姓名 (可选)",
+            "username": "用户名",
+            "email": "邮箱",
+            "password": "密码"
+        },
+        "placeholders": {
+            "name": "张三",
+            "username": "zhangsan",
+            "email": "zhangsan@example.com",
+            "password": "••••••••"
+        },
+        "passwordHint": "最少 8 个字符，包含大小写字母和数字",
+        "footer": {
+            "noAccount": "还没有账户？ ",
+            "hasAccount": "已有账户？ "
+        },
+        "testTips": {
+            "title": "测试提示：",
+            "p1": "密码必须包含大小写字母和数字",
+            "p2": "用户名：3-20 个字符，字母数字 + 下划线",
+            "p3": "尝试创建一个账户然后登录！"
+        }
+    }
+}

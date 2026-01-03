@@ -1,20 +1,23 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor } from 'lucide-react';
+import { Link, usePathname, useRouter } from '@/navigation';
+import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeProvider';
+import { useTranslations } from 'next-intl';
 
 export default function Header() {
+    const t = useTranslations('Header');
     const pathname = usePathname();
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<any>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+    const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const themeDropdownRef = useRef<HTMLDivElement>(null);
+    const langDropdownRef = useRef<HTMLDivElement>(null);
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
@@ -40,6 +43,9 @@ export default function Header() {
             if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
                 setIsThemeDropdownOpen(false);
             }
+            if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
+                setIsLangDropdownOpen(false);
+            }
         }
 
         document.addEventListener('mousedown', handleClickOutside);
@@ -51,6 +57,11 @@ export default function Header() {
         localStorage.removeItem('user');
         setIsDropdownOpen(false);
         router.push('/auth');
+    };
+
+    const handleLanguageChange = (locale: string) => {
+        router.replace(pathname, { locale });
+        setIsLangDropdownOpen(false);
     };
 
     // Don't show header on auth and welcome pages
@@ -82,7 +93,7 @@ export default function Header() {
                                 }`}
                         >
                             <Home className="w-5 h-5" />
-                            <span className="font-medium">Home</span>
+                            <span className="font-medium">{t('home')}</span>
                         </Link>
 
                         {isAuthenticated ? (
@@ -95,8 +106,42 @@ export default function Header() {
                                         }`}
                                 >
                                     <TrendingUp className="w-5 h-5" />
-                                    <span className="font-medium">Trending</span>
+                                    <span className="font-medium">{t('trending')}</span>
                                 </Link>
+
+                                {/* Language Switcher */}
+                                <div className="relative" ref={langDropdownRef}>
+                                    <button
+                                        onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                        title="Change language"
+                                    >
+                                        <Languages className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                                    </button>
+
+                                    {isLangDropdownOpen && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
+                                            <button
+                                                onClick={() => handleLanguageChange('en')}
+                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                            >
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">English</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleLanguageChange('es')}
+                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                            >
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Español</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleLanguageChange('zh-cn')}
+                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                            >
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">简体中文</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
 
                                 {/* Theme Switcher */}
                                 <div className="relative" ref={themeDropdownRef}>
@@ -121,7 +166,7 @@ export default function Header() {
                                                 className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                                             >
                                                 <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Light</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.light')}</span>
                                                 {theme === 'light' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
                                             </button>
 
@@ -133,7 +178,7 @@ export default function Header() {
                                                 className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'dark' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                                             >
                                                 <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Dark</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.dark')}</span>
                                                 {theme === 'dark' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
                                             </button>
 
@@ -145,7 +190,7 @@ export default function Header() {
                                                 className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                                             >
                                                 <Monitor className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">System</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.system')}</span>
                                                 {theme === 'system' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
                                             </button>
                                         </div>
@@ -179,7 +224,7 @@ export default function Header() {
                                                 className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                             >
                                                 <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">View Profile</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('profile')}</span>
                                             </Link>
 
                                             <Link
@@ -188,7 +233,7 @@ export default function Header() {
                                                 className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                             >
                                                 <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Settings</span>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings')}</span>
                                             </Link>
 
                                             <div className="border-t border-gray-100 dark:border-dark-700 my-2"></div>
@@ -198,7 +243,7 @@ export default function Header() {
                                                 className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                             >
                                                 <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
-                                                <span className="text-sm font-medium text-red-600 dark:text-red-400">Logout</span>
+                                                <span className="text-sm font-medium text-red-600 dark:text-red-400">{t('logout')}</span>
                                             </button>
                                         </div>
                                     )}
@@ -211,14 +256,14 @@ export default function Header() {
                                     className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-dark-700 rounded-lg transition-colors font-medium"
                                 >
                                     <LogIn className="w-5 h-5" />
-                                    <span>Sign In</span>
+                                    <span>{t('signIn')}</span>
                                 </Link>
                                 <Link
                                     href="/auth"
                                     className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg"
                                 >
                                     <UserPlus className="w-5 h-5" />
-                                    <span>Sign Up</span>
+                                    <span>{t('signUp')}</span>
                                 </Link>
                             </>
                         )}

@@ -297,6 +297,7 @@ npm run dev
 - [x] **Password Hashing** - bcrypt for secure password storage
 - [x] **Type Safety** - Full TypeScript coverage
 - [x] **Hot Reload** - Development servers with auto-reload
+- [ ] **Multi-language Support** - Internationalization (In Progress)
 
 ### 🔮 Planned Features
 
@@ -375,7 +376,7 @@ npm run dev
 - [ ] **Keyboard Shortcuts** - Power user shortcuts
 - [x] **Dark/Light Theme Toggle** - Switch between themes
 - [ ] **Accessibility Features** - Screen reader support, high contrast
-- [ ] **Multi-language Support** - Internationalization
+
 - [ ] **Progressive Web App** - Installable web app
 - [ ] **Offline Mode** - View cached content offline
 - [ ] **Export Data** - Download your data archive

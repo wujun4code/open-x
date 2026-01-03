@@ -6,7 +6,8 @@ import ProfileCard from '@/components/ProfileCard';
 import CreatePost from '@/components/CreatePost';
 import PostFeed from '@/components/PostFeed';
 import TrendingHashtags from '@/components/TrendingHashtags';
-import Link from 'next/link';
+import { Link } from '@/navigation';
+import { useTranslations } from 'next-intl';
 
 const HELLO_QUERY = gql`
   query Hello {
@@ -18,6 +19,7 @@ export default function Home() {
     const { data, loading, error } = useQuery(HELLO_QUERY);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const t = useTranslations('Home');
 
     useEffect(() => {
         // Check authentication status
@@ -67,23 +69,23 @@ export default function Home() {
                         {/* Hero Section */}
                         <div className="text-center mb-16 pt-8">
                             <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                Welcome to Open X
+                                {t('heroTitle')}
                             </h1>
                             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-                                A modern social platform built with cutting-edge technology
+                                {t('heroSubtitle')}
                             </p>
                             <div className="flex items-center justify-center space-x-4">
                                 <Link
                                     href="/auth"
                                     className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-lg hover:shadow-xl"
                                 >
-                                    Get Started
+                                    {t('getStarted')}
                                 </Link>
                                 <Link
                                     href="/auth"
                                     className="px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-dark-800 dark:hover:border-blue-500 transition-all font-medium"
                                 >
-                                    Sign In
+                                    {t('signIn')}
                                 </Link>
                             </div>
                         </div>
@@ -92,25 +94,25 @@ export default function Home() {
                         <div className="grid md:grid-cols-3 gap-6 mb-16">
                             <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-dark-700 hover:shadow-xl transition-shadow">
                                 <div className="text-4xl mb-4">⚡</div>
-                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Lightning Fast</h3>
+                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{t('features.fast')}</h3>
                                 <p className="text-gray-600 dark:text-gray-300">
-                                    Built with Next.js 14 and optimized for performance
+                                    {t('features.fastDesc')}
                                 </p>
                             </div>
 
                             <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-dark-700 hover:shadow-xl transition-shadow">
                                 <div className="text-4xl mb-4">🎨</div>
-                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Beautiful Design</h3>
+                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{t('features.design')}</h3>
                                 <p className="text-gray-600 dark:text-gray-300">
-                                    Modern UI with TailwindCSS and smooth animations
+                                    {t('features.designDesc')}
                                 </p>
                             </div>
 
                             <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-dark-700 hover:shadow-xl transition-shadow">
                                 <div className="text-4xl mb-4">🔒</div>
-                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Secure & Scalable</h3>
+                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{t('features.secure')}</h3>
                                 <p className="text-gray-600 dark:text-gray-300">
-                                    GraphQL API with JWT authentication and PostgreSQL
+                                    {t('features.secureDesc')}
                                 </p>
                             </div>
                         </div>
@@ -119,21 +121,21 @@ export default function Home() {
                         <div className="max-w-2xl mx-auto">
                             <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-dark-700">
                                 <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                                    🚀 GraphQL API Status
+                                    🚀 {t('apiStatus.title')}
                                 </h2>
 
                                 {loading && (
                                     <div className="flex items-center space-x-3">
                                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                                        <span className="text-gray-600 dark:text-gray-300">Connecting to API...</span>
+                                        <span className="text-gray-600 dark:text-gray-300">{t('apiStatus.connecting')}</span>
                                     </div>
                                 )}
 
                                 {error && (
                                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                                        <p className="text-red-600 dark:text-red-400">❌ Error: {error.message}</p>
+                                        <p className="text-red-600 dark:text-red-400">❌ {t('apiStatus.error')}: {error.message}</p>
                                         <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
-                                            Make sure the backend server is running on port 4000
+                                            {t('apiStatus.backendTip')}
                                         </p>
                                     </div>
                                 )}
@@ -144,7 +146,7 @@ export default function Home() {
                                             ✅ {data.hello}
                                         </p>
                                         <p className="text-green-600 dark:text-green-400 text-sm mt-2">
-                                            Backend is connected and responding!
+                                            {t('apiStatus.connected')}
                                         </p>
                                     </div>
                                 )}

@@ -1,0 +1,72 @@
+{
+    "Header": {
+        "home": "Home",
+        "trending": "Trending",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+        }
+    },
+    "Home": {
+        "welcome": "Welcome back",
+        "happening": "What is happening?!",
+        "heroTitle": "Welcome to Open X",
+        "heroSubtitle": "A modern social platform built with cutting-edge technology",
+        "getStarted": "Get Started",
+        "signIn": "Sign In",
+        "features": {
+            "fast": "Lightning Fast",
+            "fastDesc": "Built with Next.js 14 and optimized for performance",
+            "design": "Beautiful Design",
+            "designDesc": "Modern UI with TailwindCSS and smooth animations",
+            "secure": "Secure & Scalable",
+            "secureDesc": "GraphQL API with JWT authentication and PostgreSQL"
+        },
+        "apiStatus": {
+            "title": "GraphQL API Status",
+            "connecting": "Connecting to API...",
+            "error": "Error",
+            "backendTip": "Make sure the backend server is running on port 4000",
+            "connected": "Backend is connected and responding!"
+        }
+    },
+    "Auth": {
+        "welcomeBack": "Welcome back",
+        "join": "Join Open X",
+        "signInTitle": "Sign in to your account",
+        "signUpTitle": "Create your account to get started",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "createAccount": "Create Account",
+        "processing": "Processing...",
+        "labels": {
+            "name": "Name (optional)",
+            "username": "Username",
+            "email": "Email",
+            "password": "Password"
+        },
+        "placeholders": {
+            "name": "John Doe",
+            "username": "johndoe",
+            "email": "john@example.com",
+            "password": "••••••••"
+        },
+        "passwordHint": "Min 8 characters, with uppercase, lowercase, and number",
+        "footer": {
+            "noAccount": "Don't have an account? ",
+            "hasAccount": "Already have an account? "
+        },
+        "testTips": {
+            "title": "Testing Tips:",
+            "p1": "Password must have uppercase, lowercase, and number",
+            "p2": "Username: 3-20 chars, alphanumeric + underscores",
+            "p3": "Try creating an account and then logging in!"
+        }
+    }
+}
