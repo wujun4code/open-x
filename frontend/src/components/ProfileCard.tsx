@@ -2,7 +2,7 @@
 
 import { useQuery, gql } from '@apollo/client';
 import { User, Calendar } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useTranslations } from 'next-intl';
 
 const ME_QUERY = gql`
@@ -87,10 +87,10 @@ export default function ProfileCard() {
 
                 {/* Stats */}
                 <div className="flex items-center justify-around py-3 border-t border-gray-100 dark:border-dark-700">
-                    <div className="text-center">
+                    <Link href="/profile" className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.postsCount}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{t('posts')}</div>
-                    </div>
+                    </Link>
                     <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.followersCount}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{t('followers')}</div>

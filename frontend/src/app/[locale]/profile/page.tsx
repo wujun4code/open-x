@@ -3,6 +3,7 @@
 import { useQuery, gql } from '@apollo/client';
 import { User, Mail, Calendar, MapPin, Link as LinkIcon, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import PostCard from '@/components/PostCard';
 
 const ME_QUERY = gql`
   query Me {
@@ -21,9 +22,39 @@ const ME_QUERY = gql`
   }
 `;
 
+const USER_POSTS_QUERY = gql`
+  query UserPosts($userId: ID!, $limit: Int, $offset: Int) {
+    userPosts(userId: $userId, limit: $limit, offset: $offset) {
+      id
+      content
+      imageUrl
+      createdAt
+      user {
+        id
+        name
+        username
+        avatar
+      }
+      likesCount
+      commentsCount
+      isLiked
+    }
+  }
+`;
+
 export default function ProfilePage() {
     const router = useRouter();
     const { data, loading, error } = useQuery(ME_QUERY);
+
+    // Fetch user posts once we have the user ID
+    const { data: postsData, loading: postsLoading, refetch: refetchPosts } = useQuery(USER_POSTS_QUERY, {
+        variables: {
+            userId: data?.me?.id,
+            limit: 50,
+            offset: 0
+        },
+        skip: !data?.me?.id, // Skip query until we have user ID
+    });
 
     if (loading) {
         return (
@@ -140,15 +171,41 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Content Area */}
-                    <div className="p-8 text-center">
-                        <div className="text-gray-400 dark:text-gray-500 mb-4">
-                            <User className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No posts yet</h3>
-                        <p className="text-gray-500 dark:text-gray-400 mb-6">Start sharing your thoughts with the world!</p>
-                        <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg">
-                            Create Your First Post
-                        </button>
+                    <div className="p-6">
+                        {postsLoading ? (
+                            <div className="space-y-4">
+                                {[...Array(3)].map((_, i) => (
+                                    <div key={i} className="bg-gray-50 dark:bg-dark-700 rounded-xl p-6 animate-pulse">
+                                        <div className="flex space-x-4">
+                                            <div className="w-12 h-12 bg-gray-200 dark:bg-dark-600 rounded-full"></div>
+                                            <div className="flex-1 space-y-3">
+                                                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-1/4"></div>
+                                                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-3/4"></div>
+                                                <div className="h-4 bg-gray-200 dark:bg-dark-600 rounded w-1/2"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : postsData?.userPosts?.length > 0 ? (
+                            <div className="space-y-4">
+                                {postsData.userPosts.map((post: any) => (
+                                    <PostCard
+                                        key={post.id}
+                                        post={post}
+                                        onPostDeleted={() => refetchPosts()}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12">
+                                <div className="text-gray-400 dark:text-gray-500 mb-4">
+                                    <User className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No posts yet</h3>
+                                <p className="text-gray-500 dark:text-gray-400 mb-6">Start sharing your thoughts with the world!</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
