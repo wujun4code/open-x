@@ -58,6 +58,15 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     // Hover card state
     const [hoverCardData, setHoverCardData] = useState<{ username: string; position: { x: number; y: number } } | null>(null);
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Cleanup timeouts on unmount
+    useEffect(() => {
+        return () => {
+            if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+            if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+        };
+    }, []);
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -156,10 +165,9 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                         onMouseEnter={(e) => {
-                            // Clear any existing timeout
-                            if (hoverTimeoutRef.current) {
-                                clearTimeout(hoverTimeoutRef.current);
-                            }
+                            // Clear any existing timeouts
+                            if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                            if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
 
                             // Capture the rect now while the event is active
                             const rect = e.currentTarget.getBoundingClientRect();
@@ -176,11 +184,16 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                             }, 300); // 300ms delay
                         }}
                         onMouseLeave={() => {
-                            // Clear timeout if mouse leaves before delay completes
+                            // Clear show timeout
                             if (hoverTimeoutRef.current) {
                                 clearTimeout(hoverTimeoutRef.current);
                                 hoverTimeoutRef.current = null;
                             }
+
+                            // Start hide timeout
+                            leaveTimeoutRef.current = setTimeout(() => {
+                                setHoverCardData(null);
+                            }, 100); // 100ms grace period to move to the card
                         }}
                     >
                         {segment.content}
@@ -314,6 +327,14 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     username={hoverCardData.username}
                     position={hoverCardData.position}
                     onClose={() => setHoverCardData(null)}
+                    onMouseEnter={() => {
+                        // Keep card open if mouse enters it
+                        if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+                    }}
+                    onMouseLeave={() => {
+                        // Close card when mouse leaves it
+                        setHoverCardData(null);
+                    }}
                 />
             )}
         </div>

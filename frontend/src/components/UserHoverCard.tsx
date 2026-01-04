@@ -36,9 +36,11 @@ interface UserHoverCardProps {
     username: string;
     position: { x: number; y: number };
     onClose: () => void;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
 }
 
-export default function UserHoverCard({ username, position, onClose }: UserHoverCardProps) {
+export default function UserHoverCard({ username, position, onClose, onMouseEnter, onMouseLeave }: UserHoverCardProps) {
     const [isFollowing, setIsFollowing] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -76,8 +78,14 @@ export default function UserHoverCard({ username, position, onClose }: UserHover
                     left: `${position.x}px`,
                     opacity: 0.5,
                 }}
-                onMouseEnter={(e) => e.stopPropagation()}
-                onMouseLeave={onClose}
+                onMouseEnter={(e) => {
+                    e.stopPropagation();
+                    if (onMouseEnter) onMouseEnter();
+                }}
+                onMouseLeave={() => {
+                    if (onMouseLeave) onMouseLeave();
+                    else onClose();
+                }}
             >
                 <div className="animate-pulse">
                     <div className="w-16 h-16 bg-gray-200 dark:bg-dark-700 rounded-full mb-3"></div>
@@ -111,8 +119,17 @@ export default function UserHoverCard({ username, position, onClose }: UserHover
                 top: `${position.y}px`,
                 left: `${position.x}px`,
             }}
-            onMouseEnter={(e) => e.stopPropagation()}
-            onMouseLeave={onClose}
+            onMouseEnter={(e) => {
+                e.stopPropagation();
+                if (onMouseEnter) onMouseEnter();
+            }}
+            onMouseLeave={() => {
+                if (onMouseLeave) {
+                    onMouseLeave();
+                } else {
+                    onClose();
+                }
+            }}
         >
             {/* Gradient Background Accent */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 dark:from-blue-500/10 dark:to-purple-500/10 rounded-2xl pointer-events-none"></div>
