@@ -15,6 +15,7 @@ export default function CommentList({ postId, onCommentDeleted }: CommentListPro
     const t = useTranslations('Comments');
     const { data, loading, error } = useQuery(GET_POST_COMMENTS, {
         variables: { postId },
+        fetchPolicy: 'cache-and-network', // Fetch from network while showing cached data
     });
 
     if (loading) {

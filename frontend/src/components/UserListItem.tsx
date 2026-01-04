@@ -12,13 +12,14 @@ interface UserListItemProps {
         name?: string;
         avatar?: string;
         bio?: string;
+        isFollowing?: boolean;
     };
     showFollowButton?: boolean;
 }
 
 export default function UserListItem({ user, showFollowButton = true }: UserListItemProps) {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-    const [isFollowing, setIsFollowing] = useState(false);
+    const [isFollowing, setIsFollowing] = useState(user.isFollowing || false);
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');

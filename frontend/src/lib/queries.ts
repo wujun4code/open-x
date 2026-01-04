@@ -106,6 +106,7 @@ export const USER_LIST_FIELDS = gql`
     name
     avatar
     bio
+    isFollowing
   }
 `;
 
@@ -149,6 +150,23 @@ export const SEARCH_USERS = gql`
       username
       name
       avatar
+    }
+  }
+`;
+
+export const GET_USER_BY_USERNAME = gql`
+  query GetUserByUsername($username: String!) {
+    userByUsername(username: $username) {
+      id
+      username
+      name
+      bio
+      avatar
+      createdAt
+      followersCount
+      followingCount
+      postsCount
+      isFollowing
     }
   }
 `;

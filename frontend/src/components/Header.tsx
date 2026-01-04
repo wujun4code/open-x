@@ -12,6 +12,7 @@ export default function Header() {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
     const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
@@ -32,6 +33,8 @@ export default function Header() {
             setIsAuthenticated(false);
             setUser(null);
         }
+
+        setIsLoading(false);
     }, [pathname]); // Re-check on route change
 
     useEffect(() => {
@@ -96,175 +99,179 @@ export default function Header() {
                             <span className="font-medium hidden sm:inline">{t('home')}</span>
                         </Link>
 
-                        {isAuthenticated ? (
+                        {!isLoading && (
                             <>
-                                <Link
-                                    href="/trending"
-                                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${pathname === '/trending'
-                                        ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-dark-700'
-                                        }`}
-                                >
-                                    <TrendingUp className="w-5 h-5" />
-                                    <span className="font-medium hidden sm:inline">{t('trending')}</span>
-                                </Link>
+                                {isAuthenticated ? (
+                                    <>
+                                        <Link
+                                            href="/trending"
+                                            className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${pathname === '/trending'
+                                                ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                                                : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-dark-700'
+                                                }`}
+                                        >
+                                            <TrendingUp className="w-5 h-5" />
+                                            <span className="font-medium hidden sm:inline">{t('trending')}</span>
+                                        </Link>
 
-                                {/* Language Switcher */}
-                                <div className="relative" ref={langDropdownRef}>
-                                    <button
-                                        onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                        title="Change language"
-                                    >
-                                        <Languages className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                                    </button>
+                                        {/* Language Switcher */}
+                                        <div className="relative" ref={langDropdownRef}>
+                                            <button
+                                                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                                                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                title="Change language"
+                                            >
+                                                <Languages className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                                            </button>
 
-                                    {isLangDropdownOpen && (
-                                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
-                                            <button
-                                                onClick={() => handleLanguageChange('en')}
-                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                            >
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">English</span>
-                                            </button>
-                                            <button
-                                                onClick={() => handleLanguageChange('es')}
-                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                            >
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Español</span>
-                                            </button>
-                                            <button
-                                                onClick={() => handleLanguageChange('zh-cn')}
-                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                            >
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">简体中文</span>
-                                            </button>
+                                            {isLangDropdownOpen && (
+                                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
+                                                    <button
+                                                        onClick={() => handleLanguageChange('en')}
+                                                        className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                    >
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">English</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleLanguageChange('es')}
+                                                        className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                    >
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Español</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleLanguageChange('zh-cn')}
+                                                        className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                    >
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">简体中文</span>
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
 
-                                {/* Theme Switcher */}
-                                <div className="relative" ref={themeDropdownRef}>
-                                    <button
-                                        onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                        title="Change theme"
-                                    >
-                                        {theme === 'light' && <Sun className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
-                                        {theme === 'dark' && <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
-                                        {theme === 'system' && <Monitor className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
-                                    </button>
-
-                                    {/* Theme Dropdown Menu */}
-                                    {isThemeDropdownOpen && (
-                                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
+                                        {/* Theme Switcher */}
+                                        <div className="relative" ref={themeDropdownRef}>
                                             <button
-                                                onClick={() => {
-                                                    setTheme('light');
-                                                    setIsThemeDropdownOpen(false);
-                                                }}
-                                                className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                                onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+                                                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                title="Change theme"
                                             >
-                                                <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.light')}</span>
-                                                {theme === 'light' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
+                                                {theme === 'light' && <Sun className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
+                                                {theme === 'dark' && <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
+                                                {theme === 'system' && <Monitor className="w-5 h-5 text-gray-700 dark:text-gray-300" />}
                                             </button>
 
-                                            <button
-                                                onClick={() => {
-                                                    setTheme('dark');
-                                                    setIsThemeDropdownOpen(false);
-                                                }}
-                                                className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'dark' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-                                            >
-                                                <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.dark')}</span>
-                                                {theme === 'dark' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
-                                            </button>
+                                            {/* Theme Dropdown Menu */}
+                                            {isThemeDropdownOpen && (
+                                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
+                                                    <button
+                                                        onClick={() => {
+                                                            setTheme('light');
+                                                            setIsThemeDropdownOpen(false);
+                                                        }}
+                                                        className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                                    >
+                                                        <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.light')}</span>
+                                                        {theme === 'light' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
+                                                    </button>
 
-                                            <button
-                                                onClick={() => {
-                                                    setTheme('system');
-                                                    setIsThemeDropdownOpen(false);
-                                                }}
-                                                className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-                                            >
-                                                <Monitor className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.system')}</span>
-                                                {theme === 'system' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
-                                            </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setTheme('dark');
+                                                            setIsThemeDropdownOpen(false);
+                                                        }}
+                                                        className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'dark' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                                    >
+                                                        <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.dark')}</span>
+                                                        {theme === 'dark' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => {
+                                                            setTheme('system');
+                                                            setIsThemeDropdownOpen(false);
+                                                        }}
+                                                        className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors ${theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                                    >
+                                                        <Monitor className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('theme.system')}</span>
+                                                        {theme === 'system' && <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
 
-                                {/* User Dropdown */}
-                                <div className="relative pl-3 border-l border-gray-200 dark:border-dark-700" ref={dropdownRef}>
-                                    <button
-                                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                    >
-                                        <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                            {user?.name?.[0] || user?.username?.[0] || 'U'}
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">{user?.name || user?.username}</span>
-                                        <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                                    </button>
-
-                                    {/* Dropdown Menu */}
-                                    {isDropdownOpen && (
-                                        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
-                                            <div className="px-4 py-3 border-b border-gray-100 dark:border-dark-700">
-                                                <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.name || user?.username}</p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">@{user?.username}</p>
-                                            </div>
-
-                                            <Link
-                                                href="/profile"
-                                                onClick={() => setIsDropdownOpen(false)}
-                                                className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                            >
-                                                <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('profile')}</span>
-                                            </Link>
-
-                                            <Link
-                                                href="/settings"
-                                                onClick={() => setIsDropdownOpen(false)}
-                                                className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
-                                            >
-                                                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings')}</span>
-                                            </Link>
-
-                                            <div className="border-t border-gray-100 dark:border-dark-700 my-2"></div>
-
+                                        {/* User Dropdown */}
+                                        <div className="relative pl-3 border-l border-gray-200 dark:border-dark-700" ref={dropdownRef}>
                                             <button
-                                                onClick={handleLogout}
-                                                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                             >
-                                                <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
-                                                <span className="text-sm font-medium text-red-600 dark:text-red-400">{t('logout')}</span>
+                                                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                                    {user?.name?.[0] || user?.username?.[0] || 'U'}
+                                                </div>
+                                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">{user?.name || user?.username}</span>
+                                                <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                                             </button>
+
+                                            {/* Dropdown Menu */}
+                                            {isDropdownOpen && (
+                                                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-dark-800 rounded-lg shadow-lg border border-gray-200 dark:border-dark-700 py-2 z-50">
+                                                    <div className="px-4 py-3 border-b border-gray-100 dark:border-dark-700">
+                                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.name || user?.username}</p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">@{user?.username}</p>
+                                                    </div>
+
+                                                    <Link
+                                                        href="/profile"
+                                                        onClick={() => setIsDropdownOpen(false)}
+                                                        className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                    >
+                                                        <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('profile')}</span>
+                                                    </Link>
+
+                                                    <Link
+                                                        href="/settings"
+                                                        onClick={() => setIsDropdownOpen(false)}
+                                                        className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                    >
+                                                        <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings')}</span>
+                                                    </Link>
+
+                                                    <div className="border-t border-gray-100 dark:border-dark-700 my-2"></div>
+
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                    >
+                                                        <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                                        <span className="text-sm font-medium text-red-600 dark:text-red-400">{t('logout')}</span>
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <Link
-                                    href="/auth"
-                                    className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-dark-700 rounded-lg transition-colors font-medium"
-                                >
-                                    <LogIn className="w-5 h-5" />
-                                    <span className="hidden sm:inline">{t('signIn')}</span>
-                                </Link>
-                                <Link
-                                    href="/auth"
-                                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg"
-                                >
-                                    <UserPlus className="w-5 h-5" />
-                                    <span className="hidden sm:inline">{t('signUp')}</span>
-                                </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/auth"
+                                            className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-dark-700 rounded-lg transition-colors font-medium"
+                                        >
+                                            <LogIn className="w-5 h-5" />
+                                            <span className="hidden sm:inline">{t('signIn')}</span>
+                                        </Link>
+                                        <Link
+                                            href="/auth"
+                                            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg"
+                                        >
+                                            <UserPlus className="w-5 h-5" />
+                                            <span className="hidden sm:inline">{t('signUp')}</span>
+                                        </Link>
+                                    </>
+                                )}
                             </>
                         )}
                     </nav>

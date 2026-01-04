@@ -3,6 +3,7 @@ export const typeDefs = `#graphql
     hello: String!
     me: User
     user(id: ID!): User
+    userByUsername(username: String!): User
     users(limit: Int, offset: Int): [User!]!
     searchUsers(query: String, limit: Int): [User!]!
     post(id: ID!): Post
@@ -65,6 +66,7 @@ export const typeDefs = `#graphql
     followersCount: Int!
     followingCount: Int!
     postsCount: Int!
+    isFollowing: Boolean!
   }
 
   type Post {

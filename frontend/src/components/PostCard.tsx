@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -140,9 +140,11 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
+    // Memoize the parsed content segments
+    const contentSegments = useMemo(() => parseContent(post.content), [post.content]);
+
     const renderContent = () => {
-        const segments = parseContent(post.content);
-        return segments.map((segment, index) => {
+        return contentSegments.map((segment, index) => {
             if (segment.type === 'hashtag') {
                 const hashtagName = getHashtagName(segment.content);
                 return (
@@ -178,7 +180,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                                     username,
                                     position: {
                                         x: rect.left,
-                                        y: rect.bottom + 8, // 8px below the mention
+                                        y: rect.bottom, // Directly below (0px gap) for reliable transition
                                     },
                                 });
                             }, 300); // 300ms delay
@@ -193,7 +195,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                             // Start hide timeout
                             leaveTimeoutRef.current = setTimeout(() => {
                                 setHoverCardData(null);
-                            }, 100); // 100ms grace period to move to the card
+                            }, 300); // 300ms grace period to move to the card
                         }}
                     >
                         {segment.content}
@@ -207,11 +209,12 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     const isOwnPost = currentUserId === post.user.id;
 
     return (
-        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-4 sm:p-6 hover:shadow-xl transition-shadow">
-            <div className="flex space-x-3 sm:space-x-4">
+        <div className="bg-white dark:bg-dark-950 border-b border-gray-100 dark:border-dark-800 px-4 py-5 hover:bg-gray-50 dark:hover:bg-dark-900/50 transition-colors">
+            <div className="flex space-x-4">
+
                 {/* User Avatar */}
                 <Link href={`/profile`} className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
                         {post.user.avatar ? (
                             <img src={post.user.avatar} alt={post.user.name || post.user.username} className="w-full h-full rounded-full object-cover" />
                         ) : (
@@ -223,7 +226,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                 {/* Post Content */}
                 <div className="flex-1 min-w-0">
                     {/* Header */}
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-2">
                             <Link href={`/profile`} className="font-semibold text-gray-900 dark:text-white hover:underline">
                                 {post.user.name || post.user.username}
@@ -246,7 +249,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     </div>
 
                     {/* Post Text */}
-                    <p className="text-gray-900 dark:text-white text-lg mb-3 whitespace-pre-wrap break-words">
+                    <p className="text-gray-900 dark:text-white text-base leading-relaxed mb-4 whitespace-pre-wrap break-words">
                         {renderContent()}
                     </p>
 
@@ -274,11 +277,11 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     )}
 
                     {/* Interaction Buttons */}
-                    <div className="flex items-center flex-wrap gap-2 sm:gap-0 sm:space-x-6 pt-3 border-t border-gray-100 dark:border-dark-700">
+                    <div className="flex items-center gap-1 pt-2 mt-3">
                         {/* Like Button */}
                         <button
                             onClick={handleLikeToggle}
-                            className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${isLiked
+                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full transition-colors ${isLiked
                                 ? 'text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
                                 }`}
@@ -290,7 +293,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         {/* Comment Button */}
                         <button
                             onClick={() => setShowComments(!showComments)}
-                            className={`flex items-center space-x-2 px-3 py-2 transition-colors rounded-lg ${showComments
+                            className={`flex items-center space-x-1.5 px-3 py-1.5 transition-colors rounded-full ${showComments
                                 ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20'
                                 }`}
@@ -300,7 +303,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         </button>
 
                         {/* Share Button */}
-                        <button className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors">
+                        <button className="flex items-center space-x-1.5 px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-full transition-colors">
                             <Share2 className="w-5 h-5" />
                         </button>
                     </div>
@@ -310,7 +313,6 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-dark-700">
                             <CreateComment
                                 postId={post.id}
-                                onCommentAdded={() => setCommentsCount(prev => prev + 1)}
                             />
                             <CommentList
                                 postId={post.id}

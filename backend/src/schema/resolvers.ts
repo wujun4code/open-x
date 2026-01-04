@@ -50,6 +50,19 @@ export const resolvers = {
             return user;
         },
 
+        // Get user by username
+        userByUsername: async (_: any, { username }: { username: string }, context: Context) => {
+            const user = await context.prisma.user.findUnique({
+                where: { username },
+            });
+            if (!user) {
+                throw new GraphQLError('User not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+            return user;
+        },
+
         // List users with pagination
         users: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }, context: Context) => {
             return context.prisma.user.findMany({
@@ -476,6 +489,48 @@ export const resolvers = {
             return true;
         },
 
+        // Bookmark a post
+        bookmarkPost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            // Check if already bookmarked
+            const existingBookmark = await context.prisma.bookmark.findUnique({
+                where: {
+                    userId_postId: {
+                        userId,
+                        postId,
+                    },
+                },
+            });
+
+            if (existingBookmark) {
+                return true; // Already bookmarked
+            }
+
+            await context.prisma.bookmark.create({
+                data: {
+                    userId,
+                    postId,
+                },
+            });
+
+            return true;
+        },
+
+        // Remove bookmark
+        unbookmarkPost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.bookmark.deleteMany({
+                where: {
+                    userId,
+                    postId,
+                },
+            });
+
+            return true;
+        },
+
         // Create a comment
         createComment: async (
             _: any,
@@ -581,48 +636,6 @@ export const resolvers = {
             return true;
         },
 
-        // Bookmark a post
-        bookmarkPost: async (_: any, { postId }: { postId: string }, context: Context) => {
-            const userId = requireAuth(context);
-
-            // Check if already bookmarked
-            const existingBookmark = await context.prisma.bookmark.findUnique({
-                where: {
-                    userId_postId: {
-                        userId,
-                        postId,
-                    },
-                },
-            });
-
-            if (existingBookmark) {
-                return true; // Already bookmarked
-            }
-
-            await context.prisma.bookmark.create({
-                data: {
-                    userId,
-                    postId,
-                },
-            });
-
-            return true;
-        },
-
-        // Remove bookmark
-        unbookmarkPost: async (_: any, { postId }: { postId: string }, context: Context) => {
-            const userId = requireAuth(context);
-
-            await context.prisma.bookmark.deleteMany({
-                where: {
-                    userId,
-                    postId,
-                },
-            });
-
-            return true;
-        },
-
         // Generate upload URL for R2
         generateUploadUrl: async (
             _: any,
@@ -684,6 +697,19 @@ export const resolvers = {
             return context.prisma.post.count({
                 where: { userId: parent.id },
             });
+        },
+
+        isFollowing: async (parent: any, _: any, context: Context) => {
+            if (!context.userId) return false;
+            const follow = await context.prisma.follow.findUnique({
+                where: {
+                    followerId_followingId: {
+                        followerId: context.userId,
+                        followingId: parent.id,
+                    },
+                },
+            });
+            return !!follow;
         },
     },
 

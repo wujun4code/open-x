@@ -24,28 +24,13 @@ export default function CreateComment({ postId, onCommentAdded }: CreateCommentP
     }, []);
 
     const [createComment, { loading }] = useMutation(CREATE_COMMENT_MUTATION, {
-        update(cache, { data }) {
-            if (!data?.createComment) return;
-
-            const existingComments: any = cache.readQuery({
+        refetchQueries: [
+            {
                 query: GET_POST_COMMENTS,
                 variables: { postId },
-            });
-
-            if (existingComments && existingComments.post) {
-                cache.writeQuery({
-                    query: GET_POST_COMMENTS,
-                    variables: { postId },
-                    data: {
-                        post: {
-                            ...existingComments.post,
-                            comments: [data.createComment, ...existingComments.post.comments],
-                            commentsCount: existingComments.post.commentsCount + 1,
-                        },
-                    },
-                });
-            }
-        },
+            },
+        ],
+        awaitRefetchQueries: true,
         onCompleted: () => {
             setContent('');
             if (onCommentAdded) {
@@ -53,10 +38,7 @@ export default function CreateComment({ postId, onCommentAdded }: CreateCommentP
             }
         },
         onError: (error) => {
-            // Only alert if it's not an optimistic update failure (which usually shouldn't happen if UI logic is correct)
-            if (!error.message.includes('optimistic')) {
-                alert(`Error adding comment: ${error.message}`);
-            }
+            alert(`Error adding comment: ${error.message}`);
         },
     });
 
@@ -64,31 +46,12 @@ export default function CreateComment({ postId, onCommentAdded }: CreateCommentP
         e.preventDefault();
         if (!content.trim() || loading || !currentUser) return;
 
-        const optimisticId = `temp-${Date.now()}`;
         const contentToSubmit = content.trim();
-
-        // Clear content early for better UX
-        setContent('');
 
         await createComment({
             variables: {
                 postId,
                 content: contentToSubmit,
-            },
-            optimisticResponse: {
-                createComment: {
-                    __typename: 'Comment',
-                    id: optimisticId,
-                    content: contentToSubmit,
-                    createdAt: Date.now().toString(),
-                    user: {
-                        __typename: 'User',
-                        id: currentUser.id,
-                        name: currentUser.name || null,
-                        username: currentUser.username,
-                        avatar: currentUser.avatar || null,
-                    },
-                },
             },
         });
     };
