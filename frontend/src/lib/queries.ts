@@ -43,3 +43,44 @@ export const POSTS_BY_HASHTAG = gql`
     }
   }
 `;
+export const COMMENT_FIELDS = gql`
+  fragment CommentFields on Comment {
+    id
+    content
+    createdAt
+    user {
+      id
+      name
+      username
+      avatar
+    }
+  }
+`;
+
+export const CREATE_COMMENT_MUTATION = gql`
+  ${COMMENT_FIELDS}
+  mutation CreateComment($postId: ID!, $content: String!) {
+    createComment(postId: $postId, content: $content) {
+      ...CommentFields
+    }
+  }
+`;
+
+export const DELETE_COMMENT_MUTATION = gql`
+  mutation DeleteComment($id: ID!) {
+    deleteComment(id: $id)
+  }
+`;
+
+export const GET_POST_COMMENTS = gql`
+  ${COMMENT_FIELDS}
+  query GetPostComments($postId: ID!) {
+    post(id: $postId) {
+      id
+      comments {
+        ...CommentFields
+      }
+      commentsCount
+    }
+  }
+`;

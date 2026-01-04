@@ -87,5 +87,16 @@
             "p2": "用户名：3-20 个字符，字母数字 + 下划线",
             "p3": "尝试创建一个账户然后登录！"
         }
+    },
+    "Comments": {
+        "title": "评论",
+        "placeholder": "写评论...",
+        "reply": "回复",
+        "delete": "删除评论",
+        "deleteConfirm": "确定要删除这条评论吗？",
+        "deleteSuccess": "评论已成功删除",
+        "deleteError": "删除评论失败",
+        "noComments": "还没有评论",
+        "beFirst": "成为第一个评论的人！"
     }
 }

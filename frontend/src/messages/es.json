@@ -87,5 +87,16 @@
             "p2": "Usuario: 3-20 caracteres, alfanumérico + guiones bajos",
             "p3": "¡Intenta crear una cuenta y luego iniciar sesión!"
         }
+    },
+    "Comments": {
+        "title": "Comentarios",
+        "placeholder": "Escribe un comentario...",
+        "reply": "Responder",
+        "delete": "Eliminar comentario",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar este comentario?",
+        "deleteSuccess": "Comentario eliminado exitosamente",
+        "deleteError": "Error al eliminar el comentario",
+        "noComments": "No hay comentarios aún",
+        "beFirst": "¡Sé el primero en comentar!"
     }
 }

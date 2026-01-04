@@ -13,11 +13,14 @@ A modern, full-stack social media platform inspired by Twitter/X, built with cut
 
 ### Backend
 - **Apollo Server** - GraphQL server
-- **Express** - Node.js web framework
-- **Prisma** - Next-generation ORM
-- **PostgreSQL** - Relational database
-- **JWT** - Authentication
-- **bcrypt** - Password hashing
+- **Social Features**: Create posts, like posts, and comment on posts
+- **Comments System**: 
+  - Real-time optimistic updates for creating and deleting comments
+  - Delete own comments with confirmation dialog
+  - Internationalized UI (EN/ES/ZH-CN)
+- **Profile System**: User profiles with avatar and bio
+- **Internationalization**: Support for English, Spanish, and Chinese
+- **Authentication**: JWT-based auth with secure password hashing
 
 ## 📁 Project Structure
 

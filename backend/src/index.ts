@@ -29,7 +29,7 @@ async function startServer() {
     app.use(
         '/graphql',
         cors<cors.CorsRequest>({
-            origin: ['http://localhost:3000', 'http://localhost:4000'],
+            origin: 'http://localhost:3000',
             credentials: true,
         }),
         express.json(),
