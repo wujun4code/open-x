@@ -91,14 +91,14 @@ export default function ProfileCard() {
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.postsCount}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{t('posts')}</div>
                     </Link>
-                    <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
+                    <Link href="/followers" className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.followersCount}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{t('followers')}</div>
-                    </div>
-                    <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
+                    </Link>
+                    <Link href="/following" className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-2 py-1 rounded transition-colors">
                         <div className="text-lg font-bold text-gray-900 dark:text-white">{user.followingCount}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{t('following')}</div>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

@@ -221,7 +221,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
     const isSubmitting = loading || isUploading;
 
     return (
-        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-6">
+        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-4 sm:p-6">
             <form onSubmit={handleSubmit}>
                 <div className="flex space-x-4">
                     {/* User Avatar */}

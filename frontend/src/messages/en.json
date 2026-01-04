@@ -98,5 +98,19 @@
         "deleteError": "Failed to delete comment",
         "noComments": "No comments yet",
         "beFirst": "Be the first to comment!"
+    },
+    "Follow": {
+        "follow": "Follow",
+        "following": "Following",
+        "unfollow": "Unfollow",
+        "followers": "Followers",
+        "loading": "Loading...",
+        "followError": "Failed to follow user",
+        "unfollowError": "Failed to unfollow user",
+        "loadError": "Failed to load users",
+        "noFollowers": "No followers yet",
+        "noFollowersDesc": "When people follow you, they'll appear here",
+        "noFollowing": "Not following anyone yet",
+        "noFollowingDesc": "Start following people to see their posts in your feed"
     }
 }

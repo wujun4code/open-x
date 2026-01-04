@@ -98,5 +98,19 @@
         "deleteError": "删除评论失败",
         "noComments": "还没有评论",
         "beFirst": "成为第一个评论的人！"
+    },
+    "Follow": {
+        "follow": "关注",
+        "following": "已关注",
+        "unfollow": "取消关注",
+        "followers": "粉丝",
+        "loading": "加载中...",
+        "followError": "关注失败",
+        "unfollowError": "取消关注失败",
+        "loadError": "加载用户失败",
+        "noFollowers": "还没有粉丝",
+        "noFollowersDesc": "当有人关注你时，他们会出现在这里",
+        "noFollowing": "还没有关注任何人",
+        "noFollowingDesc": "开始关注他人以在你的动态中看到他们的帖子"
     }
 }

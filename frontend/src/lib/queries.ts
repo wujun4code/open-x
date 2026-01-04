@@ -84,3 +84,59 @@ export const GET_POST_COMMENTS = gql`
     }
   }
 `;
+
+// Follow/Unfollow Mutations
+export const FOLLOW_USER_MUTATION = gql`
+  mutation FollowUser($userId: ID!) {
+    followUser(userId: $userId)
+  }
+`;
+
+export const UNFOLLOW_USER_MUTATION = gql`
+  mutation UnfollowUser($userId: ID!) {
+    unfollowUser(userId: $userId)
+  }
+`;
+
+// User Fragment for Followers/Following Lists
+export const USER_LIST_FIELDS = gql`
+  fragment UserListFields on User {
+    id
+    username
+    name
+    avatar
+    bio
+  }
+`;
+
+// Get Followers List
+export const GET_FOLLOWERS_QUERY = gql`
+  ${USER_LIST_FIELDS}
+  query GetFollowers($userId: ID!) {
+    user(id: $userId) {
+      id
+      username
+      name
+      followers {
+        ...UserListFields
+      }
+      followersCount
+    }
+  }
+`;
+
+// Get Following List
+export const GET_FOLLOWING_QUERY = gql`
+  ${USER_LIST_FIELDS}
+  query GetFollowing($userId: ID!) {
+    user(id: $userId) {
+      id
+      username
+      name
+      following {
+        ...UserListFields
+      }
+      followingCount
+    }
+  }
+`;

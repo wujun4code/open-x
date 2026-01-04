@@ -84,7 +84,7 @@ export default function Header() {
                     </Link>
 
                     {/* Navigation */}
-                    <nav className="flex items-center space-x-6">
+                    <nav className="flex items-center space-x-1 sm:space-x-6">
                         <Link
                             href="/"
                             className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${pathname === '/'
@@ -93,7 +93,7 @@ export default function Header() {
                                 }`}
                         >
                             <Home className="w-5 h-5" />
-                            <span className="font-medium">{t('home')}</span>
+                            <span className="font-medium hidden sm:inline">{t('home')}</span>
                         </Link>
 
                         {isAuthenticated ? (
@@ -106,7 +106,7 @@ export default function Header() {
                                         }`}
                                 >
                                     <TrendingUp className="w-5 h-5" />
-                                    <span className="font-medium">{t('trending')}</span>
+                                    <span className="font-medium hidden sm:inline">{t('trending')}</span>
                                 </Link>
 
                                 {/* Language Switcher */}
@@ -206,7 +206,7 @@ export default function Header() {
                                         <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                                             {user?.name?.[0] || user?.username?.[0] || 'U'}
                                         </div>
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.name || user?.username}</span>
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">{user?.name || user?.username}</span>
                                         <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                                     </button>
 
@@ -256,14 +256,14 @@ export default function Header() {
                                     className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-dark-700 rounded-lg transition-colors font-medium"
                                 >
                                     <LogIn className="w-5 h-5" />
-                                    <span>{t('signIn')}</span>
+                                    <span className="hidden sm:inline">{t('signIn')}</span>
                                 </Link>
                                 <Link
                                     href="/auth"
                                     className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg"
                                 >
                                     <UserPlus className="w-5 h-5" />
-                                    <span>{t('signUp')}</span>
+                                    <span className="hidden sm:inline">{t('signUp')}</span>
                                 </Link>
                             </>
                         )}

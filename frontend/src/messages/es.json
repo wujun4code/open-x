@@ -98,5 +98,19 @@
         "deleteError": "Error al eliminar el comentario",
         "noComments": "No hay comentarios aún",
         "beFirst": "¡Sé el primero en comentar!"
+    },
+    "Follow": {
+        "follow": "Seguir",
+        "following": "Siguiendo",
+        "unfollow": "Dejar de seguir",
+        "followers": "Seguidores",
+        "loading": "Cargando...",
+        "followError": "Error al seguir al usuario",
+        "unfollowError": "Error al dejar de seguir",
+        "loadError": "Error al cargar usuarios",
+        "noFollowers": "Aún no tienes seguidores",
+        "noFollowersDesc": "Cuando las personas te sigan, aparecerán aquí",
+        "noFollowing": "Aún no sigues a nadie",
+        "noFollowingDesc": "Comienza a seguir personas para ver sus publicaciones"
     }
 }

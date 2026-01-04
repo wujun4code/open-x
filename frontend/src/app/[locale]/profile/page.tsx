@@ -4,6 +4,7 @@ import { useQuery, gql } from '@apollo/client';
 import { User, Mail, Calendar, Link as LinkIcon, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import PostCard from '@/components/PostCard';
+import { Link } from '@/navigation';
 
 const ME_QUERY = gql`
   query Me {
@@ -141,14 +142,14 @@ export default function ProfilePage() {
                                 <div className="text-2xl font-bold text-gray-900 dark:text-white">{user.postsCount}</div>
                                 <div className="text-sm text-gray-500 dark:text-gray-400">Posts</div>
                             </div>
-                            <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-4 py-2 rounded-lg transition-colors">
+                            <Link href="/followers" className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-4 py-2 rounded-lg transition-colors">
                                 <div className="text-2xl font-bold text-gray-900 dark:text-white">{user.followersCount}</div>
                                 <div className="text-sm text-gray-500 dark:text-gray-400">Followers</div>
-                            </div>
-                            <div className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-4 py-2 rounded-lg transition-colors">
+                            </Link>
+                            <Link href="/following" className="text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 px-4 py-2 rounded-lg transition-colors">
                                 <div className="text-2xl font-bold text-gray-900 dark:text-white">{user.followingCount}</div>
                                 <div className="text-sm text-gray-500 dark:text-gray-400">Following</div>
-                            </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -149,8 +149,8 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     const isOwnPost = currentUserId === post.user.id;
 
     return (
-        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-6 hover:shadow-xl transition-shadow">
-            <div className="flex space-x-4">
+        <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-4 sm:p-6 hover:shadow-xl transition-shadow">
+            <div className="flex space-x-3 sm:space-x-4">
                 {/* User Avatar */}
                 <Link href={`/profile`} className="flex-shrink-0">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
@@ -216,7 +216,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     )}
 
                     {/* Interaction Buttons */}
-                    <div className="flex items-center space-x-6 pt-3 border-t border-gray-100 dark:border-dark-700">
+                    <div className="flex items-center flex-wrap gap-2 sm:gap-0 sm:space-x-6 pt-3 border-t border-gray-100 dark:border-dark-700">
                         {/* Like Button */}
                         <button
                             onClick={handleLikeToggle}

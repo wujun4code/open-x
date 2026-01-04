@@ -38,12 +38,12 @@ export default function Home() {
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
                 {isAuthenticated ? (
                     // Authenticated User View
-                    <div className="grid lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
                         {/* Left Sidebar - Profile */}
-                        <div className="lg:col-span-1">
+                        <div className="hidden lg:block lg:col-span-1">
                             <ProfileCard />
                         </div>
 
