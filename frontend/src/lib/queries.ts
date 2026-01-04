@@ -140,3 +140,15 @@ export const GET_FOLLOWING_QUERY = gql`
     }
   }
 `;
+
+// Search Users for Mentions
+export const SEARCH_USERS = gql`
+  query SearchUsers($query: String, $limit: Int) {
+    searchUsers(query: $query, limit: $limit) {
+      id
+      username
+      name
+      avatar
+    }
+  }
+`;

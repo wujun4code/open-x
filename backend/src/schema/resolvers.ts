@@ -59,6 +59,29 @@ export const resolvers = {
             });
         },
 
+        // Search users by username or name
+        searchUsers: async (_: any, { query, limit = 10 }: { query?: string; limit?: number }, context: Context) => {
+            // If no query provided, return all users (for when user types just '@')
+            if (!query || !query.trim()) {
+                return context.prisma.user.findMany({
+                    take: limit,
+                    orderBy: { username: 'asc' },
+                });
+            }
+
+            // Search by username or name
+            return context.prisma.user.findMany({
+                where: {
+                    OR: [
+                        { username: { contains: query, mode: 'insensitive' } },
+                        { name: { contains: query, mode: 'insensitive' } },
+                    ],
+                },
+                take: limit,
+                orderBy: { username: 'asc' },
+            });
+        },
+
         // Get post by ID
         post: async (_: any, { id }: { id: string }, context: Context) => {
             const post = await context.prisma.post.findUnique({

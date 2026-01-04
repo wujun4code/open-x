@@ -112,5 +112,9 @@
         "noFollowersDesc": "Cuando las personas te sigan, aparecerán aquí",
         "noFollowing": "Aún no sigues a nadie",
         "noFollowingDesc": "Comienza a seguir personas para ver sus publicaciones"
+    },
+    "Mention": {
+        "loading": "Cargando...",
+        "noUsers": "No se encontraron usuarios"
     }
 }

@@ -4,6 +4,7 @@ export const typeDefs = `#graphql
     me: User
     user(id: ID!): User
     users(limit: Int, offset: Int): [User!]!
+    searchUsers(query: String, limit: Int): [User!]!
     post(id: ID!): Post
     posts(limit: Int, offset: Int): [Post!]!
     userPosts(userId: ID!, limit: Int, offset: Int): [Post!]!

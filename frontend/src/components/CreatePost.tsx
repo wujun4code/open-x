@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Image, Send, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import MentionList from './MentionList';
 
 const GENERATE_UPLOAD_URL = gql`
   mutation GenerateUploadUrl($filename: String!, $contentType: String!) {
@@ -67,7 +68,13 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const maxLength = 280;
+
+    // Mention state
+    const [showMentions, setShowMentions] = useState(false);
+    const [mentionQuery, setMentionQuery] = useState('');
+    const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 });
 
     const [generateUploadUrl] = useMutation(GENERATE_UPLOAD_URL);
     const [createPost, { loading }] = useMutation(CREATE_POST_MUTATION, {
@@ -116,6 +123,20 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
             setUser(JSON.parse(userStr));
         }
     });
+
+    // Hide mention list on scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            if (showMentions) {
+                setShowMentions(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, true);
+        return () => {
+            window.removeEventListener('scroll', handleScroll, true);
+        };
+    }, [showMentions]);
 
     const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -215,6 +236,76 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
         }
     };
 
+    // Handle mention detection
+    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newContent = e.target.value;
+        setContent(newContent);
+
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        const cursorPos = textarea.selectionStart;
+        const textBeforeCursor = newContent.substring(0, cursorPos);
+
+        // Find the last '@' before cursor
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+
+        if (lastAtIndex !== -1) {
+            // Check if there's a space between '@' and cursor
+            const textAfterAt = textBeforeCursor.substring(lastAtIndex + 1);
+            if (!textAfterAt.includes(' ')) {
+                // Show mention dropdown
+                setMentionQuery(textAfterAt);
+                setShowMentions(true);
+
+                // Calculate position for dropdown
+                const rect = textarea.getBoundingClientRect();
+                const lineHeight = 24; // Approximate line height
+                const charWidth = 8; // Approximate character width
+
+                setMentionPosition({
+                    top: rect.top + lineHeight * 2,
+                    left: rect.left + (lastAtIndex % 40) * charWidth,
+                });
+                return;
+            }
+        }
+
+        // Hide mention dropdown if no valid '@' found
+        setShowMentions(false);
+    };
+
+    // Handle user selection from mention list
+    const handleMentionSelect = (user: any) => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        const cursorPos = textarea.selectionStart;
+        const textBeforeCursor = content.substring(0, cursorPos);
+        const textAfterCursor = content.substring(cursorPos);
+
+        // Find the last '@' before cursor
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+
+        if (lastAtIndex !== -1) {
+            // Replace from '@' to cursor with '@username '
+            const newContent =
+                content.substring(0, lastAtIndex) +
+                `@${user.username} ` +
+                textAfterCursor;
+
+            setContent(newContent);
+            setShowMentions(false);
+
+            // Restore focus to textarea
+            setTimeout(() => {
+                textarea.focus();
+                const newCursorPos = lastAtIndex + user.username.length + 2;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+            }, 0);
+        }
+    };
+
     const remainingChars = maxLength - content.length;
     const isOverLimit = remainingChars < 0;
     const isNearLimit = remainingChars <= 20 && remainingChars >= 0;
@@ -232,15 +323,25 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
                     </div>
 
                     {/* Input Area */}
-                    <div className="flex-1">
+                    <div className="flex-1 relative">
                         <textarea
+                            ref={textareaRef}
                             value={content}
-                            onChange={(e) => setContent(e.target.value)}
+                            onChange={handleContentChange}
                             placeholder={t('placeholder')}
                             className="w-full px-4 py-3 border border-gray-200 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-lg"
                             rows={3}
                             disabled={isSubmitting}
                         />
+
+                        {/* Mention Dropdown */}
+                        {showMentions && (
+                            <MentionList
+                                query={mentionQuery}
+                                onSelect={handleMentionSelect}
+                                position={mentionPosition}
+                            />
+                        )}
 
                         {/* Image Preview */}
                         {imagePreview && (

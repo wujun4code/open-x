@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import ImageModal from './ImageModal';
-import { parseHashtags, getHashtagName } from '@/lib/hashtag';
+import { parseContent, getHashtagName, getUsername } from '@/lib/hashtag';
 import CommentList from './CommentList';
 import CreateComment from './CreateComment';
+import UserHoverCard from './UserHoverCard';
 
 const LIKE_POST_MUTATION = gql`
   mutation LikePost($postId: ID!) {
@@ -53,6 +54,10 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [commentsCount, setCommentsCount] = useState(post.commentsCount);
+
+    // Hover card state
+    const [hoverCardData, setHoverCardData] = useState<{ username: string; position: { x: number; y: number } } | null>(null);
+    const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -127,7 +132,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     };
 
     const renderContent = () => {
-        const segments = parseHashtags(post.content);
+        const segments = parseContent(post.content);
         return segments.map((segment, index) => {
             if (segment.type === 'hashtag') {
                 const hashtagName = getHashtagName(segment.content);
@@ -135,8 +140,48 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     <Link
                         key={index}
                         href={`/hashtag/${hashtagName}`}
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         onClick={(e) => e.stopPropagation()}
+                    >
+                        {segment.content}
+                    </Link>
+                );
+            }
+            if (segment.type === 'mention') {
+                const username = getUsername(segment.content);
+                return (
+                    <Link
+                        key={index}
+                        href={`/profile/${username}`}
+                        className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                        onMouseEnter={(e) => {
+                            // Clear any existing timeout
+                            if (hoverTimeoutRef.current) {
+                                clearTimeout(hoverTimeoutRef.current);
+                            }
+
+                            // Capture the rect now while the event is active
+                            const rect = e.currentTarget.getBoundingClientRect();
+
+                            // Set a delay before showing the hover card
+                            hoverTimeoutRef.current = setTimeout(() => {
+                                setHoverCardData({
+                                    username,
+                                    position: {
+                                        x: rect.left,
+                                        y: rect.bottom + 8, // 8px below the mention
+                                    },
+                                });
+                            }, 300); // 300ms delay
+                        }}
+                        onMouseLeave={() => {
+                            // Clear timeout if mouse leaves before delay completes
+                            if (hoverTimeoutRef.current) {
+                                clearTimeout(hoverTimeoutRef.current);
+                                hoverTimeoutRef.current = null;
+                            }
+                        }}
                     >
                         {segment.content}
                     </Link>
@@ -262,6 +307,15 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     )}
                 </div>
             </div>
+
+            {/* User Hover Card */}
+            {hoverCardData && (
+                <UserHoverCard
+                    username={hoverCardData.username}
+                    position={hoverCardData.position}
+                    onClose={() => setHoverCardData(null)}
+                />
+            )}
         </div>
     );
 }

@@ -112,5 +112,9 @@
         "noFollowersDesc": "When people follow you, they'll appear here",
         "noFollowing": "Not following anyone yet",
         "noFollowingDesc": "Start following people to see their posts in your feed"
+    },
+    "Mention": {
+        "loading": "Loading...",
+        "noUsers": "No users found"
     }
 }
