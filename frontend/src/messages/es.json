@@ -2,6 +2,7 @@
     "Header": {
         "home": "Inicio",
         "trending": "Tendencias",
+        "moderation": "Moderación",
         "signIn": "Iniciar Sesión",
         "signUp": "Registrarse",
         "profile": "Perfil",
@@ -117,5 +118,127 @@
     "Mention": {
         "loading": "Cargando...",
         "noUsers": "No se encontraron usuarios"
+    },
+    "Moderation": {
+        "title": "Panel de Moderación",
+        "subtitle": "Revisar y gestionar reportes de usuarios y contenido eliminado",
+        "tabs": {
+            "reports": "Reportes",
+            "deletedContent": "Contenido Eliminado"
+        },
+        "filters": {
+            "all": "Todos",
+            "pending": "Pendientes",
+            "reviewed": "Revisados",
+            "actioned": "Accionados",
+            "dismissed": "Desestimados"
+        },
+        "accessDenied": {
+            "title": "Acceso Denegado",
+            "message": "No tienes permiso para acceder a esta página."
+        },
+        "loading": "Cargando panel de moderación...",
+        "error": {
+            "title": "Error al Cargar Datos",
+            "retry": "Reintentar"
+        },
+        "noReports": {
+            "title": "No se Encontraron Reportes",
+            "allReviewed": "No hay reportes revisados en este momento.",
+            "filtered": "No hay reportes {status} en este momento.",
+            "none": "No hay reportes para revisar."
+        },
+        "noDeleted": {
+            "title": "Sin Contenido Eliminado",
+            "message": "No hay contenido eliminado suavemente para revisar."
+        },
+        "reportCard": {
+            "reportNumber": "Reporte",
+            "reportedBy": "Reportado por:",
+            "reportedContent": "{type} Reportado",
+            "reviewedBy": "Revisado por",
+            "action": "Acción:",
+            "notes": "Notas:",
+            "reviewAction": "Revisar y Tomar Acción",
+            "post": "Publicación",
+            "comment": "Comentario",
+            "by": "por",
+            "timeAgo": {
+                "justNow": "Justo ahora",
+                "minutesAgo": "Hace {count}m",
+                "hoursAgo": "Hace {count}h",
+                "daysAgo": "Hace {count}d",
+                "unknown": "Desconocido"
+            },
+            "status": {
+                "pending": "Pendiente",
+                "reviewed": "Revisado",
+                "actioned": "Accionado",
+                "dismissed": "Desestimado"
+            },
+            "reason": {
+                "SPAM": "Spam",
+                "HARASSMENT": "Acoso",
+                "HATE_SPEECH": "Discurso de Odio",
+                "VIOLENCE": "Violencia",
+                "NUDITY": "Desnudez",
+                "MISINFORMATION": "Desinformación",
+                "OTHER": "Otro"
+            },
+            "actionType": {
+                "warning": "Advertencia",
+                "content_removal": "Eliminación de Contenido",
+                "user_warning": "Advertencia al Usuario",
+                "user_suspension": "Suspensión del Usuario",
+                "user_ban": "Prohibición del Usuario",
+                "no_action": "Sin Acción"
+            }
+        },
+        "deletedContentCard": {
+            "deletedPost": "Publicación Eliminada",
+            "deletedComment": "Comentario Eliminado",
+            "softDeleted": "Eliminación Suave",
+            "deleted": "Eliminado",
+            "originalAuthor": "Autor original:",
+            "deletedByModerator": "Eliminado por moderador:",
+            "onPost": "En publicación:",
+            "created": "Creado:",
+            "likes": "me gusta",
+            "comments": "comentarios",
+            "restoreContent": "Restaurar Contenido",
+            "permanentlyDelete": "Eliminar Permanentemente",
+            "cancel": "Cancelar",
+            "restore": "Restaurar",
+            "timeAgo": {
+                "justNow": "Justo ahora",
+                "minutesAgo": "hace {count}m",
+                "hoursAgo": "hace {count}h",
+                "daysAgo": "hace {count}d",
+                "unknown": "Desconocido"
+            },
+            "dialog": {
+                "deleteTitle": "¿Eliminar Contenido Permanentemente?",
+                "restoreTitle": "¿Restaurar Contenido?",
+                "deleteMessage": "Esta acción no se puede deshacer. El contenido se eliminará permanentemente de la base de datos.",
+                "restoreMessage": "Esto hará que el contenido sea visible para los usuarios nuevamente."
+            },
+            "alerts": {
+                "deleteSuccess": "Contenido eliminado permanentemente de la base de datos",
+                "deleteError": "Error al eliminar permanentemente el contenido",
+                "restoreSuccess": "Contenido restaurado exitosamente",
+                "restoreError": "Error al restaurar el contenido"
+            }
+        }
+    },
+    "Error": {
+        "title": "¡Algo salió mal!",
+        "description": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo o vuelve a la página de inicio.",
+        "tryAgain": "Intentar de Nuevo",
+        "goHome": "Ir al Inicio"
+    },
+    "NotFound": {
+        "title": "Página No Encontrada",
+        "description": "La página que buscas no existe o ha sido movida.",
+        "goHome": "Ir al Inicio"
     }
 }

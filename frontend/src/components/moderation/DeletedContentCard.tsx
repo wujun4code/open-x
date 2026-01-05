@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Trash2, RotateCcw, MessageSquare, User, Calendar, AlertTriangle } from 'lucide-react';
 import { PERMANENTLY_DELETE_POST, PERMANENTLY_DELETE_COMMENT, RESTORE_POST, RESTORE_COMMENT } from '@/lib/queries';
+import { useTranslations } from 'next-intl';
 
 interface DeletedContentCardProps {
     content: any;
@@ -12,6 +13,7 @@ interface DeletedContentCardProps {
 }
 
 export default function DeletedContentCard({ content, type, onActionComplete }: DeletedContentCardProps) {
+    const t = useTranslations('Moderation.deletedContentCard');
     const [showConfirmDialog, setShowConfirmDialog] = useState<'delete' | 'restore' | null>(null);
 
     const [permanentlyDeletePost] = useMutation(PERMANENTLY_DELETE_POST);
@@ -20,7 +22,7 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
     const [restoreComment] = useMutation(RESTORE_COMMENT);
 
     const formatDate = (dateString: string | number) => {
-        if (!dateString) return 'Unknown';
+        if (!dateString) return t('timeAgo.unknown');
 
         let timestamp: number;
         if (typeof dateString === 'string') {
@@ -30,7 +32,7 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
             } else {
                 const date = new Date(dateString);
                 if (isNaN(date.getTime())) {
-                    return 'Unknown';
+                    return t('timeAgo.unknown');
                 }
                 timestamp = date.getTime();
             }
@@ -40,7 +42,7 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
 
         const date = new Date(timestamp);
         if (isNaN(date.getTime())) {
-            return 'Unknown';
+            return t('timeAgo.unknown');
         }
 
         const now = new Date();
@@ -49,10 +51,10 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
 
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
+        if (diffMins < 1) return t('timeAgo.justNow');
+        if (diffMins < 60) return t('timeAgo.minutesAgo', { count: diffMins });
+        if (diffHours < 24) return t('timeAgo.hoursAgo', { count: diffHours });
+        if (diffDays < 7) return t('timeAgo.daysAgo', { count: diffDays });
         return date.toLocaleDateString();
     };
 
@@ -63,12 +65,12 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
             } else {
                 await permanentlyDeleteComment({ variables: { commentId: content.id } });
             }
-            alert('Content permanently deleted from database');
+            alert(t('alerts.deleteSuccess'));
             setShowConfirmDialog(null);
             onActionComplete();
         } catch (error: any) {
             console.error('Error permanently deleting content:', error);
-            alert(error.message || 'Failed to permanently delete content');
+            alert(error.message || t('alerts.deleteError'));
         }
     };
 
@@ -79,12 +81,12 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
             } else {
                 await restoreComment({ variables: { commentId: content.id } });
             }
-            alert('Content restored successfully');
+            alert(t('alerts.restoreSuccess'));
             setShowConfirmDialog(null);
             onActionComplete();
         } catch (error: any) {
             console.error('Error restoring content:', error);
-            alert(error.message || 'Failed to restore content');
+            alert(error.message || t('alerts.restoreError'));
         }
     };
 
@@ -103,15 +105,15 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold">Deleted {type === 'post' ? 'Post' : 'Comment'}</span>
+                                <span className="font-semibold">{type === 'post' ? t('deletedPost') : t('deletedComment')}</span>
                                 <span className="px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">
                                     <AlertTriangle className="w-4 h-4 inline mr-1" />
-                                    Soft Deleted
+                                    {t('softDeleted')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                 <Calendar className="w-4 h-4" />
-                                Deleted {formatDate(content.deletedAt)}
+                                {t('deleted')} {formatDate(content.deletedAt)}
                             </div>
                         </div>
                     </div>
@@ -120,7 +122,7 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
                 {/* Original Author Info */}
                 <div className="flex items-center gap-2 mb-4 text-sm">
                     <User className="w-4 h-4 text-gray-500" />
-                    <span className="text-gray-600 dark:text-gray-400">Original author:</span>
+                    <span className="text-gray-600 dark:text-gray-400">{t('originalAuthor')}</span>
                     <span className="font-medium">@{content.user.username}</span>
                     {content.user.name && (
                         <span className="text-gray-500">({content.user.name})</span>
@@ -131,7 +133,7 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
                 {content.deletedBy && (
                     <div className="flex items-center gap-2 mb-4 text-sm p-3 bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800 rounded-lg">
                         <User className="w-4 h-4 text-orange-600" />
-                        <span className="text-gray-600 dark:text-gray-400">Deleted by moderator:</span>
+                        <span className="text-gray-600 dark:text-gray-400">{t('deletedByModerator')}</span>
                         <span className="font-medium text-orange-800 dark:text-orange-200">@{content.deletedBy.username}</span>
                     </div>
                 )}
@@ -150,7 +152,7 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
                     )}
                     {type === 'comment' && content.post && (
                         <div className="mt-2 pt-2 border-t border-gray-200 dark:border-dark-700">
-                            <span className="text-xs text-gray-500">On post: </span>
+                            <span className="text-xs text-gray-500">{t('onPost')} </span>
                             <span className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
                                 {content.post.content}
                             </span>
@@ -160,13 +162,13 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
 
                 {/* Metadata */}
                 <div className="flex items-center gap-4 mb-4 text-sm text-gray-600 dark:text-gray-400">
-                    <span>Created: {formatDate(content.createdAt)}</span>
+                    <span>{t('created')} {formatDate(content.createdAt)}</span>
                     {type === 'post' && (
                         <>
                             <span>•</span>
-                            <span>{content.likesCount} likes</span>
+                            <span>{content.likesCount} {t('likes')}</span>
                             <span>•</span>
-                            <span>{content.commentsCount} comments</span>
+                            <span>{content.commentsCount} {t('comments')}</span>
                         </>
                     )}
                 </div>
@@ -178,14 +180,14 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
                         className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                     >
                         <RotateCcw className="w-4 h-4" />
-                        Restore Content
+                        {t('restoreContent')}
                     </button>
                     <button
                         onClick={() => setShowConfirmDialog('delete')}
                         className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
                     >
                         <Trash2 className="w-4 h-4" />
-                        Permanently Delete
+                        {t('permanentlyDelete')}
                     </button>
                 </div>
             </div>
@@ -201,28 +203,28 @@ export default function DeletedContentCard({ content, type, onActionComplete }: 
                         onClick={(e) => e.stopPropagation()}
                     >
                         <h3 className="text-xl font-bold mb-4">
-                            {showConfirmDialog === 'delete' ? 'Permanently Delete Content?' : 'Restore Content?'}
+                            {showConfirmDialog === 'delete' ? t('dialog.deleteTitle') : t('dialog.restoreTitle')}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-6">
                             {showConfirmDialog === 'delete'
-                                ? 'This action cannot be undone. The content will be permanently removed from the database.'
-                                : 'This will make the content visible to users again.'}
+                                ? t('dialog.deleteMessage')
+                                : t('dialog.restoreMessage')}
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setShowConfirmDialog(null)}
                                 className="flex-1 px-4 py-2 bg-gray-200 dark:bg-dark-800 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-dark-700 transition-colors"
                             >
-                                Cancel
+                                {t('cancel')}
                             </button>
                             <button
                                 onClick={showConfirmDialog === 'delete' ? handlePermanentDelete : handleRestore}
                                 className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${showConfirmDialog === 'delete'
-                                        ? 'bg-red-600 text-white hover:bg-red-700'
-                                        : 'bg-green-600 text-white hover:bg-green-700'
+                                    ? 'bg-red-600 text-white hover:bg-red-700'
+                                    : 'bg-green-600 text-white hover:bg-green-700'
                                     }`}
                             >
-                                {showConfirmDialog === 'delete' ? 'Permanently Delete' : 'Restore'}
+                                {showConfirmDialog === 'delete' ? t('permanentlyDelete') : t('restore')}
                             </button>
                         </div>
                     </div>

@@ -29,7 +29,7 @@ interface PostFeedProps {
     userId?: string;
 }
 
-export default function PostFeed({ limit = 20, userId }: PostFeedProps) {
+export default function PostFeed({ limit = 20 }: PostFeedProps) {
     const { data, loading, error, refetch } = useQuery(POSTS_QUERY, {
         variables: { limit, offset: 0 },
         fetchPolicy: 'network-only',

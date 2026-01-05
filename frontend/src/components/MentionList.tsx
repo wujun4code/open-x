@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from 'lucide-react';
+
 import { useQuery } from '@apollo/client';
 import { SEARCH_USERS } from '@/lib/queries';
 import { useTranslations } from 'next-intl';

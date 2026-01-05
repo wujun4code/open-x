@@ -39,7 +39,7 @@ export default function TrendingPage() {
                         </div>
                         <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Trending Now</h1>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 text-lg">Discover what's hot and happening right now</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">Discover what&apos;s hot and happening right now</p>
                 </div>
 
                 {/* Loading State */}

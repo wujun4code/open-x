@@ -2,7 +2,8 @@
 
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { Calendar, ArrowLeft } from 'lucide-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import PostCard from '@/components/PostCard';
 import { Link } from '@/navigation';
 import { GET_USER_BY_USERNAME, FOLLOW_USER_MUTATION, UNFOLLOW_USER_MUTATION } from '@/lib/queries';
@@ -99,7 +100,7 @@ export default function UserProfilePage() {
         return (
             <div className="min-h-screen bg-white dark:bg-dark-950 flex flex-col items-center justify-center p-4">
                 <h1 className="text-2xl font-bold mb-4">User not found</h1>
-                <p className="text-gray-500 mb-6">The account you're looking for doesn't exist.</p>
+                <p className="text-gray-500 mb-6">The account you&apos;re looking for doesn&apos;t exist.</p>
                 <Link href="/" className="px-6 py-2 bg-blue-600 text-white rounded-full font-bold">
                     Go Home
                 </Link>

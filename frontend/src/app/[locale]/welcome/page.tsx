@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { useMutation, useQuery, gql } from '@apollo/client';
 import { Sparkles, Users, MessageSquare, Heart, ArrowRight, Check } from 'lucide-react';
 
@@ -90,8 +90,8 @@ export default function WelcomePage() {
                         Welcome, {user?.name || user?.username}!
                     </h2>
                     <p className="text-xl text-gray-600 dark:text-gray-300 max-w-md mx-auto">
-                        You've just joined a vibrant community of creators, thinkers, and innovators.
-                        Let's get you started!
+                        You&apos;ve just joined a vibrant community of creators, thinkers, and innovators.
+                        Let&apos;s get you started!
                     </p>
                     <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mt-8">
                         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
@@ -136,7 +136,7 @@ export default function WelcomePage() {
                             <div className="flex-1">
                                 <div className="bg-white dark:bg-dark-700 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-dark-600">
                                     <p className="text-gray-700 dark:text-gray-300 italic">
-                                        "Just joined Open X! Excited to connect with everyone here. 🚀"
+                                        &quot;Just joined Open X! Excited to connect with everyone here. 🚀&quot;
                                     </p>
                                 </div>
                                 <div className="flex items-center space-x-4 mt-3 text-sm text-gray-500 dark:text-gray-400">
@@ -239,14 +239,14 @@ export default function WelcomePage() {
                         <Check className="w-12 h-12 text-white" />
                     </div>
                     <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
-                        You're Ready to Go! 🎊
+                        You&apos;re Ready to Go! 🎊
                     </h2>
                     <p className="text-xl text-gray-600 dark:text-gray-300 max-w-md mx-auto">
                         Your account is all set up. Time to dive in and explore what Open X has to offer!
                     </p>
 
                     <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-8 max-w-lg mx-auto border border-blue-100 dark:border-blue-800">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">What's next?</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">What&apos;s next?</h3>
                         <ul className="space-y-3 text-left">
                             <li className="flex items-start">
                                 <Check className="w-5 h-5 text-green-600 dark:text-green-400 mr-3 mt-0.5 flex-shrink-0" />
@@ -300,7 +300,6 @@ export default function WelcomePage() {
     }
 
     const currentStepData = steps[currentStep];
-    const Icon = currentStepData.icon;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
@@ -330,7 +329,7 @@ export default function WelcomePage() {
             <div className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-dark-700">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-center space-x-2 py-6">
-                        {steps.map((step, idx) => (
+                        {steps.map((_, idx) => (
                             <div key={idx} className="flex items-center">
                                 <div
                                     className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${idx === currentStep

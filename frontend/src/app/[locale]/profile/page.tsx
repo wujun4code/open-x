@@ -2,7 +2,7 @@
 
 import { useQuery, gql } from '@apollo/client';
 import { User, Mail, Calendar } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import PostCard from '@/components/PostCard';
 import { Link } from '@/navigation';
 

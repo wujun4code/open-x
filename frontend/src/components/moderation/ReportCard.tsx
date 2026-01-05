@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Flag, User, MessageSquare, Calendar, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import ReviewReportDialog from './ReviewReportDialog';
+import { useTranslations } from 'next-intl';
 
 interface ReportCardProps {
     report: any;
@@ -10,6 +11,7 @@ interface ReportCardProps {
 }
 
 export default function ReportCard({ report, onActionComplete }: ReportCardProps) {
+    const t = useTranslations('Moderation.reportCard');
     const [showReviewDialog, setShowReviewDialog] = useState(false);
 
     const getStatusBadge = (status: string) => {
@@ -26,7 +28,7 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
         return (
             <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${badge.bg} ${badge.text}`}>
                 <Icon className="w-4 h-4" />
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {t(`status.${status}`)}
             </span>
         );
     };
@@ -80,15 +82,15 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
 
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
+        if (diffMins < 1) return t('timeAgo.justNow');
+        if (diffMins < 60) return t('timeAgo.minutesAgo', { count: diffMins });
+        if (diffHours < 24) return t('timeAgo.hoursAgo', { count: diffHours });
+        if (diffDays < 7) return t('timeAgo.daysAgo', { count: diffDays });
         return date.toLocaleDateString();
     };
 
     const reportedContent = report.post || report.comment;
-    const contentType = report.post ? 'Post' : 'Comment';
+    const contentType = report.post ? t('post') : t('comment');
 
     return (
         <>
@@ -101,7 +103,7 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold">Report #{report.id.slice(-8)}</span>
+                                <span className="font-semibold">{t('reportNumber')} #{report.id.slice(-8)}</span>
                                 {getStatusBadge(report.status)}
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -112,14 +114,14 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
                     </div>
 
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${getReasonBadge(report.reason)}`}>
-                        {report.reason.replace('_', ' ')}
+                        {t(`reason.${report.reason}`)}
                     </span>
                 </div>
 
                 {/* Reporter Info */}
                 <div className="flex items-center gap-2 mb-4 text-sm">
                     <User className="w-4 h-4 text-gray-500" />
-                    <span className="text-gray-600 dark:text-gray-400">Reported by:</span>
+                    <span className="text-gray-600 dark:text-gray-400">{t('reportedBy')}</span>
                     <span className="font-medium">@{report.reporter.username}</span>
                     {report.reporter.name && (
                         <span className="text-gray-500">({report.reporter.name})</span>
@@ -138,11 +140,11 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
                     <div className="flex items-center gap-2 mb-2">
                         <MessageSquare className="w-4 h-4 text-red-600" />
                         <span className="text-sm font-medium text-red-800 dark:text-red-200">
-                            Reported {contentType}
+                            {t('reportedContent', { type: contentType })}
                         </span>
                         {reportedContent?.user && (
                             <span className="text-sm text-gray-600 dark:text-gray-400">
-                                by @{reportedContent.user.username}
+                                {t('by')} @{reportedContent.user.username}
                             </span>
                         )}
                     </div>
@@ -164,7 +166,7 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
                         <div className="flex items-center gap-2 mb-1">
                             <CheckCircle className="w-4 h-4 text-blue-600" />
                             <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                                Reviewed by @{report.reviewedBy.username}
+                                {t('reviewedBy')} @{report.reviewedBy.username}
                             </span>
                             <span className="text-sm text-gray-600 dark:text-gray-400">
                                 {formatDate(report.reviewedAt)}
@@ -172,12 +174,12 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
                         </div>
                         {report.action && (
                             <p className="text-sm text-gray-700 dark:text-gray-300">
-                                Action: <span className="font-medium">{report.action.replace('_', ' ')}</span>
+                                {t('action')} <span className="font-medium">{t(`actionType.${report.action}`)}</span>
                             </p>
                         )}
                         {report.moderatorNotes && (
                             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Notes: {report.moderatorNotes}
+                                {t('notes')}: {report.moderatorNotes}
                             </p>
                         )}
                     </div>
@@ -190,7 +192,7 @@ export default function ReportCard({ report, onActionComplete }: ReportCardProps
                             onClick={() => setShowReviewDialog(true)}
                             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                         >
-                            Review & Take Action
+                            {t('reviewAction')}
                         </button>
                     </div>
                 )}

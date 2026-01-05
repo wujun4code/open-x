@@ -2,12 +2,14 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link, usePathname, useRouter } from '@/navigation';
-import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages, Shield, Edit } from 'lucide-react';
+import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages, Shield, Edit, Bell } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeProvider';
-import { useRole } from '@/contexts/RoleContext';
+
 import ProtectedComponent from './ProtectedComponent';
 import { useTranslations } from 'next-intl';
 import { useQuery, gql } from '@apollo/client';
+import NotificationDropdown from './NotificationDropdown';
+import { GET_UNREAD_COUNT } from '@/lib/queries';
 
 const ME_QUERY = gql`
   query Me {
@@ -24,13 +26,15 @@ export default function Header() {
     const t = useTranslations('Header');
     const pathname = usePathname();
     const router = useRouter();
-    const { isModerator } = useRole();
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
     const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
     const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const notificationDropdownRef = useRef<HTMLDivElement>(null);
     const themeDropdownRef = useRef<HTMLDivElement>(null);
     const langDropdownRef = useRef<HTMLDivElement>(null);
     const { theme, setTheme } = useTheme();
@@ -40,6 +44,13 @@ export default function Header() {
         skip: !isAuthenticated,
     });
     const user = userData?.me;
+
+    // Fetch unread notifications count with polling
+    const { data: unreadData } = useQuery(GET_UNREAD_COUNT, {
+        skip: !isAuthenticated,
+        pollInterval: 5000, // Poll every 5 seconds
+    });
+    const unreadCount = unreadData?.unreadNotificationsCount || 0;
 
     useEffect(() => {
         // Check if user is authenticated
@@ -60,6 +71,9 @@ export default function Header() {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsDropdownOpen(false);
             }
+            if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target as Node)) {
+                setIsNotificationDropdownOpen(false);
+            }
             if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
                 setIsThemeDropdownOpen(false);
             }
@@ -79,8 +93,11 @@ export default function Header() {
         router.push('/auth');
     };
 
+
     const handleLanguageChange = (locale: string) => {
-        router.replace(pathname, { locale });
+        // pathname from next-intl's usePathname is already locale-free (e.g., "/moderation")
+        // router.replace will add the new locale prefix automatically
+        router.replace({ pathname }, { locale: locale as any });
         setIsLangDropdownOpen(false);
     };
 
@@ -141,7 +158,7 @@ export default function Header() {
                                                     }`}
                                             >
                                                 <Shield className="w-5 h-5" />
-                                                <span className="font-medium hidden sm:inline">Moderation</span>
+                                                <span className="font-medium hidden sm:inline">{t('moderation')}</span>
                                             </Link>
                                         </ProtectedComponent>
 
@@ -176,6 +193,26 @@ export default function Header() {
                                                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">简体中文</span>
                                                     </button>
                                                 </div>
+                                            )}
+                                        </div>
+
+                                        {/* Notification Bell */}
+                                        <div className="relative" ref={notificationDropdownRef}>
+                                            <button
+                                                onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
+                                                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors relative"
+                                                title="Notifications"
+                                            >
+                                                <Bell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                                                {unreadCount > 0 && (
+                                                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                                                        {unreadCount > 9 ? '9+' : unreadCount}
+                                                    </span>
+                                                )}
+                                            </button>
+
+                                            {isNotificationDropdownOpen && (
+                                                <NotificationDropdown onClose={() => setIsNotificationDropdownOpen(false)} />
                                             )}
                                         </div>
 

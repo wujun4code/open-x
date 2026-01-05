@@ -25,6 +25,10 @@ export const typeDefs = `#graphql
     
     # Role management
     myRole: String!
+    
+    # Notifications
+    notifications(limit: Int, offset: Int): [Notification!]!
+    unreadNotificationsCount: Int!
   }
 
   type Mutation {
@@ -71,6 +75,10 @@ export const typeDefs = `#graphql
     
     # File Upload
     generateUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
+    
+    # Notifications
+    markNotificationAsRead(id: ID!): Notification!
+    markAllNotificationsAsRead: Boolean!
   }
 
   type User {
@@ -199,5 +207,28 @@ export const typeDefs = `#graphql
     report: Report
     expiresAt: String
     createdAt: String!
+  }
+  
+  enum NotificationType {
+    LIKE
+    COMMENT
+    FOLLOW
+    MENTION
+  }
+  
+  type Notification {
+    id: ID!
+    type: NotificationType!
+    userId: String!
+    actorId: String!
+    postId: String
+    commentId: String
+    read: Boolean!
+    createdAt: String!
+    
+    # Relations
+    actor: User!
+    post: Post
+    comment: Comment
   }
 `;

@@ -2,6 +2,7 @@
     "Header": {
         "home": "首页",
         "trending": "趋势",
+        "moderation": "内容审核",
         "signIn": "登录",
         "signUp": "注册",
         "profile": "个人资料",
@@ -117,5 +118,127 @@
     "Mention": {
         "loading": "加载中...",
         "noUsers": "未找到用户"
+    },
+    "Moderation": {
+        "title": "内容审核",
+        "subtitle": "审查和管理用户举报及已删除内容",
+        "tabs": {
+            "reports": "举报",
+            "deletedContent": "已删除内容"
+        },
+        "filters": {
+            "all": "全部",
+            "pending": "待处理",
+            "reviewed": "已审核",
+            "actioned": "已处理",
+            "dismissed": "已驳回"
+        },
+        "accessDenied": {
+            "title": "访问被拒绝",
+            "message": "您没有权限访问此页面。"
+        },
+        "loading": "加载审核面板中...",
+        "error": {
+            "title": "加载数据出错",
+            "retry": "重试"
+        },
+        "noReports": {
+            "title": "未找到举报",
+            "allReviewed": "目前没有已审核的举报。",
+            "filtered": "目前没有{status}的举报。",
+            "none": "没有需要审核的举报。"
+        },
+        "noDeleted": {
+            "title": "无已删除内容",
+            "message": "没有需要审核的软删除内容。"
+        },
+        "reportCard": {
+            "reportNumber": "举报",
+            "reportedBy": "举报人：",
+            "reportedContent": "被举报的{type}",
+            "reviewedBy": "审核人",
+            "action": "处理：",
+            "notes": "备注：",
+            "reviewAction": "审核并处理",
+            "post": "帖子",
+            "comment": "评论",
+            "by": "来自",
+            "timeAgo": {
+                "justNow": "刚刚",
+                "minutesAgo": "{count}分钟前",
+                "hoursAgo": "{count}小时前",
+                "daysAgo": "{count}天前",
+                "unknown": "未知"
+            },
+            "status": {
+                "pending": "待处理",
+                "reviewed": "已审核",
+                "actioned": "已处理",
+                "dismissed": "已驳回"
+            },
+            "reason": {
+                "SPAM": "垃圾信息",
+                "HARASSMENT": "骚扰",
+                "HATE_SPEECH": "仇恨言论",
+                "VIOLENCE": "暴力",
+                "NUDITY": "裸露",
+                "MISINFORMATION": "虚假信息",
+                "OTHER": "其他"
+            },
+            "actionType": {
+                "warning": "警告",
+                "content_removal": "删除内容",
+                "user_warning": "警告用户",
+                "user_suspension": "暂停用户",
+                "user_ban": "封禁用户",
+                "no_action": "无操作"
+            }
+        },
+        "deletedContentCard": {
+            "deletedPost": "已删除的帖子",
+            "deletedComment": "已删除的评论",
+            "softDeleted": "软删除",
+            "deleted": "已删除",
+            "originalAuthor": "原作者：",
+            "deletedByModerator": "由版主删除：",
+            "onPost": "在帖子上：",
+            "created": "创建时间：",
+            "likes": "点赞",
+            "comments": "评论",
+            "restoreContent": "恢复内容",
+            "permanentlyDelete": "永久删除",
+            "cancel": "取消",
+            "restore": "恢复",
+            "timeAgo": {
+                "justNow": "刚刚",
+                "minutesAgo": "{count}分钟前",
+                "hoursAgo": "{count}小时前",
+                "daysAgo": "{count}天前",
+                "unknown": "未知"
+            },
+            "dialog": {
+                "deleteTitle": "永久删除内容？",
+                "restoreTitle": "恢复内容？",
+                "deleteMessage": "此操作无法撤消。内容将从数据库中永久删除。",
+                "restoreMessage": "这将使内容再次对用户可见。"
+            },
+            "alerts": {
+                "deleteSuccess": "内容已从数据库中永久删除",
+                "deleteError": "永久删除内容失败",
+                "restoreSuccess": "内容恢复成功",
+                "restoreError": "恢复内容失败"
+            }
+        }
+    },
+    "Error": {
+        "title": "出错了！",
+        "description": "发生了意外错误。请重试或返回主页。",
+        "tryAgain": "重试",
+        "goHome": "返回主页"
+    },
+    "NotFound": {
+        "title": "页面未找到",
+        "description": "您查找的页面不存在或已被移动。",
+        "goHome": "返回主页"
     }
 }

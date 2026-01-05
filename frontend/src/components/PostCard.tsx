@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Heart, MessageCircle, Share2, Trash2, Flag } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import ImageModal from './ImageModal';
 import { parseContent, getHashtagName, getUsername } from '@/lib/hashtag';
 import CommentList from './CommentList';
@@ -152,7 +152,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                 return (
                     <Link
                         key={index}
-                        href={`/ hashtag / ${hashtagName} `}
+                        href={`/hashtag/${hashtagName}`}
                         className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -165,7 +165,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                 return (
                     <Link
                         key={index}
-                        href={`/ profile / ${username} `}
+                        href={`/profile/${username}`}
                         className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                         onMouseEnter={(e) => {
@@ -215,7 +215,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
             <div className="flex space-x-4">
 
                 {/* User Avatar */}
-                <Link href={`/ profile`} className="flex-shrink-0">
+                <Link href={`/profile/${post.user.username}`} className="flex-shrink-0">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
                         {post.user.avatar ? (
                             <img src={post.user.avatar} alt={post.user.name || post.user.username} className="w-full h-full rounded-full object-cover" />
@@ -230,7 +230,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     {/* Header */}
                     <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-2">
-                            <Link href={`/ profile`} className="font-semibold text-gray-900 dark:text-white hover:underline">
+                            <Link href={`/profile/${post.user.username}`} className="font-semibold text-gray-900 dark:text-white hover:underline">
                                 {post.user.name || post.user.username}
                             </Link>
                             <span className="text-gray-500 dark:text-gray-400">@{post.user.username}</span>

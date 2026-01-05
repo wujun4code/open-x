@@ -58,6 +58,29 @@ async function requireAdmin(context: Context): Promise<string> {
     return userId;
 }
 
+// Helper function to create notifications
+async function createNotification(
+    context: Context,
+    type: 'LIKE' | 'COMMENT' | 'FOLLOW' | 'MENTION',
+    userId: string,
+    actorId: string,
+    postId?: string,
+    commentId?: string
+) {
+    // Don't create notification if user is acting on their own content
+    if (userId === actorId) return;
+
+    await context.prisma.notification.create({
+        data: {
+            type,
+            userId,
+            actorId,
+            postId,
+            commentId,
+        },
+    });
+}
+
 export const resolvers = {
     Query: {
         hello: () => {
@@ -394,6 +417,34 @@ export const resolvers = {
                 orderBy: { deletedAt: 'desc' },
             });
         },
+
+        // Get user notifications
+        notifications: async (
+            _: any,
+            { limit = 20, offset = 0 }: { limit?: number; offset?: number },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            return context.prisma.notification.findMany({
+                where: { userId },
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get unread notifications count
+        unreadNotificationsCount: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+
+            return context.prisma.notification.count({
+                where: {
+                    userId,
+                    read: false,
+                },
+            });
+        },
     },
 
     Mutation: {
@@ -618,6 +669,22 @@ export const resolvers = {
                     });
                 }
 
+                // Extract mentions and create notifications
+                const mentionRegex = /@(\w+)/g;
+                const mentions = content.match(mentionRegex);
+                if (mentions) {
+                    const uniqueMentions = [...new Set(mentions.map(m => m.slice(1)))]; // Remove @ and get unique
+                    for (const username of uniqueMentions) {
+                        const mentionedUser = await context.prisma.user.findUnique({
+                            where: { username },
+                            select: { id: true },
+                        });
+                        if (mentionedUser && mentionedUser.id !== userId) {
+                            await createNotification(context, 'MENTION', mentionedUser.id, userId, post.id);
+                        }
+                    }
+                }
+
                 return post;
             } catch (error) {
                 if (error instanceof ValidationError) {
@@ -680,6 +747,16 @@ export const resolvers = {
                     postId,
                 },
             });
+
+            // Get post owner to create notification
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+                select: { userId: true },
+            });
+
+            if (post) {
+                await createNotification(context, 'LIKE', post.userId, userId, postId);
+            }
 
             return true;
         },
@@ -759,6 +836,32 @@ export const resolvers = {
                     },
                 });
 
+                // Get post owner to create notification
+                const post = await context.prisma.post.findUnique({
+                    where: { id: postId },
+                    select: { userId: true },
+                });
+
+                if (post) {
+                    await createNotification(context, 'COMMENT', post.userId, userId, postId, comment.id);
+                }
+
+                // Extract mentions and create notifications
+                const mentionRegex = /@(\w+)/g;
+                const mentions = content.match(mentionRegex);
+                if (mentions) {
+                    const uniqueMentions = [...new Set(mentions.map(m => m.slice(1)))]; // Remove @ and get unique
+                    for (const username of uniqueMentions) {
+                        const mentionedUser = await context.prisma.user.findUnique({
+                            where: { username },
+                            select: { id: true },
+                        });
+                        if (mentionedUser && mentionedUser.id !== userId) {
+                            await createNotification(context, 'MENTION', mentionedUser.id, userId, postId, comment.id);
+                        }
+                    }
+                }
+
                 return comment;
             } catch (error) {
                 if (error instanceof ValidationError) {
@@ -827,6 +930,9 @@ export const resolvers = {
                     followingId: targetUserId,
                 },
             });
+
+            // Create follow notification
+            await createNotification(context, 'FOLLOW', targetUserId, userId);
 
             return true;
         },
@@ -1159,6 +1265,47 @@ export const resolvers = {
                 },
             });
         },
+
+        // Mark a notification as read
+        markNotificationAsRead: async (_: any, { id }: { id: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            const notification = await context.prisma.notification.findUnique({
+                where: { id },
+            });
+
+            if (!notification) {
+                throw new GraphQLError('Notification not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            if (notification.userId !== userId) {
+                throw new GraphQLError('You can only mark your own notifications as read', {
+                    extensions: { code: 'FORBIDDEN' },
+                });
+            }
+
+            return context.prisma.notification.update({
+                where: { id },
+                data: { read: true },
+            });
+        },
+
+        // Mark all notifications as read
+        markAllNotificationsAsRead: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.notification.updateMany({
+                where: {
+                    userId,
+                    read: false,
+                },
+                data: { read: true },
+            });
+
+            return true;
+        },
     },
 
     // Field resolvers for User type
@@ -1396,6 +1543,33 @@ export const resolvers = {
             return context.prisma.report.findUnique({
                 where: { id: parent.reportId },
             });
+        },
+    },
+
+    // Field resolvers for Notification type
+    Notification: {
+        actor: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.actorId },
+            });
+        },
+
+        post: async (parent: any, _: any, context: Context) => {
+            if (!parent.postId) return null;
+            return context.prisma.post.findUnique({
+                where: { id: parent.postId },
+            });
+        },
+
+        comment: async (parent: any, _: any, context: Context) => {
+            if (!parent.commentId) return null;
+            return context.prisma.comment.findUnique({
+                where: { id: parent.commentId },
+            });
+        },
+
+        createdAt: (parent: any) => {
+            return parent.createdAt.getTime().toString();
         },
     },
 };

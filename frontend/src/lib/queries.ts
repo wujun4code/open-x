@@ -379,3 +379,52 @@ export const RESTORE_COMMENT = gql`
     }
   }
 `;
+
+// Notification Queries
+export const GET_NOTIFICATIONS = gql`
+  query GetNotifications($limit: Int, $offset: Int) {
+    notifications(limit: $limit, offset: $offset) {
+      id
+      type
+      read
+      createdAt
+      actor {
+        id
+        username
+        name
+        avatar
+      }
+      post {
+        id
+        content
+      }
+      comment {
+        id
+        content
+      }
+    }
+  }
+`;
+
+export const GET_UNREAD_COUNT = gql`
+  query GetUnreadCount {
+    unreadNotificationsCount
+  }
+`;
+
+// Notification Mutations
+export const MARK_NOTIFICATION_AS_READ = gql`
+  mutation MarkNotificationAsRead($id: ID!) {
+    markNotificationAsRead(id: $id) {
+      id
+      read
+    }
+  }
+`;
+
+export const MARK_ALL_NOTIFICATIONS_AS_READ = gql`
+  mutation MarkAllNotificationsAsRead {
+    markAllNotificationsAsRead
+  }
+`;
+

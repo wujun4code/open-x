@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import {
     Settings as SettingsIcon,
     User,
     Lock,
     Bell,
-    Eye,
     Shield,
     Palette,
-    Globe,
     Save,
     LogOut
 } from 'lucide-react';

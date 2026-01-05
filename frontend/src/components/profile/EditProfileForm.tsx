@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, gql } from '@apollo/client';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { UPDATE_PROFILE } from '@/lib/queries';
 import ImageUploadButton from './ImageUploadButton';
 import { Loader2, ArrowLeft } from 'lucide-react';
@@ -173,8 +173,8 @@ export default function EditProfileForm() {
                             if (errors.name) setErrors({ ...errors, name: '' });
                         }}
                         className={`w-full px-4 py-3 rounded-lg border ${errors.name
-                                ? 'border-red-500 focus:ring-red-500'
-                                : 'border-gray-300 dark:border-dark-700 focus:ring-blue-500'
+                            ? 'border-red-500 focus:ring-red-500'
+                            : 'border-gray-300 dark:border-dark-700 focus:ring-blue-500'
                             } bg-white dark:bg-dark-900 focus:ring-2 focus:outline-none transition-colors`}
                         placeholder="Your name"
                         maxLength={50}
@@ -196,8 +196,8 @@ export default function EditProfileForm() {
                             if (errors.bio) setErrors({ ...errors, bio: '' });
                         }}
                         className={`w-full px-4 py-3 rounded-lg border ${errors.bio
-                                ? 'border-red-500 focus:ring-red-500'
-                                : 'border-gray-300 dark:border-dark-700 focus:ring-blue-500'
+                            ? 'border-red-500 focus:ring-red-500'
+                            : 'border-gray-300 dark:border-dark-700 focus:ring-blue-500'
                             } bg-white dark:bg-dark-900 focus:ring-2 focus:outline-none transition-colors resize-none`}
                         placeholder="Tell us about yourself..."
                         rows={4}
