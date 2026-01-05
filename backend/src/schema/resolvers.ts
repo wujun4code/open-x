@@ -22,6 +22,24 @@ function requireAuth(context: Context): string {
     return context.userId;
 }
 
+// Helper function to require moderator/admin role
+async function requireModerator(context: Context): Promise<string> {
+    const userId = requireAuth(context);
+
+    const user = await context.prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true },
+    });
+
+    if (!user || (user.role !== 'moderator' && user.role !== 'admin')) {
+        throw new GraphQLError('Unauthorized - Moderator access required', {
+            extensions: { code: 'FORBIDDEN' },
+        });
+    }
+
+    return userId;
+}
+
 export const resolvers = {
     Query: {
         hello: () => {
@@ -257,6 +275,47 @@ export const resolvers = {
             });
 
             return postHashtags.map((ph) => ph.post);
+        },
+
+        // Moderation queries (admin/moderator only)
+        reports: async (
+            _: any,
+            { status, limit = 20, offset = 0 }: { status?: string; limit?: number; offset?: number },
+            context: Context
+        ) => {
+            await requireModerator(context);
+
+            return context.prisma.report.findMany({
+                where: status ? { status } : undefined,
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        report: async (_: any, { id }: { id: string }, context: Context) => {
+            await requireModerator(context);
+
+            const report = await context.prisma.report.findUnique({
+                where: { id },
+            });
+
+            if (!report) {
+                throw new GraphQLError('Report not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return report;
+        },
+
+        moderationActions: async (_: any, { userId }: { userId: string }, context: Context) => {
+            await requireModerator(context);
+
+            return context.prisma.moderationAction.findMany({
+                where: { targetUserId: userId },
+                orderBy: { createdAt: 'desc' },
+            });
         },
     },
 
@@ -636,6 +695,169 @@ export const resolvers = {
             return true;
         },
 
+        // Moderation mutations
+        reportPost: async (
+            _: any,
+            { postId, reason, description }: { postId: string; reason: string; description?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            // Check if post exists
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.report.create({
+                data: {
+                    reason,
+                    description,
+                    postId,
+                    reporterId: userId,
+                },
+            });
+        },
+
+        reportComment: async (
+            _: any,
+            { commentId, reason, description }: { commentId: string; reason: string; description?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            // Check if comment exists
+            const comment = await context.prisma.comment.findUnique({
+                where: { id: commentId },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.report.create({
+                data: {
+                    reason,
+                    description,
+                    commentId,
+                    reporterId: userId,
+                },
+            });
+        },
+
+        reviewReport: async (
+            _: any,
+            {
+                reportId,
+                action,
+                moderatorNotes,
+                duration,
+            }: { reportId: string; action: string; moderatorNotes?: string; duration?: number },
+            context: Context
+        ) => {
+            const userId = await requireModerator(context);
+
+            const report = await context.prisma.report.findUnique({
+                where: { id: reportId },
+                include: {
+                    post: true,
+                    comment: true,
+                },
+            });
+
+            if (!report) {
+                throw new GraphQLError('Report not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            // Update report
+            const updatedReport = await context.prisma.report.update({
+                where: { id: reportId },
+                data: {
+                    status: 'actioned',
+                    action,
+                    reviewedById: userId,
+                    reviewedAt: new Date(),
+                    moderatorNotes,
+                },
+            });
+
+            // Get target user ID
+            let targetUserId: string | null = null;
+            if (report.post) {
+                targetUserId = report.post.userId;
+            } else if (report.comment) {
+                targetUserId = report.comment.userId;
+            }
+
+            // Create moderation action if needed
+            if (targetUserId && action !== 'dismissed') {
+                await context.prisma.moderationAction.create({
+                    data: {
+                        type: action,
+                        reason: moderatorNotes || report.reason,
+                        duration,
+                        targetUserId,
+                        moderatorId: userId,
+                        reportId,
+                        expiresAt: duration ? new Date(Date.now() + duration * 24 * 60 * 60 * 1000) : null,
+                    },
+                });
+
+                // Handle content removal
+                if (action === 'content_removal') {
+                    if (report.postId) {
+                        await context.prisma.post.delete({
+                            where: { id: report.postId },
+                        });
+                    } else if (report.commentId) {
+                        await context.prisma.comment.delete({
+                            where: { id: report.commentId },
+                        });
+                    }
+                }
+            }
+
+            return updatedReport;
+        },
+
+        dismissReport: async (
+            _: any,
+            { reportId, moderatorNotes }: { reportId: string; moderatorNotes?: string },
+            context: Context
+        ) => {
+            const userId = await requireModerator(context);
+
+            const report = await context.prisma.report.findUnique({
+                where: { id: reportId },
+            });
+
+            if (!report) {
+                throw new GraphQLError('Report not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.report.update({
+                where: { id: reportId },
+                data: {
+                    status: 'dismissed',
+                    action: 'dismissed',
+                    reviewedById: userId,
+                    reviewedAt: new Date(),
+                    moderatorNotes,
+                },
+            });
+        },
+
         // Generate upload URL for R2
         generateUploadUrl: async (
             _: any,
@@ -812,6 +1034,58 @@ export const resolvers = {
         postsCount: async (parent: any, _: any, context: Context) => {
             return context.prisma.postHashtag.count({
                 where: { hashtagId: parent.id },
+            });
+        },
+    },
+
+    // Field resolvers for Report type
+    Report: {
+        post: async (parent: any, _: any, context: Context) => {
+            if (!parent.postId) return null;
+            return context.prisma.post.findUnique({
+                where: { id: parent.postId },
+            });
+        },
+
+        comment: async (parent: any, _: any, context: Context) => {
+            if (!parent.commentId) return null;
+            return context.prisma.comment.findUnique({
+                where: { id: parent.commentId },
+            });
+        },
+
+        reporter: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.reporterId },
+            });
+        },
+
+        reviewedBy: async (parent: any, _: any, context: Context) => {
+            if (!parent.reviewedById) return null;
+            return context.prisma.user.findUnique({
+                where: { id: parent.reviewedById },
+            });
+        },
+    },
+
+    // Field resolvers for ModerationAction type
+    ModerationAction: {
+        targetUser: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.targetUserId },
+            });
+        },
+
+        moderator: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.moderatorId },
+            });
+        },
+
+        report: async (parent: any, _: any, context: Context) => {
+            if (!parent.reportId) return null;
+            return context.prisma.report.findUnique({
+                where: { id: parent.reportId },
             });
         },
     },

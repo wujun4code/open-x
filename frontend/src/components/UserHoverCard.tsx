@@ -16,6 +16,7 @@ const GET_USER_BY_USERNAME = gql`
       followersCount
       followingCount
       postsCount
+      isFollowing
     }
   }
 `;
@@ -61,13 +62,20 @@ export default function UserHoverCard({ username, position, onClose, onMouseEnte
         }
     }, []);
 
+    const user = data?.searchUsers?.[0];
+
     useEffect(() => {
         // Fade in animation
         const timer = setTimeout(() => setIsVisible(true), 10);
         return () => clearTimeout(timer);
     }, []);
 
-    const user = data?.searchUsers?.[0];
+    useEffect(() => {
+        // Set isFollowing state from query result
+        if (user?.isFollowing !== undefined) {
+            setIsFollowing(user.isFollowing);
+        }
+    }, [user]);
 
     if (loading || !user) {
         return (

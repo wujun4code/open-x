@@ -19,6 +19,7 @@ model User {
   coverImage String?
   verified  Boolean  @default(false)
   onboardingCompleted Boolean @default(false)
+  role      String   @default("user") // user, moderator, admin
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -29,6 +30,12 @@ model User {
   bookmarks     Bookmark[]
   followers     Follow[]     @relation("UserFollowers")
   following     Follow[]     @relation("UserFollowing")
+  
+  // Moderation relations
+  reportsCreated    Report[] @relation("ReportedBy")
+  reportsReviewed   Report[] @relation("ReviewedBy")
+  moderationActions ModerationAction[] @relation("ModeratedUser")
+  moderatorActions  ModerationAction[] @relation("Moderator")
   
   @@map("users")
 }
@@ -48,6 +55,7 @@ model Post {
   comments  Comment[]
   bookmarks Bookmark[]
   hashtags  PostHashtag[]
+  reports   Report[]
 
   @@index([userId])
   @@index([createdAt])
@@ -83,6 +91,7 @@ model Comment {
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reports Report[]
 
   @@index([userId])
   @@index([postId])
@@ -152,4 +161,64 @@ model PostHashtag {
   @@index([postId])
   @@index([hashtagId])
   @@map("post_hashtags")
+}
+
+// Report model (content moderation)
+model Report {
+  id          String   @id @default(cuid())
+  reason      String   // Spam, Harassment, Hate Speech, etc.
+  description String?  // Optional details from reporter
+  status      String   @default("pending") // pending, reviewed, dismissed, actioned
+  
+  // What's being reported
+  postId      String?
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId   String?
+  comment     Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  // Who reported it
+  reporterId  String
+  reporter    User     @relation("ReportedBy", fields: [reporterId], references: [id])
+  
+  // Moderation action
+  reviewedById String?
+  reviewedBy   User?   @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  moderatorNotes String?
+  action       String? // warning, content_removed, user_suspended, dismissed
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  moderationActions ModerationAction[]
+  
+  @@index([status])
+  @@index([reporterId])
+  @@index([postId])
+  @@index([commentId])
+  @@map("reports")
+}
+
+// Moderation Action model (tracking moderator actions)
+model ModerationAction {
+  id          String   @id @default(cuid())
+  type        String   // warning, suspension, ban, content_removal
+  reason      String
+  duration    Int?     // Duration in days for temporary actions
+  
+  targetUserId String
+  targetUser   User    @relation("ModeratedUser", fields: [targetUserId], references: [id])
+  
+  moderatorId  String
+  moderator    User    @relation("Moderator", fields: [moderatorId], references: [id])
+  
+  reportId     String?
+  report       Report? @relation(fields: [reportId], references: [id])
+  
+  expiresAt    DateTime?
+  createdAt    DateTime @default(now())
+  
+  @@index([targetUserId])
+  @@index([moderatorId])
+  @@map("moderation_actions")
 }

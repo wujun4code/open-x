@@ -15,6 +15,11 @@ export const typeDefs = `#graphql
     trendingHashtags(limit: Int): [Hashtag!]!
     searchHashtags(query: String!, limit: Int): [Hashtag!]!
     postsByHashtag(hashtag: String!, limit: Int, offset: Int): [Post!]!
+    
+    # Moderation (admin/moderator only)
+    reports(status: String, limit: Int, offset: Int): [Report!]!
+    report(id: ID!): Report
+    moderationActions(userId: ID!): [ModerationAction!]!
   }
 
   type Mutation {
@@ -42,6 +47,12 @@ export const typeDefs = `#graphql
     # Bookmarks
     bookmarkPost(postId: ID!): Boolean!
     unbookmarkPost(postId: ID!): Boolean!
+    
+    # Moderation
+    reportPost(postId: ID!, reason: String!, description: String): Report!
+    reportComment(commentId: ID!, reason: String!, description: String): Report!
+    reviewReport(reportId: ID!, action: String!, moderatorNotes: String, duration: Int): Report!
+    dismissReport(reportId: ID!, moderatorNotes: String): Report!
     
     # File Upload
     generateUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
@@ -133,6 +144,34 @@ export const typeDefs = `#graphql
     id: ID!
     name: String!
     postsCount: Int!
+    createdAt: String!
+  }
+  
+  type Report {
+    id: ID!
+    reason: String!
+    description: String
+    status: String!
+    post: Post
+    comment: Comment
+    reporter: User!
+    reviewedBy: User
+    reviewedAt: String
+    moderatorNotes: String
+    action: String
+    createdAt: String!
+    updatedAt: String!
+  }
+  
+  type ModerationAction {
+    id: ID!
+    type: String!
+    reason: String!
+    duration: Int
+    targetUser: User!
+    moderator: User!
+    report: Report
+    expiresAt: String
     createdAt: String!
   }
 `;

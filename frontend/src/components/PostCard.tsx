@@ -2,30 +2,31 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { Heart, MessageCircle, Share2, Trash2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Trash2, Flag } from 'lucide-react';
 import Link from 'next/link';
 import ImageModal from './ImageModal';
 import { parseContent, getHashtagName, getUsername } from '@/lib/hashtag';
 import CommentList from './CommentList';
 import CreateComment from './CreateComment';
 import UserHoverCard from './UserHoverCard';
+import ReportDialog from './ReportDialog';
 
 const LIKE_POST_MUTATION = gql`
   mutation LikePost($postId: ID!) {
     likePost(postId: $postId)
-  }
+}
 `;
 
 const UNLIKE_POST_MUTATION = gql`
   mutation UnlikePost($postId: ID!) {
     unlikePost(postId: $postId)
-  }
+}
 `;
 
 const DELETE_POST_MUTATION = gql`
   mutation DeletePost($id: ID!) {
     deletePost(id: $id)
-  }
+}
 `;
 
 interface PostCardProps {
@@ -54,6 +55,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [commentsCount, setCommentsCount] = useState(post.commentsCount);
+    const [showReportDialog, setShowReportDialog] = useState(false);
 
     // Hover card state
     const [hoverCardData, setHoverCardData] = useState<{ username: string; position: { x: number; y: number } } | null>(null);
@@ -109,7 +111,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
             }
         },
         onError: (error) => {
-            alert(`Error deleting post: ${error.message}`);
+            alert(`Error deleting post: ${error.message} `);
         },
     });
 
@@ -132,10 +134,10 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
         const now = new Date();
         const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-        if (diffInSeconds < 60) return `${diffInSeconds}s`;
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
-        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d`;
+        if (diffInSeconds < 60) return `${diffInSeconds} s`;
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} m`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} h`;
+        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} d`;
 
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
@@ -150,7 +152,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                 return (
                     <Link
                         key={index}
-                        href={`/hashtag/${hashtagName}`}
+                        href={`/ hashtag / ${hashtagName} `}
                         className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -163,7 +165,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                 return (
                     <Link
                         key={index}
-                        href={`/profile/${username}`}
+                        href={`/ profile / ${username} `}
                         className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                         onMouseEnter={(e) => {
@@ -213,7 +215,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
             <div className="flex space-x-4">
 
                 {/* User Avatar */}
-                <Link href={`/profile`} className="flex-shrink-0">
+                <Link href={`/ profile`} className="flex-shrink-0">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
                         {post.user.avatar ? (
                             <img src={post.user.avatar} alt={post.user.name || post.user.username} className="w-full h-full rounded-full object-cover" />
@@ -228,7 +230,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     {/* Header */}
                     <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-2">
-                            <Link href={`/profile`} className="font-semibold text-gray-900 dark:text-white hover:underline">
+                            <Link href={`/ profile`} className="font-semibold text-gray-900 dark:text-white hover:underline">
                                 {post.user.name || post.user.username}
                             </Link>
                             <span className="text-gray-500 dark:text-gray-400">@{post.user.username}</span>
@@ -281,24 +283,24 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         {/* Like Button */}
                         <button
                             onClick={handleLikeToggle}
-                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full transition-colors ${isLiked
+                            className={`flex items - center space - x - 1.5 px - 3 py - 1.5 rounded - full transition - colors ${isLiked
                                 ? 'text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
-                                }`}
+                                } `}
                         >
-                            <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                            <Heart className={`w - 5 h - 5 ${isLiked ? 'fill-current' : ''} `} />
                             <span className="font-medium">{likesCount}</span>
                         </button>
 
                         {/* Comment Button */}
                         <button
                             onClick={() => setShowComments(!showComments)}
-                            className={`flex items-center space-x-1.5 px-3 py-1.5 transition-colors rounded-full ${showComments
+                            className={`flex items - center space - x - 1.5 px - 3 py - 1.5 transition - colors rounded - full ${showComments
                                 ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                                }`}
+                                } `}
                         >
-                            <MessageCircle className={`w-5 h-5 ${showComments ? 'fill-current' : ''}`} />
+                            <MessageCircle className={`w - 5 h - 5 ${showComments ? 'fill-current' : ''} `} />
                             <span className="font-medium">{commentsCount}</span>
                         </button>
 
@@ -306,6 +308,17 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         <button className="flex items-center space-x-1.5 px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-full transition-colors">
                             <Share2 className="w-5 h-5" />
                         </button>
+
+                        {/* Report Button (only for other users' posts) */}
+                        {!isOwnPost && (
+                            <button
+                                onClick={() => setShowReportDialog(true)}
+                                className="flex items-center space-x-1.5 px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors ml-auto"
+                                title="Report post"
+                            >
+                                <Flag className="w-5 h-5" />
+                            </button>
+                        )}
                     </div>
 
                     {/* Comments Section */}
@@ -337,6 +350,14 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                         // Close card when mouse leaves it
                         setHoverCardData(null);
                     }}
+                />
+            )}
+
+            {/* Report Dialog */}
+            {showReportDialog && (
+                <ReportDialog
+                    postId={post.id}
+                    onClose={() => setShowReportDialog(false)}
                 />
             )}
         </div>

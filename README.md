@@ -356,6 +356,12 @@ npm run dev
 - [ ] **Live Streaming** - Live video broadcasts
 
 #### 🔒 Privacy & Safety
+- [ ] **Content Moderation** - AI-powered and manual content moderation system
+  - Automated detection of inappropriate content (hate speech, spam, harassment)
+  - User reporting and review workflow
+  - Moderator dashboard for content review
+  - Automated actions (warnings, temporary restrictions, bans)
+  - Appeal system for moderation decisions
 - [ ] **Mute Users** - Hide posts from specific users
 - [ ] **Block Users** - Prevent interactions with blocked users
 - [ ] **Private Accounts** - Require approval for followers
