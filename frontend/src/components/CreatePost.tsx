@@ -63,7 +63,6 @@ interface CreatePostProps {
 export default function CreatePost({ onPostCreated }: CreatePostProps) {
     const t = useTranslations('CreatePost');
     const [content, setContent] = useState('');
-    const [user, setUser] = useState<any>(null);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -116,13 +115,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
         },
     });
 
-    // Get user from localStorage
-    useState(() => {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            setUser(JSON.parse(userStr));
-        }
-    });
+
 
     // Hide mention list on scroll
     useEffect(() => {
@@ -314,101 +307,92 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
     return (
         <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 p-4 sm:p-6">
             <form onSubmit={handleSubmit}>
-                <div className="flex space-x-4">
-                    {/* User Avatar */}
-                    <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
-                            {user?.name?.[0] || user?.username?.[0] || 'U'}
-                        </div>
-                    </div>
+                {/* Input Area */}
+                <div className="relative">
+                    <textarea
+                        ref={textareaRef}
+                        value={content}
+                        onChange={handleContentChange}
+                        placeholder={t('placeholder')}
+                        className="w-full px-4 py-3 border border-gray-200 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-lg"
+                        rows={3}
+                        disabled={isSubmitting}
+                    />
 
-                    {/* Input Area */}
-                    <div className="flex-1 relative">
-                        <textarea
-                            ref={textareaRef}
-                            value={content}
-                            onChange={handleContentChange}
-                            placeholder={t('placeholder')}
-                            className="w-full px-4 py-3 border border-gray-200 dark:border-dark-600 dark:bg-dark-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-lg"
-                            rows={3}
-                            disabled={isSubmitting}
+                    {/* Mention Dropdown */}
+                    {showMentions && (
+                        <MentionList
+                            query={mentionQuery}
+                            onSelect={handleMentionSelect}
+                            position={mentionPosition}
                         />
+                    )}
 
-                        {/* Mention Dropdown */}
-                        {showMentions && (
-                            <MentionList
-                                query={mentionQuery}
-                                onSelect={handleMentionSelect}
-                                position={mentionPosition}
+                    {/* Image Preview */}
+                    {imagePreview && (
+                        <div className="mt-3 relative">
+                            <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="w-full max-h-64 object-cover rounded-lg"
                             />
-                        )}
+                            <button
+                                type="button"
+                                onClick={removeImage}
+                                className="absolute top-2 right-2 p-1 bg-gray-900 bg-opacity-75 text-white rounded-full hover:bg-opacity-90 transition-all"
+                                disabled={isSubmitting}
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                    )}
 
-                        {/* Image Preview */}
-                        {imagePreview && (
-                            <div className="mt-3 relative">
-                                <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    className="w-full max-h-64 object-cover rounded-lg"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={removeImage}
-                                    className="absolute top-2 right-2 p-1 bg-gray-900 bg-opacity-75 text-white rounded-full hover:bg-opacity-90 transition-all"
-                                    disabled={isSubmitting}
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
+                    {/* Footer */}
+                    <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center space-x-2">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageSelect}
+                                className="hidden"
+                                disabled={isSubmitting}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-dark-700 rounded-lg transition-colors disabled:opacity-50"
+                                title={t('addImage')}
+                                disabled={isSubmitting}
+                            >
+                                <Image className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="flex items-center space-x-4">
+                            {/* Character Counter */}
+                            <div
+                                className={`text-sm font-medium ${isOverLimit
+                                    ? 'text-red-600'
+                                    : isNearLimit
+                                        ? 'text-orange-600'
+                                        : 'text-gray-500'
+                                    }`}
+                            >
+                                {remainingChars}
                             </div>
-                        )}
 
-                        {/* Footer */}
-                        <div className="flex items-center justify-between mt-4">
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageSelect}
-                                    className="hidden"
-                                    disabled={isSubmitting}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-dark-700 rounded-lg transition-colors disabled:opacity-50"
-                                    title={t('addImage')}
-                                    disabled={isSubmitting}
-                                >
-                                    <Image className="w-5 h-5" />
-                                </button>
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                {/* Character Counter */}
-                                <div
-                                    className={`text-sm font-medium ${isOverLimit
-                                        ? 'text-red-600'
-                                        : isNearLimit
-                                            ? 'text-orange-600'
-                                            : 'text-gray-500'
-                                        }`}
-                                >
-                                    {remainingChars}
-                                </div>
-
-                                {/* Submit Button */}
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting || !content.trim() || isOverLimit}
-                                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                                >
-                                    <Send className="w-4 h-4" />
-                                    <span>
-                                        {isUploading ? t('uploading') : loading ? t('posting') : t('post')}
-                                    </span>
-                                </button>
-                            </div>
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                disabled={isSubmitting || !content.trim() || isOverLimit}
+                                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                            >
+                                <Send className="w-4 h-4" />
+                                <span>
+                                    {isUploading ? t('uploading') : loading ? t('posting') : t('post')}
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>

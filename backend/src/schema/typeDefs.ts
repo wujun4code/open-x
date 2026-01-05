@@ -33,6 +33,9 @@ export const typeDefs = `#graphql
     login(email: String!, password: String!): AuthPayload!
     completeOnboarding: Boolean!
     
+    # Profile
+    updateProfile(name: String, bio: String, avatar: String, coverImage: String): User!
+    
     # Posts
     createPost(content: String!, imageUrl: String): Post!
     deletePost(id: ID!): Boolean!

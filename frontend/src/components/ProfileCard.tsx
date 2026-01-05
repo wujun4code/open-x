@@ -13,6 +13,7 @@ const ME_QUERY = gql`
       name
       bio
       avatar
+      coverImage
       createdAt
       followersCount
       followingCount
@@ -53,8 +54,12 @@ export default function ProfileCard() {
 
     return (
         <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 overflow-hidden sticky top-24">
-            {/* Compact Header with gradient */}
-            <div className="h-16 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+            {/* Compact Header with cover image */}
+            <div className="h-16 bg-gradient-to-r from-blue-600 to-purple-600">
+                {user.coverImage && (
+                    <img src={user.coverImage} alt="Cover" className="w-full h-full object-cover" />
+                )}
+            </div>
 
             {/* Profile Content */}
             <div className="px-4 pb-4">

@@ -5,6 +5,7 @@
         "signIn": "登录",
         "signUp": "注册",
         "profile": "个人资料",
+        "editProfile": "编辑资料",
         "settings": "设置",
         "logout": "退出登录",
         "theme": {

@@ -302,7 +302,16 @@ npm run dev
 - [x] **Hot Reload** - Development servers with auto-reload
 - [x] **Multi-language Support** - Internationalization (English, Spanish, Chinese)
 
-### 🔮 Planned Features
+### �️ Content Moderation & Safety
+- [x] **Role-Based Access Control** - User, Moderator, and Admin roles
+- [x] **Report System** - Report inappropriate posts and comments
+- [x] **Moderation Dashboard** - Review and manage user reports
+- [x] **Moderation Actions** - Warning, content removal, suspension, and ban
+- [x] **Soft Delete** - Two-stage deletion with restore capability
+- [x] **Deleted Content Management** - Review and permanently delete or restore content
+- [x] **Audit Trail** - Track who deleted content and when
+
+### �🔮 Planned Features
 
 #### 📊 Content Discovery & Search
 - [ ] **Search** - Search for users, posts, and hashtags
@@ -323,7 +332,7 @@ npm run dev
 - [ ] **Draft Posts** - Save posts as drafts
 
 #### 👤 Profile & Customization
-- [ ] **Edit Profile** - Update bio, avatar, cover image, and personal info
+- [x] **Edit Profile** - Update bio, avatar, cover image, and personal info
 - [ ] **Profile Themes** - Customize profile appearance
 - [ ] **Media Gallery** - View all media from a user's posts
 - [ ] **Liked Posts** - View posts a user has liked
@@ -356,16 +365,20 @@ npm run dev
 - [ ] **Live Streaming** - Live video broadcasts
 
 #### 🔒 Privacy & Safety
-- [ ] **Content Moderation** - AI-powered and manual content moderation system
-  - Automated detection of inappropriate content (hate speech, spam, harassment)
-  - User reporting and review workflow
-  - Moderator dashboard for content review
-  - Automated actions (warnings, temporary restrictions, bans)
-  - Appeal system for moderation decisions
+- [x] **Content Moderation** - Comprehensive moderation system
+  - [x] Role-based access control (User, Moderator, Admin)
+  - [x] User reporting system for posts and comments
+  - [x] Moderator dashboard for content review
+  - [x] Report management with status tracking (pending, reviewed, actioned, dismissed)
+  - [x] Moderation actions (warnings, content removal, suspension, ban)
+  - [x] Soft delete system for content (two-stage deletion)
+  - [x] Restore deleted content functionality
+  - [x] Permanent deletion for final content removal
+  - [ ] Automated detection of inappropriate content (AI-powered)
+  - [ ] Appeal system for moderation decisions
 - [ ] **Mute Users** - Hide posts from specific users
 - [ ] **Block Users** - Prevent interactions with blocked users
 - [ ] **Private Accounts** - Require approval for followers
-- [ ] **Report System** - Report inappropriate content
 - [ ] **Content Warnings** - Mark sensitive content
 - [ ] **Two-Factor Authentication** - Enhanced account security
 - [ ] **Privacy Settings** - Granular privacy controls

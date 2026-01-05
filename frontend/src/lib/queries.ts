@@ -43,6 +43,21 @@ export const POSTS_BY_HASHTAG = gql`
     }
   }
 `;
+
+// Profile Mutations
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile($name: String, $bio: String, $avatar: String, $coverImage: String) {
+    updateProfile(name: $name, bio: $bio, avatar: $avatar, coverImage: $coverImage) {
+      id
+      name
+      bio
+      avatar
+      coverImage
+      updatedAt
+    }
+  }
+`;
+
 export const COMMENT_FIELDS = gql`
   fragment CommentFields on Comment {
     id
@@ -162,6 +177,7 @@ export const GET_USER_BY_USERNAME = gql`
       name
       bio
       avatar
+      coverImage
       createdAt
       followersCount
       followingCount

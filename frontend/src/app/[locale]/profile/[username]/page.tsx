@@ -130,8 +130,16 @@ export default function UserProfilePage() {
 
             {/* Profile Info */}
             <div className="relative max-w-2xl mx-auto">
-                {/* Cover Placeholder */}
-                <div className="h-48 bg-gray-200 dark:bg-dark-800"></div>
+                {/* Cover Image */}
+                <div className="h-48 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+                    {currentUser.coverImage && (
+                        <img
+                            src={currentUser.coverImage}
+                            alt="Cover"
+                            className="w-full h-full object-cover"
+                        />
+                    )}
+                </div>
 
                 <div className="px-4 pb-4">
                     <div className="flex justify-between items-end -mt-16 mb-4">

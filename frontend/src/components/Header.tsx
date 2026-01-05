@@ -2,11 +2,23 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link, usePathname, useRouter } from '@/navigation';
-import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages, Shield } from 'lucide-react';
+import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages, Shield, Edit } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeProvider';
 import { useRole } from '@/contexts/RoleContext';
 import ProtectedComponent from './ProtectedComponent';
 import { useTranslations } from 'next-intl';
+import { useQuery, gql } from '@apollo/client';
+
+const ME_QUERY = gql`
+  query Me {
+    me {
+      id
+      username
+      name
+      avatar
+    }
+  }
+`;
 
 export default function Header() {
     const t = useTranslations('Header');
@@ -14,7 +26,6 @@ export default function Header() {
     const router = useRouter();
     const { isModerator } = useRole();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
@@ -24,17 +35,20 @@ export default function Header() {
     const langDropdownRef = useRef<HTMLDivElement>(null);
     const { theme, setTheme } = useTheme();
 
+    // Fetch fresh user data from API
+    const { data: userData } = useQuery(ME_QUERY, {
+        skip: !isAuthenticated,
+    });
+    const user = userData?.me;
+
     useEffect(() => {
         // Check if user is authenticated
         const token = localStorage.getItem('token');
-        const userStr = localStorage.getItem('user');
 
-        if (token && userStr) {
+        if (token) {
             setIsAuthenticated(true);
-            setUser(JSON.parse(userStr));
         } else {
             setIsAuthenticated(false);
-            setUser(null);
         }
 
         setIsLoading(false);
@@ -225,8 +239,12 @@ export default function Header() {
                                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                                 className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
                                             >
-                                                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                                    {user?.name?.[0] || user?.username?.[0] || 'U'}
+                                                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm overflow-hidden">
+                                                    {user?.avatar ? (
+                                                        <img src={user.avatar} alt={user.name || user.username} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        user?.name?.[0] || user?.username?.[0] || 'U'
+                                                    )}
                                                 </div>
                                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">{user?.name || user?.username}</span>
                                                 <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -247,6 +265,15 @@ export default function Header() {
                                                     >
                                                         <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                                                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('profile')}</span>
+                                                    </Link>
+
+                                                    <Link
+                                                        href="/profile/edit"
+                                                        onClick={() => setIsDropdownOpen(false)}
+                                                        className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors"
+                                                    >
+                                                        <Edit className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('editProfile')}</span>
                                                     </Link>
 
                                                     <Link

@@ -501,6 +501,79 @@ export const resolvers = {
             return true;
         },
 
+        // Update user profile
+        updateProfile: async (
+            _: any,
+            { name, bio, avatar, coverImage }: { name?: string; bio?: string; avatar?: string; coverImage?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            // Validate name if provided
+            if (name !== undefined && name !== null) {
+                if (name.trim().length === 0) {
+                    throw new GraphQLError('Name cannot be empty', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                if (name.length > 50) {
+                    throw new GraphQLError('Name must be 50 characters or less', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+            }
+
+            // Validate bio if provided
+            if (bio !== undefined && bio !== null && bio.length > 160) {
+                throw new GraphQLError('Bio must be 160 characters or less', {
+                    extensions: { code: 'BAD_USER_INPUT' },
+                });
+            }
+
+            // Validate avatar URL if provided
+            if (avatar !== undefined && avatar !== null && avatar.trim() !== '') {
+                try {
+                    new URL(avatar);
+                    if (!avatar.startsWith('https://')) {
+                        throw new Error('Must be HTTPS');
+                    }
+                } catch {
+                    throw new GraphQLError('Avatar must be a valid HTTPS URL', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+            }
+
+            // Validate cover image URL if provided
+            if (coverImage !== undefined && coverImage !== null && coverImage.trim() !== '') {
+                try {
+                    new URL(coverImage);
+                    if (!coverImage.startsWith('https://')) {
+                        throw new Error('Must be HTTPS');
+                    }
+                } catch {
+                    throw new GraphQLError('Cover image must be a valid HTTPS URL', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+            }
+
+            // Build update data object with only provided fields
+            const updateData: any = {};
+            if (name !== undefined && name !== null) updateData.name = name.trim();
+            if (bio !== undefined) updateData.bio = bio !== null ? bio.trim() : null;
+            if (avatar !== undefined) updateData.avatar = avatar !== null ? (avatar.trim() || null) : null;
+            if (coverImage !== undefined) updateData.coverImage = coverImage !== null ? (coverImage.trim() || null) : null;
+
+            // Update user profile
+            const updatedUser = await context.prisma.user.update({
+                where: { id: userId },
+                data: updateData,
+            });
+
+            return updatedUser;
+        },
+
         // Create a new post
         createPost: async (
             _: any,
