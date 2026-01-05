@@ -170,3 +170,196 @@ export const GET_USER_BY_USERNAME = gql`
     }
   }
 `;
+
+// Role Management Queries
+export const MY_ROLE_QUERY = gql`
+  query MyRole {
+    myRole
+  }
+`;
+
+export const UPDATE_USER_ROLE = gql`
+  mutation UpdateUserRole($userId: ID!, $role: String!) {
+    updateUserRole(userId: $userId, role: $role) {
+      id
+      username
+      role
+    }
+  }
+`;
+
+// Moderation Dashboard Queries
+export const GET_REPORTS = gql`
+  query GetReports($status: String, $limit: Int, $offset: Int) {
+    reports(status: $status, limit: $limit, offset: $offset) {
+      id
+      reason
+      description
+      status
+      action
+      createdAt
+      updatedAt
+      reporter {
+        id
+        username
+        name
+        avatar
+      }
+      post {
+        id
+        content
+        imageUrl
+        user {
+          id
+          username
+          name
+        }
+      }
+      comment {
+        id
+        content
+        user {
+          id
+          username
+          name
+        }
+      }
+      reviewedBy {
+        id
+        username
+        name
+      }
+      reviewedAt
+      moderatorNotes
+    }
+  }
+`;
+
+export const REVIEW_REPORT = gql`
+  mutation ReviewReport(
+    $reportId: ID!
+    $action: String!
+    $moderatorNotes: String
+    $duration: Int
+  ) {
+    reviewReport(
+      reportId: $reportId
+      action: $action
+      moderatorNotes: $moderatorNotes
+      duration: $duration
+    ) {
+      id
+      status
+      action
+      reviewedAt
+      moderatorNotes
+    }
+  }
+`;
+
+export const DISMISS_REPORT = gql`
+  mutation DismissReport($reportId: ID!, $moderatorNotes: String) {
+    dismissReport(reportId: $reportId, moderatorNotes: $moderatorNotes) {
+      id
+      status
+      action
+      reviewedAt
+      moderatorNotes
+    }
+  }
+`;
+
+// Deleted Content Queries (Moderator only)
+export const GET_DELETED_POSTS = gql`
+  query GetDeletedPosts($limit: Int, $offset: Int) {
+    deletedPosts(limit: $limit, offset: $offset) {
+      id
+      content
+      imageUrl
+      createdAt
+      deletedAt
+      isDeleted
+      user {
+        id
+        username
+        name
+        avatar
+      }
+      deletedBy {
+        id
+        username
+        name
+      }
+      likesCount
+      commentsCount
+    }
+  }
+`;
+
+export const GET_DELETED_COMMENTS = gql`
+  query GetDeletedComments($limit: Int, $offset: Int) {
+    deletedComments(limit: $limit, offset: $offset) {
+      id
+      content
+      createdAt
+      deletedAt
+      isDeleted
+      user {
+        id
+        username
+        name
+        avatar
+      }
+      deletedBy {
+        id
+        username
+        name
+      }
+      post {
+        id
+        content
+      }
+    }
+  }
+`;
+
+// Deleted Content Mutations (Moderator only)
+export const PERMANENTLY_DELETE_POST = gql`
+  mutation PermanentlyDeletePost($postId: ID!) {
+    permanentlyDeletePost(postId: $postId)
+  }
+`;
+
+export const PERMANENTLY_DELETE_COMMENT = gql`
+  mutation PermanentlyDeleteComment($commentId: ID!) {
+    permanentlyDeleteComment(commentId: $commentId)
+  }
+`;
+
+export const RESTORE_POST = gql`
+  mutation RestorePost($postId: ID!) {
+    restorePost(postId: $postId) {
+      id
+      isDeleted
+      deletedAt
+      deletedBy {
+        id
+        username
+      }
+    }
+  }
+`;
+
+export const RESTORE_COMMENT = gql`
+  mutation RestoreComment($commentId: ID!) {
+    restoreComment(commentId: $commentId) {
+      id
+      isDeleted
+      deletedAt
+      deletedBy {
+        id
+        username
+      }
+    }
+  }
+`;

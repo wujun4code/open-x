@@ -4,6 +4,7 @@ import '../globals.css';
 import { ApolloWrapper } from '@/lib/apollo-client';
 import Header from '@/components/Header';
 import { ThemeProvider } from '@/contexts/ThemeProvider';
+import { RoleProvider } from '@/contexts/RoleContext';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
@@ -36,10 +37,12 @@ export default async function RootLayout({
             <body className={inter.className}>
                 <ThemeProvider>
                     <ApolloWrapper>
-                        <NextIntlClientProvider messages={messages}>
-                            <Header />
-                            {children}
-                        </NextIntlClientProvider>
+                        <RoleProvider>
+                            <NextIntlClientProvider messages={messages}>
+                                <Header />
+                                {children}
+                            </NextIntlClientProvider>
+                        </RoleProvider>
                     </ApolloWrapper>
                 </ThemeProvider>
             </body>

@@ -40,6 +40,24 @@ async function requireModerator(context: Context): Promise<string> {
     return userId;
 }
 
+// Helper function to require admin role
+async function requireAdmin(context: Context): Promise<string> {
+    const userId = requireAuth(context);
+
+    const user = await context.prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true },
+    });
+
+    if (!user || user.role !== 'admin') {
+        throw new GraphQLError('Unauthorized - Admin access required', {
+            extensions: { code: 'FORBIDDEN' },
+        });
+    }
+
+    return userId;
+}
+
 export const resolvers = {
     Query: {
         hello: () => {
@@ -129,6 +147,7 @@ export const resolvers = {
         // List all posts with pagination
         posts: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }, context: Context) => {
             return context.prisma.post.findMany({
+                where: { isDeleted: false }, // Filter out deleted posts
                 take: limit,
                 skip: offset,
                 orderBy: { createdAt: 'desc' },
@@ -142,7 +161,10 @@ export const resolvers = {
             context: Context
         ) => {
             return context.prisma.post.findMany({
-                where: { userId },
+                where: {
+                    userId,
+                    isDeleted: false, // Filter out deleted posts
+                },
                 take: limit,
                 skip: offset,
                 orderBy: { createdAt: 'desc' },
@@ -167,6 +189,7 @@ export const resolvers = {
             return context.prisma.post.findMany({
                 where: {
                     userId: { in: followingIds },
+                    isDeleted: false, // Filter out deleted posts
                 },
                 take: limit,
                 skip: offset,
@@ -285,8 +308,20 @@ export const resolvers = {
         ) => {
             await requireModerator(context);
 
+            // Handle special filter for "Reviewed" tab - show all reviewed reports
+            let where: any = undefined;
+            if (status === 'all_reviewed') {
+                where = {
+                    status: {
+                        in: ['reviewed', 'actioned', 'dismissed']
+                    }
+                };
+            } else if (status) {
+                where = { status };
+            }
+
             return context.prisma.report.findMany({
-                where: status ? { status } : undefined,
+                where,
                 take: limit,
                 skip: offset,
                 orderBy: { createdAt: 'desc' },
@@ -315,6 +350,48 @@ export const resolvers = {
             return context.prisma.moderationAction.findMany({
                 where: { targetUserId: userId },
                 orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get current user's role
+        myRole: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+            const user = await context.prisma.user.findUnique({
+                where: { id: userId },
+                select: { role: true },
+            });
+            return user?.role || 'user';
+        },
+
+        // Get deleted posts (moderator only)
+        deletedPosts: async (
+            _: any,
+            { limit = 20, offset = 0 }: { limit?: number; offset?: number },
+            context: Context
+        ) => {
+            await requireModerator(context);
+
+            return context.prisma.post.findMany({
+                where: { isDeleted: true },
+                take: limit,
+                skip: offset,
+                orderBy: { deletedAt: 'desc' },
+            });
+        },
+
+        // Get deleted comments (moderator only)
+        deletedComments: async (
+            _: any,
+            { limit = 20, offset = 0 }: { limit?: number; offset?: number },
+            context: Context
+        ) => {
+            await requireModerator(context);
+
+            return context.prisma.comment.findMany({
+                where: { isDeleted: true },
+                take: limit,
+                skip: offset,
+                orderBy: { deletedAt: 'desc' },
             });
         },
     },
@@ -812,15 +889,25 @@ export const resolvers = {
                     },
                 });
 
-                // Handle content removal
+                // Handle content removal (soft delete)
                 if (action === 'content_removal') {
                     if (report.postId) {
-                        await context.prisma.post.delete({
+                        await context.prisma.post.update({
                             where: { id: report.postId },
+                            data: {
+                                isDeleted: true,
+                                deletedAt: new Date(),
+                                deletedById: userId,
+                            },
                         });
                     } else if (report.commentId) {
-                        await context.prisma.comment.delete({
+                        await context.prisma.comment.update({
                             where: { id: report.commentId },
+                            data: {
+                                isDeleted: true,
+                                deletedAt: new Date(),
+                                deletedById: userId,
+                            },
                         });
                     }
                 }
@@ -858,6 +945,39 @@ export const resolvers = {
             });
         },
 
+        // Update user role (admin only)
+        updateUserRole: async (
+            _: any,
+            { userId, role }: { userId: string; role: string },
+            context: Context
+        ) => {
+            await requireAdmin(context);
+
+            // Validate role
+            const validRoles = ['user', 'moderator', 'admin'];
+            if (!validRoles.includes(role)) {
+                throw new GraphQLError('Invalid role. Must be: user, moderator, or admin', {
+                    extensions: { code: 'BAD_USER_INPUT' },
+                });
+            }
+
+            // Check if user exists
+            const targetUser = await context.prisma.user.findUnique({
+                where: { id: userId },
+            });
+
+            if (!targetUser) {
+                throw new GraphQLError('User not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.user.update({
+                where: { id: userId },
+                data: { role },
+            });
+        },
+
         // Generate upload URL for R2
         generateUploadUrl: async (
             _: any,
@@ -875,6 +995,96 @@ export const resolvers = {
                     extensions: { code: 'INTERNAL_SERVER_ERROR' },
                 });
             }
+        },
+
+        // Permanently delete a post (moderator only)
+        permanentlyDeletePost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            await context.prisma.post.delete({
+                where: { id: postId },
+            });
+
+            return true;
+        },
+
+        // Permanently delete a comment (moderator only)
+        permanentlyDeleteComment: async (_: any, { commentId }: { commentId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const comment = await context.prisma.comment.findUnique({
+                where: { id: commentId },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            await context.prisma.comment.delete({
+                where: { id: commentId },
+            });
+
+            return true;
+        },
+
+        // Restore a soft-deleted post (moderator only)
+        restorePost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.post.update({
+                where: { id: postId },
+                data: {
+                    isDeleted: false,
+                    deletedAt: null,
+                    deletedById: null,
+                },
+            });
+        },
+
+        // Restore a soft-deleted comment (moderator only)
+        restoreComment: async (_: any, { commentId }: { commentId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const comment = await context.prisma.comment.findUnique({
+                where: { id: commentId },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.comment.update({
+                where: { id: commentId },
+                data: {
+                    isDeleted: false,
+                    deletedAt: null,
+                    deletedById: null,
+                },
+            });
         },
     },
 
@@ -932,6 +1142,10 @@ export const resolvers = {
                 },
             });
             return !!follow;
+        },
+
+        role: (parent: any) => {
+            return parent.role || 'user';
         },
     },
 
@@ -997,6 +1211,17 @@ export const resolvers = {
 
             return !!bookmark;
         },
+
+        deletedBy: async (parent: any, _: any, context: Context) => {
+            if (!parent.deletedById) return null;
+            return context.prisma.user.findUnique({
+                where: { id: parent.deletedById },
+            });
+        },
+
+        deletedAt: (parent: any) => {
+            return parent.deletedAt ? parent.deletedAt.getTime().toString() : null;
+        },
     },
 
     // Field resolvers for Comment type
@@ -1011,6 +1236,17 @@ export const resolvers = {
             return context.prisma.post.findUnique({
                 where: { id: parent.postId },
             });
+        },
+
+        deletedBy: async (parent: any, _: any, context: Context) => {
+            if (!parent.deletedById) return null;
+            return context.prisma.user.findUnique({
+                where: { id: parent.deletedById },
+            });
+        },
+
+        deletedAt: (parent: any) => {
+            return parent.deletedAt ? parent.deletedAt.getTime().toString() : null;
         },
     },
 

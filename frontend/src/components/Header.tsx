@@ -2,14 +2,17 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link, usePathname, useRouter } from '@/navigation';
-import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages } from 'lucide-react';
+import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Languages, Shield } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeProvider';
+import { useRole } from '@/contexts/RoleContext';
+import ProtectedComponent from './ProtectedComponent';
 import { useTranslations } from 'next-intl';
 
 export default function Header() {
     const t = useTranslations('Header');
     const pathname = usePathname();
     const router = useRouter();
+    const { isModerator } = useRole();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -113,6 +116,20 @@ export default function Header() {
                                             <TrendingUp className="w-5 h-5" />
                                             <span className="font-medium hidden sm:inline">{t('trending')}</span>
                                         </Link>
+
+                                        {/* Moderation Link (Moderator/Admin only) */}
+                                        <ProtectedComponent requireModerator>
+                                            <Link
+                                                href="/moderation"
+                                                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${pathname === '/moderation'
+                                                    ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-dark-700'
+                                                    }`}
+                                            >
+                                                <Shield className="w-5 h-5" />
+                                                <span className="font-medium hidden sm:inline">Moderation</span>
+                                            </Link>
+                                        </ProtectedComponent>
 
                                         {/* Language Switcher */}
                                         <div className="relative" ref={langDropdownRef}>

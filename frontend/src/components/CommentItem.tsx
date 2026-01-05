@@ -1,11 +1,12 @@
 'use client';
 
 import { useMutation } from '@apollo/client';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Flag } from 'lucide-react';
 import { DELETE_COMMENT_MUTATION, GET_POST_COMMENTS } from '@/lib/queries';
 import { Link } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
+import ReportDialog from './ReportDialog';
 
 interface CommentItemProps {
     comment: {
@@ -26,6 +27,7 @@ interface CommentItemProps {
 export default function CommentItem({ comment, postId, onDelete }: CommentItemProps) {
     const t = useTranslations('Comments');
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [showReportDialog, setShowReportDialog] = useState(false);
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -128,20 +130,38 @@ export default function CommentItem({ comment, postId, onDelete }: CommentItemPr
                         <span className="text-gray-500 dark:text-gray-400 text-xs">{formatTimestamp(comment.createdAt)}</span>
                     </div>
 
-                    {isOwnComment && (
-                        <button
-                            onClick={handleDelete}
-                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                            title={t('delete')}
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </button>
-                    )}
+                    <div className="flex items-center gap-1">
+                        {!isOwnComment && (
+                            <button
+                                onClick={() => setShowReportDialog(true)}
+                                className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                title="Report comment"
+                            >
+                                <Flag className="w-4 h-4" />
+                            </button>
+                        )}
+                        {isOwnComment && (
+                            <button
+                                onClick={handleDelete}
+                                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                title={t('delete')}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <p className="text-gray-800 dark:text-gray-200 mt-1 whitespace-pre-wrap break-words">
                     {comment.content}
                 </p>
             </div>
+
+            {showReportDialog && (
+                <ReportDialog
+                    commentId={comment.id}
+                    onClose={() => setShowReportDialog(false)}
+                />
+            )}
         </div>
     );
 }

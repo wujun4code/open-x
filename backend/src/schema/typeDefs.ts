@@ -20,6 +20,11 @@ export const typeDefs = `#graphql
     reports(status: String, limit: Int, offset: Int): [Report!]!
     report(id: ID!): Report
     moderationActions(userId: ID!): [ModerationAction!]!
+    deletedPosts(limit: Int, offset: Int): [Post!]!
+    deletedComments(limit: Int, offset: Int): [Comment!]!
+    
+    # Role management
+    myRole: String!
   }
 
   type Mutation {
@@ -53,6 +58,13 @@ export const typeDefs = `#graphql
     reportComment(commentId: ID!, reason: String!, description: String): Report!
     reviewReport(reportId: ID!, action: String!, moderatorNotes: String, duration: Int): Report!
     dismissReport(reportId: ID!, moderatorNotes: String): Report!
+    permanentlyDeletePost(postId: ID!): Boolean!
+    permanentlyDeleteComment(commentId: ID!): Boolean!
+    restorePost(postId: ID!): Post!
+    restoreComment(commentId: ID!): Comment!
+    
+    # Role management (admin only)
+    updateUserRole(userId: ID!, role: String!): User!
     
     # File Upload
     generateUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
@@ -78,6 +90,7 @@ export const typeDefs = `#graphql
     followingCount: Int!
     postsCount: Int!
     isFollowing: Boolean!
+    role: String!
   }
 
   type Post {
@@ -86,6 +99,11 @@ export const typeDefs = `#graphql
     imageUrl: String
     createdAt: String!
     updatedAt: String!
+    
+    # Soft delete fields
+    isDeleted: Boolean!
+    deletedAt: String
+    deletedBy: User
     
     # Relations
     user: User!
@@ -109,6 +127,11 @@ export const typeDefs = `#graphql
     content: String!
     createdAt: String!
     updatedAt: String!
+    
+    # Soft delete fields
+    isDeleted: Boolean!
+    deletedAt: String
+    deletedBy: User
     
     # Relations
     user: User!
