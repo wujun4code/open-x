@@ -32,7 +32,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(!!token);
     }, []);
 
-    const { data, loading } = useQuery(MY_ROLE_QUERY, {
+    const { data, loading, error } = useQuery(MY_ROLE_QUERY, {
         // Only fetch if user is logged in
         skip: typeof window === 'undefined' || !isAuthenticated,
         fetchPolicy: 'network-only', // Always fetch fresh data
@@ -41,6 +41,19 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     const role = data?.myRole || 'user';
     const isAdmin = role === 'admin';
     const isModerator = role === 'moderator' || role === 'admin';
+
+    // Debug logging
+    if (typeof window !== 'undefined') {
+        console.log('[RoleContext] Debug:', {
+            isAuthenticated,
+            loading,
+            error: error?.message,
+            role,
+            isAdmin,
+            isModerator,
+            rawData: data
+        });
+    }
 
     // If there's an error or not authenticated, default to user role
     const effectiveLoading = isAuthenticated ? loading : false;

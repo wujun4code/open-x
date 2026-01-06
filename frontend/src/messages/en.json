@@ -52,8 +52,14 @@
         "addImage": "Add image"
     },
     "Trending": {
-        "title": "Trending",
-        "trending": "Trending",
+        "backToHome": "Back to Home",
+        "title": "Trending Now",
+        "subtitle": "Discover what is hot and happening right now",
+        "trendingTopics": "Trending Topics",
+        "allTime": "All time",
+        "errorLoading": "Error loading trending topics",
+        "noTopics": "No trending topics yet",
+        "beFirst": "Be the first to start a conversation!",
         "post": "post",
         "posts": "posts"
     },
@@ -240,5 +246,50 @@
         "title": "Page Not Found",
         "description": "The page you are looking for does not exist or has been moved.",
         "goHome": "Go Home"
+    },
+    "EditProfile": {
+        "title": "Edit Profile",
+        "coverImage": "Cover Image",
+        "avatar": "Avatar",
+        "name": "Name",
+        "nameRequired": "Name is required",
+        "nameTooLong": "Name must be 50 characters or less",
+        "bio": "Bio",
+        "bioTooLong": "Bio must be 160 characters or less",
+        "bioPlaceholder": "Tell us about yourself...",
+        "language": "Language",
+        "languageChangeNote": "Changes take effect immediately",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "noChanges": "No changes to save",
+        "unsavedChanges": {
+            "title": "Unsaved Changes",
+            "message": "You have unsaved changes. Are you sure you want to leave?",
+            "keepEditing": "Keep Editing",
+            "discard": "Discard Changes"
+        }
+    },
+    "Notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all read",
+        "markAllAsRead": "Mark all as read",
+        "noNotifications": "No notifications yet",
+        "noNotificationsDesc": "When someone interacts with your content, you will see it here",
+        "seeAll": "See all notifications",
+        "types": {
+            "likedPost": "liked your post",
+            "commentedPost": "commented on your post",
+            "startedFollowing": "started following you",
+            "mentionedYou": "mentioned you"
+        },
+        "timeAgo": {
+            "justNow": "Just now",
+            "minutesAgo": "{count}m ago",
+            "hoursAgo": "{count}h ago",
+            "daysAgo": "{count}d ago"
+        },
+        "marking": "Marking...",
+        "loadMore": "Load more"
     }
 }

@@ -240,5 +240,27 @@
         "title": "页面未找到",
         "description": "您查找的页面不存在或已被移动。",
         "goHome": "返回主页"
+    },
+    "Notifications": {
+        "title": "通知",
+        "markAllRead": "全部标记为已读",
+        "markAllAsRead": "全部标记为已读",
+        "noNotifications": "暂无通知",
+        "noNotificationsDesc": "当有人与您的内容互动时，您会在这里看到",
+        "seeAll": "查看所有通知",
+        "types": {
+            "likedPost": "赞了你的帖子",
+            "commentedPost": "评论了你的帖子",
+            "startedFollowing": "开始关注你",
+            "mentionedYou": "提到了你"
+        },
+        "timeAgo": {
+            "justNow": "刚刚",
+            "minutesAgo": "{count}分钟前",
+            "hoursAgo": "{count}小时前",
+            "daysAgo": "{count}天前"
+        },
+        "marking": "标记中...",
+        "loadMore": "加载更多"
     }
 }

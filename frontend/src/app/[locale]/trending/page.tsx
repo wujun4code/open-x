@@ -3,7 +3,8 @@
 import { useQuery } from '@apollo/client';
 import { TRENDING_HASHTAGS } from '@/lib/queries';
 import { TrendingUp, Hash, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
+import { useTranslations } from 'next-intl';
 
 interface Hashtag {
     id: string;
@@ -13,6 +14,7 @@ interface Hashtag {
 }
 
 export default function TrendingPage() {
+    const t = useTranslations('Trending');
     const { data, loading, error } = useQuery(TRENDING_HASHTAGS, {
         variables: { limit: 20 },
     });
@@ -28,7 +30,7 @@ export default function TrendingPage() {
                     className="inline-flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
                 >
                     <ArrowLeft className="w-5 h-5" />
-                    <span>Back to Home</span>
+                    <span>{t('backToHome')}</span>
                 </Link>
 
                 {/* Page Header */}
@@ -37,9 +39,9 @@ export default function TrendingPage() {
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                             <TrendingUp className="w-7 h-7 text-white" />
                         </div>
-                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Trending Now</h1>
+                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 text-lg">Discover what&apos;s hot and happening right now</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">{t('subtitle')}</p>
                 </div>
 
                 {/* Loading State */}
@@ -62,7 +64,7 @@ export default function TrendingPage() {
                 {/* Error State */}
                 {error && (
                     <div className="bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg p-4 text-red-700 dark:text-red-400">
-                        Error loading trending topics: {error.message}
+                        {t('errorLoading')}: {error.message}
                     </div>
                 )}
 
@@ -72,15 +74,15 @@ export default function TrendingPage() {
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold flex items-center space-x-2 text-gray-900 dark:text-white">
                                 <Hash className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                                <span>Trending Topics</span>
+                                <span>{t('trendingTopics')}</span>
                             </h2>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">All time</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">{t('allTime')}</span>
                         </div>
 
                         {hashtags.length === 0 ? (
                             <div className="text-center py-12">
-                                <p className="text-gray-600 dark:text-gray-300 text-lg">No trending topics yet</p>
-                                <p className="text-gray-500 dark:text-gray-400 mt-2">Be the first to start a conversation!</p>
+                                <p className="text-gray-600 dark:text-gray-300 text-lg">{t('noTopics')}</p>
+                                <p className="text-gray-500 dark:text-gray-400 mt-2">{t('beFirst')}</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -101,7 +103,7 @@ export default function TrendingPage() {
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {hashtag.postsCount.toLocaleString()} {hashtag.postsCount === 1 ? 'post' : 'posts'}
+                                                    {hashtag.postsCount.toLocaleString()} {hashtag.postsCount === 1 ? t('post') : t('posts')}
                                                 </p>
                                             </div>
                                         </div>

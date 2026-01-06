@@ -5,12 +5,14 @@ import { GET_NOTIFICATIONS, MARK_ALL_NOTIFICATIONS_AS_READ, GET_UNREAD_COUNT } f
 import NotificationItem from './NotificationItem';
 import { Link } from '@/navigation';
 import { CheckCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface NotificationDropdownProps {
     onClose: () => void;
 }
 
 export default function NotificationDropdown({ onClose }: NotificationDropdownProps) {
+    const t = useTranslations('Notifications');
     const { data, loading } = useQuery(GET_NOTIFICATIONS, {
         variables: { limit: 10, offset: 0 },
     });
@@ -43,15 +45,15 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
         <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-dark-800 rounded-lg shadow-xl border border-gray-200 dark:border-dark-700 z-50 max-h-[600px] overflow-hidden flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-700">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Notifications</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('title')}</h3>
                 {hasUnread && (
                     <button
                         onClick={handleMarkAllAsRead}
                         className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        title="Mark all as read"
+                        title={t('markAllAsRead')}
                     >
                         <CheckCheck className="w-4 h-4" />
-                        <span>Mark all read</span>
+                        <span>{t('markAllRead')}</span>
                     </button>
                 )}
             </div>
@@ -60,9 +62,9 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
             <div className="overflow-y-auto flex-1">
                 {notifications.length === 0 ? (
                     <div className="p-8 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No notifications yet</p>
+                        <p className="text-gray-500 dark:text-gray-400">{t('noNotifications')}</p>
                         <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                            When someone interacts with your content, you&apos;ll see it here
+                            {t('noNotificationsDesc')}
                         </p>
                     </div>
                 ) : (
@@ -80,7 +82,7 @@ export default function NotificationDropdown({ onClose }: NotificationDropdownPr
                         onClick={onClose}
                         className="block text-center text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
                     >
-                        See all notifications
+                        {t('seeAll')}
                     </Link>
                 </div>
             )}

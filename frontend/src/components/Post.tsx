@@ -19,8 +19,10 @@ interface PostProps {
         isLiked: boolean;
         isBookmarked?: boolean;
     };
+    disableInlineComments?: boolean;
+    onPostDeleted?: () => void;
 }
 
-export default function Post({ post }: PostProps) {
-    return <PostCard post={post} />;
+export default function Post({ post, disableInlineComments, onPostDeleted }: PostProps) {
+    return <PostCard post={post} disableInlineComments={disableInlineComments} onPostDeleted={onPostDeleted} />;
 }

@@ -85,9 +85,14 @@ export default function PostPage() {
                     <span>Back</span>
                 </button>
 
+
                 {/* Post */}
                 <div className="bg-white dark:bg-dark-800 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-700 overflow-hidden mb-6">
-                    <Post post={data.post} />
+                    <Post
+                        post={data.post}
+                        disableInlineComments={true}
+                        onPostDeleted={() => router.push('/')}
+                    />
                 </div>
 
                 {/* Comments Section */}

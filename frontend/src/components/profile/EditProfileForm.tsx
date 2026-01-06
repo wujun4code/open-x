@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, gql } from '@apollo/client';
-import { useRouter } from '@/navigation';
+import { useRouter, usePathname } from '@/navigation';
 import { UPDATE_PROFILE } from '@/lib/queries';
 import ImageUploadButton from './ImageUploadButton';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Languages, Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const GET_CURRENT_USER = gql`
   query GetCurrentUser {
@@ -21,7 +22,9 @@ const GET_CURRENT_USER = gql`
 `;
 
 export default function EditProfileForm() {
+    const t = useTranslations('EditProfile');
     const router = useRouter();
+    const pathname = usePathname();
     const { data, loading: loadingUser } = useQuery(GET_CURRENT_USER);
     const [updateProfile, { loading: updating }] = useMutation(UPDATE_PROFILE);
 
@@ -64,13 +67,13 @@ export default function EditProfileForm() {
         const newErrors: Record<string, string> = {};
 
         if (!formData.name.trim()) {
-            newErrors.name = 'Name is required';
+            newErrors.name = t('nameRequired');
         } else if (formData.name.length > 50) {
-            newErrors.name = 'Name must be 50 characters or less';
+            newErrors.name = t('nameTooLong');
         }
 
         if (formData.bio.length > 160) {
-            newErrors.bio = 'Bio must be 160 characters or less';
+            newErrors.bio = t('bioTooLong');
         }
 
         setErrors(newErrors);
@@ -83,7 +86,7 @@ export default function EditProfileForm() {
         if (!validateForm()) return;
 
         if (!isDirty) {
-            alert('No changes to save');
+            alert(t('noChanges'));
             return;
         }
 
@@ -117,6 +120,28 @@ export default function EditProfileForm() {
         router.back();
     };
 
+    const handleLanguageChange = (locale: string) => {
+        router.replace({ pathname }, { locale: locale as any });
+    };
+
+    // Get current locale from pathname
+    const getCurrentLocale = () => {
+        if (typeof window !== 'undefined') {
+            const path = window.location.pathname;
+            if (path.startsWith('/en')) return 'en';
+            if (path.startsWith('/es')) return 'es';
+            if (path.startsWith('/zh-cn')) return 'zh-cn';
+        }
+        return 'en';
+    };
+
+    const currentLocale = getCurrentLocale();
+    const localeNames: Record<string, string> = {
+        'en': 'English',
+        'es': 'Español',
+        'zh-cn': '简体中文'
+    };
+
     if (loadingUser) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -139,7 +164,7 @@ export default function EditProfileForm() {
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </button>
-                <h1 className="text-2xl font-bold">Edit Profile</h1>
+                <h1 className="text-2xl font-bold">{t('title')}</h1>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -147,7 +172,7 @@ export default function EditProfileForm() {
                 <ImageUploadButton
                     currentImage={formData.coverImage}
                     onImageChange={(url) => setFormData({ ...formData, coverImage: url || '' })}
-                    label="Cover Image"
+                    label={t('coverImage')}
                     aspectRatio="16:9"
                 />
 
@@ -155,14 +180,14 @@ export default function EditProfileForm() {
                 <ImageUploadButton
                     currentImage={formData.avatar}
                     onImageChange={(url) => setFormData({ ...formData, avatar: url || '' })}
-                    label="Avatar"
+                    label={t('avatar')}
                     aspectRatio="1:1"
                 />
 
                 {/* Name */}
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Name <span className="text-red-600">*</span>
+                        {t('name')} <span className="text-red-600">*</span>
                     </label>
                     <input
                         id="name"
@@ -176,17 +201,17 @@ export default function EditProfileForm() {
                             ? 'border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-dark-700 focus:ring-blue-500'
                             } bg-white dark:bg-dark-900 focus:ring-2 focus:outline-none transition-colors`}
-                        placeholder="Your name"
+                        placeholder={t('bioPlaceholder')}
                         maxLength={50}
                     />
                     {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-                    <p className="mt-1 text-xs text-gray-500">{formData.name.length}/50 characters</p>
+                    <p className="mt-1 text-xs text-gray-500">{formData.name.length}/50 {t('name').toLowerCase()}</p>
                 </div>
 
                 {/* Bio */}
                 <div>
                     <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Bio
+                        {t('bio')}
                     </label>
                     <textarea
                         id="bio"
@@ -199,13 +224,59 @@ export default function EditProfileForm() {
                             ? 'border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-dark-700 focus:ring-blue-500'
                             } bg-white dark:bg-dark-900 focus:ring-2 focus:outline-none transition-colors resize-none`}
-                        placeholder="Tell us about yourself..."
+                        placeholder={t('bioPlaceholder')}
                         rows={4}
                         maxLength={160}
                     />
                     {errors.bio && <p className="mt-1 text-sm text-red-600">{errors.bio}</p>}
                     <p className={`mt-1 text-xs ${bioCharCount > bioCharLimit ? 'text-red-600' : 'text-gray-500'}`}>
                         {bioCharCount}/{bioCharLimit} characters
+                    </p>
+                </div>
+
+                {/* Language Preference */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <Languages className="w-4 h-4 inline mr-2" />
+                        {t('language')}
+                    </label>
+                    <div className="grid grid-cols-1 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => handleLanguageChange('en')}
+                            className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${currentLocale === 'en'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-gray-300 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-800'
+                                }`}
+                        >
+                            <span className="text-sm font-medium">English</span>
+                            {currentLocale === 'en' && <Check className="w-5 h-5 text-blue-600" />}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleLanguageChange('es')}
+                            className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${currentLocale === 'es'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-gray-300 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-800'
+                                }`}
+                        >
+                            <span className="text-sm font-medium">Español</span>
+                            {currentLocale === 'es' && <Check className="w-5 h-5 text-blue-600" />}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleLanguageChange('zh-cn')}
+                            className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${currentLocale === 'zh-cn'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-gray-300 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-800'
+                                }`}
+                        >
+                            <span className="text-sm font-medium">简体中文</span>
+                            {currentLocale === 'zh-cn' && <Check className="w-5 h-5 text-blue-600" />}
+                        </button>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500">
+                        {t('languageChangeNote')}
                     </p>
                 </div>
 
@@ -217,7 +288,7 @@ export default function EditProfileForm() {
                         className="flex-1 px-6 py-3 border border-gray-300 dark:border-dark-700 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-dark-800 transition-colors"
                         disabled={updating}
                     >
-                        Cancel
+                        {t('cancel')}
                     </button>
                     <button
                         type="submit"
@@ -227,10 +298,10 @@ export default function EditProfileForm() {
                         {updating ? (
                             <>
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                Saving...
+                                {t('saving')}
                             </>
                         ) : (
-                            'Save Changes'
+                            t('saveChanges')
                         )}
                     </button>
                 </div>
@@ -240,22 +311,22 @@ export default function EditProfileForm() {
             {showUnsavedWarning && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-dark-900 rounded-2xl p-6 max-w-md w-full shadow-2xl">
-                        <h3 className="text-xl font-bold mb-4">Unsaved Changes</h3>
+                        <h3 className="text-xl font-bold mb-4">{t('unsavedChanges.title')}</h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            You have unsaved changes. Are you sure you want to leave?
+                            {t('unsavedChanges.message')}
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setShowUnsavedWarning(false)}
                                 className="flex-1 px-4 py-2 bg-gray-200 dark:bg-dark-800 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-dark-700 transition-colors"
                             >
-                                Keep Editing
+                                {t('unsavedChanges.keepEditing')}
                             </button>
                             <button
                                 onClick={confirmCancel}
                                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
                             >
-                                Discard Changes
+                                {t('unsavedChanges.discard')}
                             </button>
                         </div>
                     </div>

@@ -52,8 +52,14 @@
         "addImage": "Agregar imagen"
     },
     "Trending": {
-        "title": "Tendencias",
-        "trending": "Tendencia",
+        "backToHome": "Volver al Inicio",
+        "title": "Tendencias Ahora",
+        "subtitle": "Descubre lo que está de moda y sucediendo ahora mismo",
+        "trendingTopics": "Temas en Tendencia",
+        "allTime": "Todo el tiempo",
+        "errorLoading": "Error al cargar temas en tendencia",
+        "noTopics": "Aún no hay temas en tendencia",
+        "beFirst": "Sé el primero en iniciar una conversación!",
         "post": "publicación",
         "posts": "publicaciones"
     },
@@ -240,5 +246,50 @@
         "title": "Página No Encontrada",
         "description": "La página que buscas no existe o ha sido movida.",
         "goHome": "Ir al Inicio"
+    },
+    "EditProfile": {
+        "title": "Editar Perfil",
+        "coverImage": "Imagen de Portada",
+        "avatar": "Avatar",
+        "name": "Nombre",
+        "nameRequired": "El nombre es obligatorio",
+        "nameTooLong": "El nombre debe tener 50 caracteres o menos",
+        "bio": "Biografía",
+        "bioTooLong": "La biografía debe tener 160 caracteres o menos",
+        "bioPlaceholder": "Cuéntanos sobre ti...",
+        "language": "Idioma",
+        "languageChangeNote": "Los cambios surten efecto inmediatamente",
+        "cancel": "Cancelar",
+        "saveChanges": "Guardar Cambios",
+        "saving": "Guardando...",
+        "noChanges": "No hay cambios para guardar",
+        "unsavedChanges": {
+            "title": "Cambios sin Guardar",
+            "message": "Estás seguro de que quieres salir? Tienes cambios sin guardar.",
+            "keepEditing": "Seguir Editando",
+            "discard": "Descartar Cambios"
+        }
+    },
+    "Notifications": {
+        "title": "Notificaciones",
+        "markAllRead": "Marcar todo como leído",
+        "markAllAsRead": "Marcar todo como leído",
+        "noNotifications": "Aún no hay notificaciones",
+        "noNotificationsDesc": "Cuando alguien interactúe con tu contenido, lo verás aquí",
+        "seeAll": "Ver todas las notificaciones",
+        "types": {
+            "likedPost": "le gustó tu publicación",
+            "commentedPost": "comentó en tu publicación",
+            "startedFollowing": "comenzó a seguirte",
+            "mentionedYou": "te mencionó"
+        },
+        "timeAgo": {
+            "justNow": "Justo ahora",
+            "minutesAgo": "hace {count}m",
+            "hoursAgo": "hace {count}h",
+            "daysAgo": "hace {count}d"
+        },
+        "marking": "Marcando...",
+        "loadMore": "Cargar más"
     }
 }

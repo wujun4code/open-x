@@ -46,9 +46,10 @@ interface PostCardProps {
         isLiked: boolean;
     };
     onPostDeleted?: () => void;
+    disableInlineComments?: boolean;
 }
 
-export default function PostCard({ post, onPostDeleted }: PostCardProps) {
+export default function PostCard({ post, onPostDeleted, disableInlineComments = false }: PostCardProps) {
     const [isLiked, setIsLiked] = useState(post.isLiked);
     const [likesCount, setLikesCount] = useState(post.likesCount);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -294,13 +295,13 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
 
                         {/* Comment Button */}
                         <button
-                            onClick={() => setShowComments(!showComments)}
-                            className={`flex items - center space - x - 1.5 px - 3 py - 1.5 transition - colors rounded - full ${showComments
+                            onClick={() => !disableInlineComments && setShowComments(!showComments)}
+                            className={`flex items-center space-x-1.5 px-3 py-1.5 transition-colors rounded-full ${showComments && !disableInlineComments
                                 ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                                } `}
+                                } ${disableInlineComments ? 'cursor-default' : ''}`}
                         >
-                            <MessageCircle className={`w - 5 h - 5 ${showComments ? 'fill-current' : ''} `} />
+                            <MessageCircle className={`w-5 h-5 ${showComments && !disableInlineComments ? 'fill-current' : ''}`} />
                             <span className="font-medium">{commentsCount}</span>
                         </button>
 
@@ -322,7 +323,7 @@ export default function PostCard({ post, onPostDeleted }: PostCardProps) {
                     </div>
 
                     {/* Comments Section */}
-                    {showComments && (
+                    {showComments && !disableInlineComments && (
                         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-dark-700">
                             <CreateComment
                                 postId={post.id}

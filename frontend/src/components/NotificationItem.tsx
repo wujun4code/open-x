@@ -4,6 +4,7 @@ import { Heart, MessageCircle, UserPlus, AtSign } from 'lucide-react';
 import { Link } from '@/navigation';
 import { useMutation } from '@apollo/client';
 import { MARK_NOTIFICATION_AS_READ, GET_UNREAD_COUNT } from '@/lib/queries';
+import { useTranslations } from 'next-intl';
 
 interface NotificationItemProps {
     notification: {
@@ -30,6 +31,7 @@ interface NotificationItemProps {
 }
 
 export default function NotificationItem({ notification, onClick }: NotificationItemProps) {
+    const t = useTranslations('Notifications');
     const [markAsRead] = useMutation(MARK_NOTIFICATION_AS_READ, {
         refetchQueries: [{ query: GET_UNREAD_COUNT }],
     });
@@ -58,13 +60,13 @@ export default function NotificationItem({ notification, onClick }: Notification
         const actorName = notification.actor.name || notification.actor.username;
         switch (notification.type) {
             case 'LIKE':
-                return `${actorName} liked your post`;
+                return `${actorName} ${t('types.likedPost')}`;
             case 'COMMENT':
-                return `${actorName} commented on your post`;
+                return `${actorName} ${t('types.commentedPost')}`;
             case 'FOLLOW':
-                return `${actorName} started following you`;
+                return `${actorName} ${t('types.startedFollowing')}`;
             case 'MENTION':
-                return `${actorName} mentioned you`;
+                return `${actorName} ${t('types.mentionedYou')}`;
         }
     };
 
@@ -91,10 +93,10 @@ export default function NotificationItem({ notification, onClick }: Notification
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
 
-        if (days > 0) return `${days}d ago`;
-        if (hours > 0) return `${hours}h ago`;
-        if (minutes > 0) return `${minutes}m ago`;
-        return 'Just now';
+        if (days > 0) return t('timeAgo.daysAgo', { count: days });
+        if (hours > 0) return t('timeAgo.hoursAgo', { count: hours });
+        if (minutes > 0) return t('timeAgo.minutesAgo', { count: minutes });
+        return t('timeAgo.justNow');
     };
 
     return (

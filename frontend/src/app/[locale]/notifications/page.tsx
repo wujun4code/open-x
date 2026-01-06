@@ -5,8 +5,10 @@ import { GET_NOTIFICATIONS, MARK_ALL_NOTIFICATIONS_AS_READ, GET_UNREAD_COUNT } f
 import NotificationItem from '@/components/NotificationItem';
 import { CheckCheck } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function NotificationsPage() {
+    const t = useTranslations('Notifications');
     const [limit] = useState(50);
     const { data, loading, fetchMore } = useQuery(GET_NOTIFICATIONS, {
         variables: { limit, offset: 0 },
@@ -46,7 +48,7 @@ export default function NotificationsPage() {
                 {/* Header */}
                 <div className="bg-white dark:bg-dark-800 rounded-t-2xl shadow-lg border border-gray-100 dark:border-dark-700 border-b-0 p-6">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notifications</h1>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
                         {hasUnread && (
                             <button
                                 onClick={handleMarkAllAsRead}
@@ -55,7 +57,7 @@ export default function NotificationsPage() {
                             >
                                 <CheckCheck className="w-4 h-4" />
                                 <span className="text-sm font-medium">
-                                    {markingAllAsRead ? 'Marking...' : 'Mark all as read'}
+                                    {markingAllAsRead ? t('marking') : t('markAllAsRead')}
                                 </span>
                             </button>
                         )}
@@ -70,10 +72,10 @@ export default function NotificationsPage() {
                                 <CheckCheck className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                                No notifications yet
+                                {t('noNotifications')}
                             </h3>
                             <p className="text-gray-500 dark:text-gray-400">
-                                When someone interacts with your content, you&apos;ll see it here
+                                {t('noNotificationsDesc')}
                             </p>
                         </div>
                     ) : (
@@ -96,7 +98,7 @@ export default function NotificationsPage() {
                             }
                             className="px-6 py-3 bg-white dark:bg-dark-800 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-700 transition-colors font-medium"
                         >
-                            Load more
+                            {t('loadMore')}
                         </button>
                     </div>
                 )}
