@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { X, Search, Loader2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { SEND_MESSAGE } from '@/lib/queries/messages';
 
 const SEARCH_USERS = gql`
@@ -23,7 +22,6 @@ interface NewMessageModalProps {
 }
 
 export default function NewMessageModal({ onClose, onConversationCreated }: NewMessageModalProps) {
-    const t = useTranslations('Messages');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [message, setMessage] = useState('');

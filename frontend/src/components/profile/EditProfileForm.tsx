@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, gql } from '@apollo/client';
-import { useRouter, usePathname } from '@/navigation';
+import { useRouter } from '@/navigation';
 import { UPDATE_PROFILE } from '@/lib/queries';
 import ImageUploadButton from './ImageUploadButton';
 import { Loader2, ArrowLeft } from 'lucide-react';
@@ -24,7 +24,6 @@ const GET_CURRENT_USER = gql`
 export default function EditProfileForm() {
     const t = useTranslations('EditProfile');
     const router = useRouter();
-    const pathname = usePathname();
     const { data, loading: loadingUser } = useQuery(GET_CURRENT_USER);
     const [updateProfile, { loading: updating }] = useMutation(UPDATE_PROFILE);
 
