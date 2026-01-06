@@ -291,5 +291,33 @@
         },
         "marking": "Marcando...",
         "loadMore": "Cargar más"
+    },
+    "ImageUpload": {
+        "change": "Cambiar",
+        "upload": "Subir",
+        "uploading": "Subiendo...",
+        "aspectRatio16x9": "Proporción 16:9",
+        "aspectRatio1x1": "Cuadrado (1:1)",
+        "maxSize": "Máx {size}MB"
+    },
+    "Profile": {
+        "posts": "publicaciones",
+        "editProfile": "Editar perfil",
+        "follow": "Seguir",
+        "following": "Siguiendo",
+        "unfollow": "Dejar de seguir",
+        "followers": "Seguidores",
+        "joined": "Se unió",
+        "userNotFound": "Usuario no encontrado",
+        "userNotFoundDesc": "La cuenta que buscas no existe.",
+        "goHome": "Ir a inicio",
+        "tabPosts": "Publicaciones",
+        "tabReplies": "Respuestas",
+        "tabHighlights": "Destacados",
+        "tabMedia": "Multimedia",
+        "tabLikes": "Me gusta",
+        "noPosts": "Aún no hay publicaciones.",
+        "noBio": "Sin biografía aún. Haz clic en Editar perfil para agregar una!",
+        "startSharing": "Comienza a compartir tus pensamientos con el mundo!"
     }
 }

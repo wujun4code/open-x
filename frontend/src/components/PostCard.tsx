@@ -212,17 +212,20 @@ export default function PostCard({ post, onPostDeleted, disableInlineComments = 
     const isOwnPost = currentUserId === post.user.id;
 
     return (
-        <div className="bg-white dark:bg-dark-950 border-b border-gray-100 dark:border-dark-800 px-4 py-5 hover:bg-gray-50 dark:hover:bg-dark-900/50 transition-colors">
+        <div className="card-glass hover-lift mb-4 p-6 cursor-pointer">
             <div className="flex space-x-4">
 
                 {/* User Avatar */}
                 <Link href={`/profile/${post.user.username}`} className="flex-shrink-0">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-                        {post.user.avatar ? (
-                            <img src={post.user.avatar} alt={post.user.name || post.user.username} className="w-full h-full rounded-full object-cover" />
-                        ) : (
-                            post.user.name?.[0] || post.user.username[0]
-                        )}
+                    <div className="relative w-12 h-12 sm:w-14 sm:h-14">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-purple-600 rounded-full blur-sm opacity-50"></div>
+                        <div className="relative w-full h-full bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md hover:shadow-lg transition-all overflow-hidden">
+                            {post.user.avatar ? (
+                                <img src={post.user.avatar} alt={post.user.name || post.user.username} className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                <span className="text-lg">{post.user.name?.[0] || post.user.username[0]}</span>
+                            )}
+                        </div>
                     </div>
                 </Link>
 
@@ -230,11 +233,11 @@ export default function PostCard({ post, onPostDeleted, disableInlineComments = 
                 <div className="flex-1 min-w-0">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                            <Link href={`/profile/${post.user.username}`} className="font-semibold text-gray-900 dark:text-white hover:underline">
+                        <div className="flex items-center space-x-2 flex-wrap">
+                            <Link href={`/profile/${post.user.username}`} className="font-semibold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                                 {post.user.name || post.user.username}
                             </Link>
-                            <span className="text-gray-500 dark:text-gray-400">@{post.user.username}</span>
+                            <span className="text-gray-500 dark:text-gray-400 text-sm">@{post.user.username}</span>
                             <span className="text-gray-400 dark:text-gray-500">·</span>
                             <span className="text-gray-500 dark:text-gray-400 text-sm">{formatTimestamp(post.createdAt)}</span>
                         </div>
@@ -243,7 +246,7 @@ export default function PostCard({ post, onPostDeleted, disableInlineComments = 
                         {isOwnPost && (
                             <button
                                 onClick={handleDelete}
-                                className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                                 title="Delete post"
                             >
                                 <Trash2 className="w-5 h-5" />

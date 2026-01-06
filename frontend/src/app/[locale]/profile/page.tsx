@@ -5,6 +5,7 @@ import { User, Mail, Calendar } from 'lucide-react';
 import { useRouter } from '@/navigation';
 import PostCard from '@/components/PostCard';
 import { Link } from '@/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 
 const ME_QUERY = gql`
   query Me {
@@ -45,6 +46,8 @@ const USER_POSTS_QUERY = gql`
 `;
 
 export default function ProfilePage() {
+    const t = useTranslations('Profile');
+    const locale = useLocale();
     const router = useRouter();
     const { data, loading, error } = useQuery(ME_QUERY);
 
@@ -72,7 +75,7 @@ export default function ProfilePage() {
     }
 
     const user = data.me;
-    const joinDate = new Date(parseInt(user.createdAt)).toLocaleDateString('en-US', {
+    const joinDate = new Date(parseInt(user.createdAt)).toLocaleDateString(locale === 'zh-cn' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US', {
         month: 'long',
         year: 'numeric',
     });
@@ -84,7 +87,7 @@ export default function ProfilePage() {
                 <div className="max-w-2xl mx-auto px-4 py-3 flex items-center space-x-4">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user.name || user.username}</h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{user.postsCount} posts</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{user.postsCount} {t('posts')}</p>
                     </div>
                 </div>
             </div>
@@ -117,7 +120,7 @@ export default function ProfilePage() {
                         </div>
 
                         <button className="px-6 py-2 border border-gray-300 dark:border-dark-700 rounded-full font-bold hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors text-gray-900 dark:text-white">
-                            Edit profile
+                            {t('editProfile')}
                         </button>
                     </div>
 
@@ -129,7 +132,7 @@ export default function ProfilePage() {
                     {user.bio ? (
                         <p className="text-gray-900 dark:text-gray-100 mb-4 whitespace-pre-wrap">{user.bio}</p>
                     ) : (
-                        <p className="text-gray-500 dark:text-gray-400 mb-4 italic">No bio yet. Click Edit profile to add one!</p>
+                        <p className="text-gray-500 dark:text-gray-400 mb-4 italic">{t('noBio')}</p>
                     )}
 
                     <div className="flex flex-wrap text-gray-500 dark:text-gray-400 gap-x-4 gap-y-2 mb-4">
@@ -139,18 +142,18 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex items-center space-x-1">
                             <Calendar className="w-4 h-4" />
-                            <span className="text-sm">Joined {joinDate}</span>
+                            <span className="text-sm">{t('joined')} {joinDate}</span>
                         </div>
                     </div>
 
                     <div className="flex space-x-4">
                         <Link href="/following" className="hover:underline">
                             <span className="font-bold text-gray-900 dark:text-white">{user.followingCount}</span>
-                            <span className="text-gray-500 dark:text-gray-400 ml-1">Following</span>
+                            <span className="text-gray-500 dark:text-gray-400 ml-1">{t('following')}</span>
                         </Link>
                         <Link href="/followers" className="hover:underline">
                             <span className="font-bold text-gray-900 dark:text-white">{user.followersCount}</span>
-                            <span className="text-gray-500 dark:text-gray-400 ml-1">Followers</span>
+                            <span className="text-gray-500 dark:text-gray-400 ml-1">{t('followers')}</span>
                         </Link>
                     </div>
                 </div>
@@ -159,11 +162,11 @@ export default function ProfilePage() {
             {/* Tabs */}
             <div className="border-b border-gray-100 dark:border-dark-800 max-w-2xl mx-auto">
                 <div className="flex">
-                    <button className="flex-1 py-4 font-bold border-b-4 border-blue-500 text-gray-900 dark:text-white">Posts</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Replies</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Highlights</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Media</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Likes</button>
+                    <button className="flex-1 py-4 font-bold border-b-4 border-blue-500 text-gray-900 dark:text-white">{t('tabPosts')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabReplies')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabHighlights')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabMedia')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabLikes')}</button>
                 </div>
             </div>
 
@@ -195,8 +198,8 @@ export default function ProfilePage() {
                         <div className="text-gray-400 dark:text-gray-500 mb-4">
                             <User className="w-16 h-16 mx-auto mb-4 opacity-50" />
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No posts yet</h3>
-                        <p className="text-gray-500 dark:text-gray-400">Start sharing your thoughts with the world!</p>
+                        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('noPosts')}</h3>
+                        <p className="text-gray-500 dark:text-gray-400">{t('startSharing')}</p>
                     </div>
                 )}
             </div>

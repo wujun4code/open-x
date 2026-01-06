@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 import { Upload, X, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const GENERATE_UPLOAD_URL = gql`
   mutation GenerateUploadUrl($filename: String!, $contentType: String!) {
@@ -30,6 +31,7 @@ export default function ImageUploadButton({
     aspectRatio = '1:1',
     maxSizeMB = 5,
 }: ImageUploadButtonProps) {
+    const t = useTranslations('ImageUpload');
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -126,8 +128,8 @@ export default function ImageUploadButton({
                         src={displayImage}
                         alt="Preview"
                         className={`object-cover border-2 border-gray-200 dark:border-dark-700 ${aspectRatio === '1:1'
-                                ? 'w-32 h-32 rounded-full'
-                                : 'w-full max-w-md h-40 rounded-lg'
+                            ? 'w-32 h-32 rounded-full'
+                            : 'w-full max-w-md h-40 rounded-lg'
                             }`}
                     />
                     <button
@@ -159,17 +161,17 @@ export default function ImageUploadButton({
                     {uploading ? (
                         <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            Uploading...
+                            {t('uploading')}
                         </>
                     ) : (
                         <>
                             <Upload className="w-4 h-4" />
-                            {displayImage ? 'Change' : 'Upload'} {label}
+                            {displayImage ? t('change') : t('upload')} {label}
                         </>
                     )}
                 </button>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {aspectRatio === '16:9' ? '16:9 aspect ratio' : 'Square (1:1)'} • Max {maxSizeMB}MB
+                    {aspectRatio === '16:9' ? t('aspectRatio16x9') : t('aspectRatio1x1')} • {t('maxSize', { size: maxSizeMB })}
                 </span>
             </div>
 

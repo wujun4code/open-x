@@ -291,5 +291,33 @@
         },
         "marking": "Marking...",
         "loadMore": "Load more"
+    },
+    "ImageUpload": {
+        "change": "Change",
+        "upload": "Upload",
+        "uploading": "Uploading...",
+        "aspectRatio16x9": "16:9 aspect ratio",
+        "aspectRatio1x1": "Square (1:1)",
+        "maxSize": "Max {size}MB"
+    },
+    "Profile": {
+        "posts": "posts",
+        "editProfile": "Edit profile",
+        "follow": "Follow",
+        "following": "Following",
+        "unfollow": "Unfollow",
+        "followers": "Followers",
+        "joined": "Joined",
+        "userNotFound": "User not found",
+        "userNotFoundDesc": "The account you are looking for does not exist.",
+        "goHome": "Go Home",
+        "tabPosts": "Posts",
+        "tabReplies": "Replies",
+        "tabHighlights": "Highlights",
+        "tabMedia": "Media",
+        "tabLikes": "Likes",
+        "noPosts": "No posts yet.",
+        "noBio": "No bio yet. Click Edit profile to add one!",
+        "startSharing": "Start sharing your thoughts with the world!"
     }
 }

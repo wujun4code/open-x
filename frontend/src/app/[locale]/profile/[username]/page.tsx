@@ -7,6 +7,7 @@ import { useRouter } from '@/navigation';
 import PostCard from '@/components/PostCard';
 import { Link } from '@/navigation';
 import { GET_USER_BY_USERNAME, FOLLOW_USER_MUTATION, UNFOLLOW_USER_MUTATION } from '@/lib/queries';
+import { useTranslations, useLocale } from 'next-intl';
 
 const USER_POSTS_QUERY = gql`
   query UserPosts($userId: ID!, $limit: Int, $offset: Int) {
@@ -37,6 +38,8 @@ const ME_ID_QUERY = gql`
 `;
 
 export default function UserProfilePage() {
+    const t = useTranslations('Profile');
+    const locale = useLocale();
     const router = useRouter();
     const params = useParams();
     const username = params.username as string;
@@ -99,17 +102,17 @@ export default function UserProfilePage() {
     if (userError || !userData?.userByUsername) {
         return (
             <div className="min-h-screen bg-white dark:bg-dark-950 flex flex-col items-center justify-center p-4">
-                <h1 className="text-2xl font-bold mb-4">User not found</h1>
-                <p className="text-gray-500 mb-6">The account you&apos;re looking for doesn&apos;t exist.</p>
+                <h1 className="text-2xl font-bold mb-4">{t('userNotFound')}</h1>
+                <p className="text-gray-500 mb-6">{t('userNotFoundDesc')}</p>
                 <Link href="/" className="px-6 py-2 bg-blue-600 text-white rounded-full font-bold">
-                    Go Home
+                    {t('goHome')}
                 </Link>
             </div>
         );
     }
 
     const currentUser = userData.userByUsername;
-    const joinDate = new Date(parseInt(currentUser.createdAt)).toLocaleDateString('en-US', {
+    const joinDate = new Date(parseInt(currentUser.createdAt)).toLocaleDateString(locale === 'zh-cn' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US', {
         month: 'long',
         year: 'numeric',
     });
@@ -124,7 +127,7 @@ export default function UserProfilePage() {
                     </button>
                     <div>
                         <h2 className="text-xl font-bold">{currentUser.name || currentUser.username}</h2>
-                        <p className="text-sm text-gray-500">{currentUser.postsCount} posts</p>
+                        <p className="text-sm text-gray-500">{currentUser.postsCount} {t('posts')}</p>
                     </div>
                 </div>
             </div>
@@ -158,17 +161,17 @@ export default function UserProfilePage() {
 
                         {isMe ? (
                             <Link href="/profile" className="px-4 py-2 border border-gray-300 dark:border-dark-700 rounded-full font-bold hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors">
-                                Edit profile
+                                {t('editProfile')}
                             </Link>
                         ) : (
                             <button
                                 onClick={isFollowing ? handleUnfollow : handleFollow}
                                 className={`px-4 py-2 rounded-full font-bold transition-colors ${isFollowing
-                                    ? 'border border-gray-300 dark:border-dark-700 hover:border-red-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 after:content-["Following"] hover:after:content-["Unfollow"]'
+                                    ? 'border border-gray-300 dark:border-dark-700 hover:border-red-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10'
                                     : 'bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200'
                                     }`}
                             >
-                                {!isFollowing && "Follow"}
+                                {isFollowing ? t('following') : t('follow')}
                             </button>
                         )}
                     </div>
@@ -183,18 +186,18 @@ export default function UserProfilePage() {
                     <div className="flex flex-wrap text-gray-500 gap-x-4 gap-y-2 mb-4">
                         <div className="flex items-center space-x-1">
                             <Calendar className="w-4 h-4" />
-                            <span>Joined {joinDate}</span>
+                            <span>{t('joined')} {joinDate}</span>
                         </div>
                     </div>
 
                     <div className="flex space-x-4">
                         <Link href={`/profile/${username}/following`} className="hover:underline">
                             <span className="font-bold text-black dark:text-white">{currentUser.followingCount}</span>
-                            <span className="text-gray-500 ml-1">Following</span>
+                            <span className="text-gray-500 ml-1">{t('following')}</span>
                         </Link>
                         <Link href={`/profile/${username}/followers`} className="hover:underline">
                             <span className="font-bold text-black dark:text-white">{currentUser.followersCount}</span>
-                            <span className="text-gray-500 ml-1">Followers</span>
+                            <span className="text-gray-500 ml-1">{t('followers')}</span>
                         </Link>
                     </div>
                 </div>
@@ -203,11 +206,11 @@ export default function UserProfilePage() {
             {/* Tabs */}
             <div className="border-b border-gray-100 dark:border-dark-800 max-w-2xl mx-auto">
                 <div className="flex">
-                    <button className="flex-1 py-4 font-bold border-b-4 border-blue-500 text-black dark:text-white">Posts</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Replies</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Highlights</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Media</button>
-                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">Likes</button>
+                    <button className="flex-1 py-4 font-bold border-b-4 border-blue-500 text-black dark:text-white">{t('tabPosts')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabReplies')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabHighlights')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabMedia')}</button>
+                    <button className="flex-1 py-4 font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-dark-900 transition-colors">{t('tabLikes')}</button>
                 </div>
             </div>
 
@@ -236,7 +239,7 @@ export default function UserProfilePage() {
                     </div>
                 ) : (
                     <div className="p-10 text-center">
-                        <p className="text-gray-500">No posts yet.</p>
+                        <p className="text-gray-500">{t('noPosts')}</p>
                     </div>
                 )}
             </div>

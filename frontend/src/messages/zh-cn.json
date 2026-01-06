@@ -52,8 +52,14 @@
         "addImage": "添加图片"
     },
     "Trending": {
+        "backToHome": "返回主页",
         "title": "趋势",
-        "trending": "趋势",
+        "subtitle": "发现当下热门话题",
+        "trendingTopics": "热门话题",
+        "allTime": "全部时间",
+        "errorLoading": "加载热门话题时出错",
+        "noTopics": "暂无热门话题",
+        "beFirst": "成为第一个开始对话的人！",
         "post": "条帖子",
         "posts": "条帖子"
     },
@@ -262,5 +268,54 @@
         },
         "marking": "标记中...",
         "loadMore": "加载更多"
+    },
+    "EditProfile": {
+        "title": "编辑个人资料",
+        "coverImage": "封面图片",
+        "changeCoverImage": "更换封面图片",
+        "avatar": "头像",
+        "uploadAvatar": "上传头像",
+        "name": "姓名",
+        "bio": "个人简介",
+        "language": "语言",
+        "languageChangeNote": "更改语言后页面将自动刷新",
+        "cancel": "取消",
+        "saveChanges": "保存更改",
+        "saving": "保存中...",
+        "noChanges": "没有要保存的更改",
+        "unsavedChanges": {
+            "title": "未保存的更改",
+            "message": "您有未保存的更改。确定要离开吗？",
+            "keepEditing": "继续编辑",
+            "discard": "放弃更改"
+        }
+    },
+    "ImageUpload": {
+        "change": "更换",
+        "upload": "上传",
+        "uploading": "上传中...",
+        "aspectRatio16x9": "16:9 比例",
+        "aspectRatio1x1": "正方形 (1:1)",
+        "maxSize": "最大 {size}MB"
+    },
+    "Profile": {
+        "posts": "条帖子",
+        "editProfile": "编辑资料",
+        "follow": "关注",
+        "following": "正在关注",
+        "unfollow": "取消关注",
+        "followers": "粉丝",
+        "joined": "加入于",
+        "userNotFound": "用户不存在",
+        "userNotFoundDesc": "您查找的账户不存在。",
+        "goHome": "返回主页",
+        "tabPosts": "帖子",
+        "tabReplies": "回复",
+        "tabHighlights": "精选",
+        "tabMedia": "媒体",
+        "tabLikes": "喜欢",
+        "noPosts": "暂无帖子。",
+        "noBio": "暂无简介。点击编辑资料添加一个！",
+        "startSharing": "开始与世界分享你的想法！"
     }
 }

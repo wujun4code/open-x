@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Lexend } from 'next/font/google';
 import '../globals.css';
 import { ApolloWrapper } from '@/lib/apollo-client';
 import Header from '@/components/Header';
@@ -8,7 +8,8 @@ import { RoleProvider } from '@/contexts/RoleContext';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const lexend = Lexend({ subsets: ['latin'], variable: '--font-lexend' });
 
 export const metadata: Metadata = {
     title: 'Open X - A Modern Social Platform',
@@ -33,7 +34,7 @@ export default async function RootLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale}>
+        <html lang={locale} className={`${inter.variable} ${lexend.variable}`}>
             <body className={inter.className}>
                 <ThemeProvider>
                     <ApolloWrapper>
