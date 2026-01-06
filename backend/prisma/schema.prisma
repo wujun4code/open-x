@@ -43,6 +43,16 @@ model User {
   notificationsReceived Notification[] @relation("NotificationRecipient")
   notificationsTriggered Notification[] @relation("NotificationActor")
   
+  // DM Relations
+  conversations      Conversation[]      @relation("ConversationParticipants")
+  sentMessages       Message[]           @relation("SentMessages")
+  messageReadStatus  MessageReadStatus[]
+  
+  // Privacy Settings
+  allowDMsFrom       DMPrivacy           @default(FOLLOWERS)
+  blockedUsers       User[]              @relation("BlockedUsers")
+  blockedBy          User[]              @relation("BlockedUsers")
+  
   @@map("users")
 }
 
@@ -271,4 +281,55 @@ enum NotificationType {
   COMMENT
   FOLLOW
   MENTION
+}
+
+// DM Privacy enum
+enum DMPrivacy {
+  ALL        // Anyone can message
+  FOLLOWERS  // Only followers can message
+  NONE       // No one can message
+}
+
+// Conversation model (DM conversations)
+model Conversation {
+  id            String    @id @default(cuid())
+  participants  User[]    @relation("ConversationParticipants")
+  messages      Message[]
+  readStatus    MessageReadStatus[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([updatedAt(sort: Desc)])
+  @@map("conversations")
+}
+
+// Message model (DM messages)
+model Message {
+  id             String       @id @default(cuid())
+  content        String       @db.Text
+  imageUrl       String?
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id])
+  senderId       String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  createdAt      DateTime     @default(now())
+  deletedAt      DateTime?
+  
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@index([senderId])
+  @@map("messages")
+}
+
+// MessageReadStatus model (track read status per user per conversation)
+model MessageReadStatus {
+  id             String       @id @default(cuid())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  lastReadAt     DateTime     @default(now())
+  
+  @@unique([userId, conversationId])
+  @@index([userId])
+  @@map("message_read_status")
 }

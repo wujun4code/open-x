@@ -11,6 +11,7 @@ import {
 import { GraphQLError } from 'graphql';
 import { generateUploadUrl } from '../utils/r2';
 import { extractHashtags } from '../utils/hashtag';
+import { dmResolvers } from './dmResolvers';
 
 // Helper function to require authentication
 function requireAuth(context: Context): string {
@@ -1572,4 +1573,12 @@ export const resolvers = {
             return parent.createdAt.getTime().toString();
         },
     },
+
+    // Merge DM resolvers
+    Conversation: dmResolvers.Conversation,
+    Message: dmResolvers.Message,
 };
+
+// Merge DM Query and Mutation resolvers
+resolvers.Query = { ...resolvers.Query, ...dmResolvers.Query };
+resolvers.Mutation = { ...resolvers.Mutation, ...dmResolvers.Mutation };

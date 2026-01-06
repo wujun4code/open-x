@@ -29,6 +29,13 @@ export const typeDefs = `#graphql
     # Notifications
     notifications(limit: Int, offset: Int): [Notification!]!
     unreadNotificationsCount: Int!
+    
+    # Direct Messages
+    myConversations(limit: Int, offset: Int, search: String): [Conversation!]!
+    conversation(userId: ID!): Conversation
+    messages(conversationId: ID!, limit: Int, offset: Int): [Message!]!
+    unreadMessageCount: Int!
+    canSendDM(userId: ID!): Boolean!
   }
 
   type Mutation {
@@ -79,6 +86,15 @@ export const typeDefs = `#graphql
     # Notifications
     markNotificationAsRead(id: ID!): Notification!
     markAllNotificationsAsRead: Boolean!
+    
+    # Direct Messages
+    sendMessage(conversationId: ID, recipientId: ID, content: String!, imageUrl: String): Message!
+    markMessagesAsRead(conversationId: ID!): Boolean!
+    deleteMessage(messageId: ID!): Boolean!
+    deleteConversation(conversationId: ID!): Boolean!
+    updateDMPrivacy(allowDMsFrom: String!): User!
+    blockUser(userId: ID!): Boolean!
+    unblockUser(userId: ID!): Boolean!
   }
 
   type User {
@@ -230,5 +246,26 @@ export const typeDefs = `#graphql
     actor: User!
     post: Post
     comment: Comment
+  }
+  
+  # Direct Messages
+  type Conversation {
+    id: ID!
+    participants: [User!]!
+    messages(limit: Int, offset: Int): [Message!]!
+    lastMessage: Message
+    unreadCount: Int!
+    createdAt: String!
+    updatedAt: String!
+  }
+  
+  type Message {
+    id: ID!
+    content: String!
+    imageUrl: String
+    sender: User!
+    conversation: Conversation!
+    createdAt: String!
+    isDeleted: Boolean!
   }
 `;

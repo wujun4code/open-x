@@ -9,11 +9,26 @@
         "editProfile": "Editar Perfil",
         "settings": "Configuración",
         "logout": "Cerrar Sesión",
+        "messages": "Mensajes",
         "theme": {
             "light": "Claro",
             "dark": "Oscuro",
             "system": "Sistema"
         }
+    },
+    "Messages": {
+        "title": "Mensajes",
+        "searchPlaceholder": "Buscar conversaciones...",
+        "noConversations": "Aún no hay conversaciones",
+        "noResults": "No se encontraron conversaciones",
+        "selectConversation": "Selecciona una conversación",
+        "selectConversationHint": "Elige una conversación de la lista para comenzar a enviar mensajes",
+        "conversation": "Conversación",
+        "noMessages": "Aún no hay mensajes. ¡Inicia la conversación!",
+        "inputPlaceholder": "Escribe un mensaje...",
+        "sendError": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+        "deleteConfirm": "¿Eliminar este mensaje?",
+        "messageDeleted": "Mensaje eliminado"
     },
     "Home": {
         "welcome": "Bienvenido de nuevo",

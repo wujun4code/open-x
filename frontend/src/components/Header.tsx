@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link, usePathname, useRouter } from '@/navigation';
-import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Shield, Edit, Bell } from 'lucide-react';
+import { Home, User, LogIn, UserPlus, Settings, LogOut, ChevronDown, TrendingUp, Sun, Moon, Monitor, Shield, Edit, Bell, MessageCircle } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeProvider';
 
 import ProtectedComponent from './ProtectedComponent';
@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery, gql } from '@apollo/client';
 import NotificationDropdown from './NotificationDropdown';
 import { GET_UNREAD_COUNT } from '@/lib/queries';
+import { GET_UNREAD_MESSAGE_COUNT } from '@/lib/queries/messages';
 
 const ME_QUERY = gql`
   query Me {
@@ -49,6 +50,13 @@ export default function Header() {
         pollInterval: 5000, // Poll every 5 seconds
     });
     const unreadCount = unreadData?.unreadNotificationsCount || 0;
+
+    // Fetch unread messages count with polling
+    const { data: unreadMessagesData } = useQuery(GET_UNREAD_MESSAGE_COUNT, {
+        skip: !isAuthenticated,
+        pollInterval: 5000, // Poll every 5 seconds
+    });
+    const unreadMessagesCount = unreadMessagesData?.unreadMessageCount || 0;
 
     useEffect(() => {
         // Check if user is authenticated
@@ -153,6 +161,24 @@ export default function Header() {
                                                 </Link>
                                             </ProtectedComponent>
 
+
+                                            {/* Messages Link */}
+                                            <Link
+                                                href="/messages"
+                                                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors relative ${pathname === '/messages'
+                                                    ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-dark-700'
+                                                    }`}
+                                                title="Messages"
+                                            >
+                                                <MessageCircle className="w-5 h-5" />
+                                                <span className="font-medium hidden sm:inline">{t('messages')}</span>
+                                                {unreadMessagesCount > 0 && (
+                                                    <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                                                        {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
+                                                    </span>
+                                                )}
+                                            </Link>
 
                                             {/* Notification Bell */}
                                             <div className="relative" ref={notificationDropdownRef}>
