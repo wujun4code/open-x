@@ -1,0 +1,335 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String?
+  bio       String?
+  avatar    String?
+  coverImage String?
+  verified  Boolean  @default(false)
+  onboardingCompleted Boolean @default(false)
+  role      String   @default("user") // user, moderator, admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  posts         Post[]
+  likes         Like[]
+  comments      Comment[]
+  bookmarks     Bookmark[]
+  followers     Follow[]     @relation("UserFollowers")
+  following     Follow[]     @relation("UserFollowing")
+  
+  // Moderation relations
+  reportsCreated    Report[] @relation("ReportedBy")
+  reportsReviewed   Report[] @relation("ReviewedBy")
+  moderationActions ModerationAction[] @relation("ModeratedUser")
+  moderatorActions  ModerationAction[] @relation("Moderator")
+  deletedPosts      Post[] @relation("DeletedBy")
+  deletedComments   Comment[] @relation("DeletedBy")
+  
+  // Notification relations
+  notificationsReceived Notification[] @relation("NotificationRecipient")
+  notificationsTriggered Notification[] @relation("NotificationActor")
+  
+  // DM Relations
+  conversations      Conversation[]      @relation("ConversationParticipants")
+  sentMessages       Message[]           @relation("SentMessages")
+  messageReadStatus  MessageReadStatus[]
+  
+  // Privacy Settings
+  allowDMsFrom       DMPrivacy           @default(FOLLOWERS)
+  blockedUsers       User[]              @relation("BlockedUsers")
+  blockedBy          User[]              @relation("BlockedUsers")
+  
+  @@map("users")
+}
+
+// Post model (tweets)
+model Post {
+  id        String   @id @default(cuid())
+  content   String
+  imageUrl  String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Soft delete fields
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
+  deletedById String?
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes     Like[]
+  comments  Comment[]
+  bookmarks Bookmark[]
+  hashtags  PostHashtag[]
+  reports   Report[]
+  deletedBy User?      @relation("DeletedBy", fields: [deletedById], references: [id])
+  notifications Notification[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+// Like model
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+  @@map("likes")
+}
+
+// Comment model (replies to posts)
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Soft delete fields
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
+  deletedById String?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reports Report[]
+  deletedBy User? @relation("DeletedBy", fields: [deletedById], references: [id])
+  notifications Notification[]
+
+  @@index([userId])
+  @@index([postId])
+  @@index([createdAt])
+  @@map("comments")
+}
+
+// Follow model (user relationships)
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}
+
+// Bookmark model (saved posts)
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+  @@map("bookmarks")
+}
+
+// Hashtag model
+model Hashtag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  posts PostHashtag[]
+
+  @@index([name])
+  @@map("hashtags")
+}
+
+// Join table for Post and Hashtag (many-to-many)
+model PostHashtag {
+  id        String   @id @default(cuid())
+  postId    String
+  hashtagId String
+  createdAt DateTime @default(now())
+
+  // Relations
+  post    Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  hashtag Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, hashtagId])
+  @@index([postId])
+  @@index([hashtagId])
+  @@map("post_hashtags")
+}
+
+// Report model (content moderation)
+model Report {
+  id          String   @id @default(cuid())
+  reason      String   // Spam, Harassment, Hate Speech, etc.
+  description String?  // Optional details from reporter
+  status      String   @default("pending") // pending, reviewed, dismissed, actioned
+  
+  // What's being reported
+  postId      String?
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId   String?
+  comment     Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  // Who reported it
+  reporterId  String
+  reporter    User     @relation("ReportedBy", fields: [reporterId], references: [id])
+  
+  // Moderation action
+  reviewedById String?
+  reviewedBy   User?   @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  moderatorNotes String?
+  action       String? // warning, content_removed, user_suspended, dismissed
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  moderationActions ModerationAction[]
+  
+  @@index([status])
+  @@index([reporterId])
+  @@index([postId])
+  @@index([commentId])
+  @@map("reports")
+}
+
+// Moderation Action model (tracking moderator actions)
+model ModerationAction {
+  id          String   @id @default(cuid())
+  type        String   // warning, suspension, ban, content_removal
+  reason      String
+  duration    Int?     // Duration in days for temporary actions
+  
+  targetUserId String
+  targetUser   User    @relation("ModeratedUser", fields: [targetUserId], references: [id])
+  
+  moderatorId  String
+  moderator    User    @relation("Moderator", fields: [moderatorId], references: [id])
+  
+  reportId     String?
+  report       Report? @relation(fields: [reportId], references: [id])
+  
+  expiresAt    DateTime?
+  createdAt    DateTime @default(now())
+  
+  @@index([targetUserId])
+  @@index([moderatorId])
+  @@map("moderation_actions")
+}
+
+// Notification model
+model Notification {
+  id        String   @id @default(cuid())
+  type      NotificationType
+  userId    String   // recipient
+  actorId   String   // who triggered the notification
+  postId    String?
+  commentId String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user      User     @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  actor     User     @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, read])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+// Notification type enum
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
+  MENTION
+}
+
+// DM Privacy enum
+enum DMPrivacy {
+  ALL        // Anyone can message
+  FOLLOWERS  // Only followers can message
+  NONE       // No one can message
+}
+
+// Conversation model (DM conversations)
+model Conversation {
+  id            String    @id @default(cuid())
+  participants  User[]    @relation("ConversationParticipants")
+  messages      Message[]
+  readStatus    MessageReadStatus[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([updatedAt(sort: Desc)])
+  @@map("conversations")
+}
+
+// Message model (DM messages)
+model Message {
+  id             String       @id @default(cuid())
+  content        String       @db.Text
+  imageUrl       String?
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id])
+  senderId       String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  createdAt      DateTime     @default(now())
+  deletedAt      DateTime?
+  
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@index([senderId])
+  @@map("messages")
+}
+
+// MessageReadStatus model (track read status per user per conversation)
+model MessageReadStatus {
+  id             String       @id @default(cuid())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  lastReadAt     DateTime     @default(now())
+  
+  @@unique([userId, conversationId])
+  @@index([userId])
+  @@map("message_read_status")
+}

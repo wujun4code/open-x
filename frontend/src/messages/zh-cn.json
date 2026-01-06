@@ -1,0 +1,405 @@
+{
+    "Header": {
+        "home": "首页",
+        "trending": "趋势",
+        "moderation": "内容审核",
+        "signIn": "登录",
+        "signUp": "注册",
+        "profile": "个人资料",
+        "editProfile": "编辑资料",
+        "settings": "设置",
+        "logout": "退出登录",
+        "messages": "消息",
+        "theme": {
+            "light": "浅色",
+            "dark": "深色",
+            "system": "系统"
+        }
+    },
+    "Messages": {
+        "title": "消息",
+        "searchPlaceholder": "搜索对话...",
+        "noConversations": "暂无对话",
+        "noResults": "未找到对话",
+        "selectConversation": "选择一个对话",
+        "selectConversationHint": "从列表中选择一个对话开始聊天",
+        "conversation": "对话",
+        "noMessages": "暂无消息。开始对话吧！",
+        "inputPlaceholder": "输入消息...",
+        "sendError": "发送消息失败。请重试。",
+        "deleteConfirm": "删除此消息？",
+        "messageDeleted": "消息已删除",
+        "endOfHistory": "对话开始"
+    },
+    "Home": {
+        "welcome": "欢迎回来",
+        "happening": "正在发生什么？！",
+        "heroTitle": "欢迎来到 Open X",
+        "heroSubtitle": "基于前沿技术构建的现代社交平台",
+        "getStarted": "开始使用",
+        "signIn": "登录",
+        "features": {
+            "fast": "极速体验",
+            "fastDesc": "基于 Next.js 14 构建，极致性能优化",
+            "design": "精美设计",
+            "designDesc": "使用 TailwindCSS 打造的现代 UI 和流畅动画",
+            "secure": "安全可扩展",
+            "secureDesc": "基于 GraphQL API，JWT 认证和 PostgreSQL"
+        },
+        "apiStatus": {
+            "title": "GraphQL API 状态",
+            "connecting": "正在连接 API...",
+            "error": "错误",
+            "backendTip": "请确保后端服务器运行在 4000 端口",
+            "connected": "后端已连接并响应！"
+        }
+    },
+    "ProfileCard": {
+        "joined": "加入于",
+        "posts": "帖子",
+        "followers": "粉丝",
+        "following": "关注"
+    },
+    "CreatePost": {
+        "placeholder": "正在发生什么？",
+        "post": "发布",
+        "posting": "发布中...",
+        "uploading": "上传中...",
+        "addImage": "添加图片"
+    },
+    "Trending": {
+        "backToHome": "返回主页",
+        "title": "趋势",
+        "subtitle": "发现当下热门话题",
+        "trendingTopics": "热门话题",
+        "allTime": "全部时间",
+        "errorLoading": "加载热门话题时出错",
+        "noTopics": "暂无热门话题",
+        "beFirst": "成为第一个开始对话的人！",
+        "post": "条帖子",
+        "posts": "条帖子"
+    },
+    "Auth": {
+        "welcomeBack": "欢迎回来",
+        "join": "加入 Open X",
+        "signInTitle": "登录您的账户",
+        "signUpTitle": "创建账户以开始",
+        "signIn": "登录",
+        "signUp": "注册",
+        "createAccount": "创建账户",
+        "processing": "处理中...",
+        "labels": {
+            "name": "姓名 (可选)",
+            "username": "用户名",
+            "email": "邮箱",
+            "password": "密码"
+        },
+        "placeholders": {
+            "name": "张三",
+            "username": "zhangsan",
+            "email": "zhangsan@example.com",
+            "password": "••••••••"
+        },
+        "passwordHint": "最少 8 个字符，包含大小写字母和数字",
+        "footer": {
+            "noAccount": "还没有账户？ ",
+            "hasAccount": "已有账户？ "
+        },
+        "testTips": {
+            "title": "测试提示：",
+            "p1": "密码必须包含大小写字母和数字",
+            "p2": "用户名：3-20 个字符，字母数字 + 下划线",
+            "p3": "尝试创建一个账户然后登录！"
+        }
+    },
+    "Comments": {
+        "title": "评论",
+        "placeholder": "写评论...",
+        "reply": "回复",
+        "delete": "删除评论",
+        "deleteConfirm": "确定要删除这条评论吗？",
+        "deleteSuccess": "评论已成功删除",
+        "deleteError": "删除评论失败",
+        "noComments": "还没有评论",
+        "beFirst": "成为第一个评论的人！"
+    },
+    "Follow": {
+        "follow": "关注",
+        "following": "已关注",
+        "unfollow": "取消关注",
+        "followers": "粉丝",
+        "loading": "加载中...",
+        "followError": "关注失败",
+        "unfollowError": "取消关注失败",
+        "loadError": "加载用户失败",
+        "noFollowers": "还没有粉丝",
+        "noFollowersDesc": "当有人关注你时，他们会出现在这里",
+        "noFollowing": "还没有关注任何人",
+        "noFollowingDesc": "开始关注他人以在你的动态中看到他们的帖子"
+    },
+    "Mention": {
+        "loading": "加载中...",
+        "noUsers": "未找到用户"
+    },
+    "Moderation": {
+        "title": "内容审核",
+        "subtitle": "审查和管理用户举报及已删除内容",
+        "tabs": {
+            "reports": "举报",
+            "deletedContent": "已删除内容"
+        },
+        "filters": {
+            "all": "全部",
+            "pending": "待处理",
+            "reviewed": "已审核",
+            "actioned": "已处理",
+            "dismissed": "已驳回"
+        },
+        "accessDenied": {
+            "title": "访问被拒绝",
+            "message": "您没有权限访问此页面。"
+        },
+        "loading": "加载审核面板中...",
+        "error": {
+            "title": "加载数据出错",
+            "retry": "重试"
+        },
+        "noReports": {
+            "title": "未找到举报",
+            "allReviewed": "目前没有已审核的举报。",
+            "filtered": "目前没有{status}的举报。",
+            "none": "没有需要审核的举报。"
+        },
+        "noDeleted": {
+            "title": "无已删除内容",
+            "message": "没有需要审核的软删除内容。"
+        },
+        "reportCard": {
+            "reportNumber": "举报",
+            "reportedBy": "举报人：",
+            "reportedContent": "被举报的{type}",
+            "reviewedBy": "审核人",
+            "action": "处理：",
+            "notes": "备注：",
+            "reviewAction": "审核并处理",
+            "post": "帖子",
+            "comment": "评论",
+            "by": "来自",
+            "timeAgo": {
+                "justNow": "刚刚",
+                "minutesAgo": "{count}分钟前",
+                "hoursAgo": "{count}小时前",
+                "daysAgo": "{count}天前",
+                "unknown": "未知"
+            },
+            "status": {
+                "pending": "待处理",
+                "reviewed": "已审核",
+                "actioned": "已处理",
+                "dismissed": "已驳回"
+            },
+            "reason": {
+                "SPAM": "垃圾信息",
+                "HARASSMENT": "骚扰",
+                "HATE_SPEECH": "仇恨言论",
+                "VIOLENCE": "暴力",
+                "NUDITY": "裸露",
+                "MISINFORMATION": "虚假信息",
+                "OTHER": "其他"
+            },
+            "actionType": {
+                "warning": "警告",
+                "content_removal": "删除内容",
+                "user_warning": "警告用户",
+                "user_suspension": "暂停用户",
+                "user_ban": "封禁用户",
+                "no_action": "无操作"
+            }
+        },
+        "deletedContentCard": {
+            "deletedPost": "已删除的帖子",
+            "deletedComment": "已删除的评论",
+            "softDeleted": "软删除",
+            "deleted": "已删除",
+            "originalAuthor": "原作者：",
+            "deletedByModerator": "由版主删除：",
+            "onPost": "在帖子上：",
+            "created": "创建时间：",
+            "likes": "点赞",
+            "comments": "评论",
+            "restoreContent": "恢复内容",
+            "permanentlyDelete": "永久删除",
+            "cancel": "取消",
+            "restore": "恢复",
+            "timeAgo": {
+                "justNow": "刚刚",
+                "minutesAgo": "{count}分钟前",
+                "hoursAgo": "{count}小时前",
+                "daysAgo": "{count}天前",
+                "unknown": "未知"
+            },
+            "dialog": {
+                "deleteTitle": "永久删除内容？",
+                "restoreTitle": "恢复内容？",
+                "deleteMessage": "此操作无法撤消。内容将从数据库中永久删除。",
+                "restoreMessage": "这将使内容再次对用户可见。"
+            },
+            "alerts": {
+                "deleteSuccess": "内容已从数据库中永久删除",
+                "deleteError": "永久删除内容失败",
+                "restoreSuccess": "内容恢复成功",
+                "restoreError": "恢复内容失败"
+            }
+        }
+    },
+    "Error": {
+        "title": "出错了！",
+        "description": "发生了意外错误。请重试或返回主页。",
+        "tryAgain": "重试",
+        "goHome": "返回主页"
+    },
+    "NotFound": {
+        "title": "页面未找到",
+        "description": "您查找的页面不存在或已被移动。",
+        "goHome": "返回主页"
+    },
+    "Notifications": {
+        "title": "通知",
+        "markAllRead": "全部标记为已读",
+        "markAllAsRead": "全部标记为已读",
+        "noNotifications": "暂无通知",
+        "noNotificationsDesc": "当有人与您的内容互动时，您会在这里看到",
+        "seeAll": "查看所有通知",
+        "types": {
+            "likedPost": "赞了你的帖子",
+            "commentedPost": "评论了你的帖子",
+            "startedFollowing": "开始关注你",
+            "mentionedYou": "提到了你"
+        },
+        "timeAgo": {
+            "justNow": "刚刚",
+            "minutesAgo": "{count}分钟前",
+            "hoursAgo": "{count}小时前",
+            "daysAgo": "{count}天前"
+        },
+        "marking": "标记中...",
+        "loadMore": "加载更多"
+    },
+    "EditProfile": {
+        "title": "编辑个人资料",
+        "coverImage": "封面图片",
+        "changeCoverImage": "更换封面图片",
+        "avatar": "头像",
+        "uploadAvatar": "上传头像",
+        "name": "姓名",
+        "bio": "个人简介",
+        "language": "语言",
+        "languageChangeNote": "更改语言后页面将自动刷新",
+        "cancel": "取消",
+        "saveChanges": "保存更改",
+        "saving": "保存中...",
+        "noChanges": "没有要保存的更改",
+        "unsavedChanges": {
+            "title": "未保存的更改",
+            "message": "您有未保存的更改。确定要离开吗？",
+            "keepEditing": "继续编辑",
+            "discard": "放弃更改"
+        }
+    },
+    "ImageUpload": {
+        "change": "更换",
+        "upload": "上传",
+        "uploading": "上传中...",
+        "aspectRatio16x9": "16:9 比例",
+        "aspectRatio1x1": "正方形 (1:1)",
+        "maxSize": "最大 {size}MB"
+    },
+    "Profile": {
+        "posts": "条帖子",
+        "editProfile": "编辑资料",
+        "follow": "关注",
+        "following": "正在关注",
+        "unfollow": "取消关注",
+        "followers": "粉丝",
+        "joined": "加入于",
+        "userNotFound": "用户不存在",
+        "userNotFoundDesc": "您查找的账户不存在。",
+        "goHome": "返回主页",
+        "tabPosts": "帖子",
+        "tabReplies": "回复",
+        "tabHighlights": "精选",
+        "tabMedia": "媒体",
+        "tabLikes": "喜欢",
+        "noPosts": "暂无帖子。",
+        "noBio": "暂无简介。点击编辑资料添加一个！",
+        "startSharing": "开始与世界分享你的想法！"
+    },
+    "Settings": {
+        "title": "设置",
+        "subtitle": "管理您的账户偏好和设置",
+        "tabs": {
+            "account": "账户",
+            "privacy": "隐私",
+            "notifications": "通知",
+            "appearance": "外观",
+            "security": "安全"
+        },
+        "account": {
+            "title": "账户信息",
+            "email": "电子邮件",
+            "username": "用户名",
+            "displayName": "显示名称",
+            "bio": "个人简介",
+            "bioPlaceholder": "介绍一下你自己..."
+        },
+        "privacy": {
+            "title": "隐私设置",
+            "profileVisibility": "个人资料可见性",
+            "public": "公开",
+            "followersOnly": "仅粉丝",
+            "private": "私密",
+            "showEmail": "在个人资料上显示电子邮件",
+            "showEmailDesc": "允许其他人查看您的电子邮件地址",
+            "allowMessages": "允许私信",
+            "allowMessagesDesc": "让其他人向您发送私信"
+        },
+        "notifications": {
+            "title": "通知偏好",
+            "emailNotifications": "电子邮件通知",
+            "emailNotificationsDesc": "通过电子邮件接收通知",
+            "pushNotifications": "推送通知",
+            "pushNotificationsDesc": "接收推送通知",
+            "likes": "点赞",
+            "likesDesc": "当有人点赞您的帖子时",
+            "comments": "评论",
+            "commentsDesc": "当有人评论您的帖子时",
+            "newFollowers": "新粉丝",
+            "newFollowersDesc": "当有人关注您时"
+        },
+        "appearance": {
+            "title": "外观",
+            "theme": "主题",
+            "light": "浅色",
+            "dark": "深色",
+            "auto": "自动（系统）",
+            "language": "语言"
+        },
+        "security": {
+            "title": "安全",
+            "changePassword": "更改密码",
+            "currentPassword": "当前密码",
+            "newPassword": "新密码",
+            "confirmPassword": "确认新密码",
+            "currentPasswordPlaceholder": "输入当前密码",
+            "newPasswordPlaceholder": "输入新密码",
+            "confirmPasswordPlaceholder": "确认新密码",
+            "updatePassword": "更新密码",
+            "dangerZone": "危险区域",
+            "logoutAll": "从所有设备登出"
+        },
+        "saveChanges": "保存更改",
+        "saving": "保存中...",
+        "changesNote": "更改将保存到您的账户",
+        "saveSuccess": "设置保存成功！"
+    }
+}

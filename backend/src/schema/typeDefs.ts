@@ -1,0 +1,271 @@
+export const typeDefs = `#graphql
+  type Query {
+    hello: String!
+    me: User
+    user(id: ID!): User
+    userByUsername(username: String!): User
+    users(limit: Int, offset: Int): [User!]!
+    searchUsers(query: String, limit: Int): [User!]!
+    post(id: ID!): Post
+    posts(limit: Int, offset: Int): [Post!]!
+    userPosts(userId: ID!, limit: Int, offset: Int): [Post!]!
+    feed(limit: Int, offset: Int): [Post!]!
+    
+    # Hashtags
+    trendingHashtags(limit: Int): [Hashtag!]!
+    searchHashtags(query: String!, limit: Int): [Hashtag!]!
+    postsByHashtag(hashtag: String!, limit: Int, offset: Int): [Post!]!
+    
+    # Moderation (admin/moderator only)
+    reports(status: String, limit: Int, offset: Int): [Report!]!
+    report(id: ID!): Report
+    moderationActions(userId: ID!): [ModerationAction!]!
+    deletedPosts(limit: Int, offset: Int): [Post!]!
+    deletedComments(limit: Int, offset: Int): [Comment!]!
+    
+    # Role management
+    myRole: String!
+    
+    # Notifications
+    notifications(limit: Int, offset: Int): [Notification!]!
+    unreadNotificationsCount: Int!
+    
+    # Direct Messages
+    myConversations(limit: Int, offset: Int, search: String): [Conversation!]!
+    conversation(userId: ID!): Conversation
+    messages(conversationId: ID!, limit: Int, offset: Int): [Message!]!
+    unreadMessageCount: Int!
+    canSendDM(userId: ID!): Boolean!
+  }
+
+  type Mutation {
+    # Authentication
+    register(email: String!, username: String!, password: String!, name: String): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
+    completeOnboarding: Boolean!
+    
+    # Profile
+    updateProfile(name: String, bio: String, avatar: String, coverImage: String): User!
+    
+    # Posts
+    createPost(content: String!, imageUrl: String): Post!
+    deletePost(id: ID!): Boolean!
+    
+    # Likes
+    likePost(postId: ID!): Boolean!
+    unlikePost(postId: ID!): Boolean!
+    
+    # Comments
+    createComment(postId: ID!, content: String!): Comment!
+    deleteComment(id: ID!): Boolean!
+    
+    # Follows
+    followUser(userId: ID!): Boolean!
+    unfollowUser(userId: ID!): Boolean!
+    
+    # Bookmarks
+    bookmarkPost(postId: ID!): Boolean!
+    unbookmarkPost(postId: ID!): Boolean!
+    
+    # Moderation
+    reportPost(postId: ID!, reason: String!, description: String): Report!
+    reportComment(commentId: ID!, reason: String!, description: String): Report!
+    reviewReport(reportId: ID!, action: String!, moderatorNotes: String, duration: Int): Report!
+    dismissReport(reportId: ID!, moderatorNotes: String): Report!
+    permanentlyDeletePost(postId: ID!): Boolean!
+    permanentlyDeleteComment(commentId: ID!): Boolean!
+    restorePost(postId: ID!): Post!
+    restoreComment(commentId: ID!): Comment!
+    
+    # Role management (admin only)
+    updateUserRole(userId: ID!, role: String!): User!
+    
+    # File Upload
+    generateUploadUrl(filename: String!, contentType: String!): UploadUrlResponse!
+    
+    # Notifications
+    markNotificationAsRead(id: ID!): Notification!
+    markAllNotificationsAsRead: Boolean!
+    
+    # Direct Messages
+    sendMessage(conversationId: ID, recipientId: ID, content: String!, imageUrl: String): Message!
+    markMessagesAsRead(conversationId: ID!): Boolean!
+    deleteMessage(messageId: ID!): Boolean!
+    deleteConversation(conversationId: ID!): Boolean!
+    updateDMPrivacy(allowDMsFrom: String!): User!
+    blockUser(userId: ID!): Boolean!
+    unblockUser(userId: ID!): Boolean!
+  }
+
+  type User {
+    id: ID!
+    email: String!
+    username: String!
+    name: String
+    bio: String
+    avatar: String
+    coverImage: String
+    verified: Boolean!
+    createdAt: String!
+    updatedAt: String!
+    
+    # Relations
+    posts: [Post!]!
+    followers: [User!]!
+    following: [User!]!
+    followersCount: Int!
+    followingCount: Int!
+    postsCount: Int!
+    isFollowing: Boolean!
+    role: String!
+  }
+
+  type Post {
+    id: ID!
+    content: String!
+    imageUrl: String
+    createdAt: String!
+    updatedAt: String!
+    
+    # Soft delete fields
+    isDeleted: Boolean!
+    deletedAt: String
+    deletedBy: User
+    
+    # Relations
+    user: User!
+    likes: [Like!]!
+    comments: [Comment!]!
+    likesCount: Int!
+    commentsCount: Int!
+    isLiked: Boolean!
+    isBookmarked: Boolean!
+  }
+
+  type Like {
+    id: ID!
+    user: User!
+    post: Post!
+    createdAt: String!
+  }
+
+  type Comment {
+    id: ID!
+    content: String!
+    createdAt: String!
+    updatedAt: String!
+    
+    # Soft delete fields
+    isDeleted: Boolean!
+    deletedAt: String
+    deletedBy: User
+    
+    # Relations
+    user: User!
+    post: Post!
+  }
+
+  type Follow {
+    id: ID!
+    follower: User!
+    following: User!
+    createdAt: String!
+  }
+
+  type Bookmark {
+    id: ID!
+    user: User!
+    post: Post!
+    createdAt: String!
+  }
+
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
+
+  type UploadUrlResponse {
+    uploadUrl: String!
+    publicUrl: String!
+    key: String!
+  }
+
+  type Hashtag {
+    id: ID!
+    name: String!
+    postsCount: Int!
+    createdAt: String!
+  }
+  
+  type Report {
+    id: ID!
+    reason: String!
+    description: String
+    status: String!
+    post: Post
+    comment: Comment
+    reporter: User!
+    reviewedBy: User
+    reviewedAt: String
+    moderatorNotes: String
+    action: String
+    createdAt: String!
+    updatedAt: String!
+  }
+  
+  type ModerationAction {
+    id: ID!
+    type: String!
+    reason: String!
+    duration: Int
+    targetUser: User!
+    moderator: User!
+    report: Report
+    expiresAt: String
+    createdAt: String!
+  }
+  
+  enum NotificationType {
+    LIKE
+    COMMENT
+    FOLLOW
+    MENTION
+  }
+  
+  type Notification {
+    id: ID!
+    type: NotificationType!
+    userId: String!
+    actorId: String!
+    postId: String
+    commentId: String
+    read: Boolean!
+    createdAt: String!
+    
+    # Relations
+    actor: User!
+    post: Post
+    comment: Comment
+  }
+  
+  # Direct Messages
+  type Conversation {
+    id: ID!
+    participants: [User!]!
+    messages(limit: Int, offset: Int): [Message!]!
+    lastMessage: Message
+    unreadCount: Int!
+    createdAt: String!
+    updatedAt: String!
+  }
+  
+  type Message {
+    id: ID!
+    content: String!
+    imageUrl: String
+    sender: User!
+    conversation: Conversation!
+    createdAt: String!
+    isDeleted: Boolean!
+  }
+`;

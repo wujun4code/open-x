@@ -1,0 +1,1584 @@
+import { Context } from '../context';
+import { hashPassword, comparePassword, generateToken } from '../utils/auth';
+import {
+    validateEmail,
+    validateUsername,
+    validatePassword,
+    validatePostContent,
+    validateCommentContent,
+    ValidationError,
+} from '../utils/validation';
+import { GraphQLError } from 'graphql';
+import { generateUploadUrl } from '../utils/r2';
+import { extractHashtags } from '../utils/hashtag';
+import { dmResolvers } from './dmResolvers';
+
+// Helper function to require authentication
+function requireAuth(context: Context): string {
+    if (!context.userId) {
+        throw new GraphQLError('You must be logged in to perform this action', {
+            extensions: { code: 'UNAUTHENTICATED' },
+        });
+    }
+    return context.userId;
+}
+
+// Helper function to require moderator/admin role
+async function requireModerator(context: Context): Promise<string> {
+    const userId = requireAuth(context);
+
+    const user = await context.prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true },
+    });
+
+    if (!user || (user.role !== 'moderator' && user.role !== 'admin')) {
+        throw new GraphQLError('Unauthorized - Moderator access required', {
+            extensions: { code: 'FORBIDDEN' },
+        });
+    }
+
+    return userId;
+}
+
+// Helper function to require admin role
+async function requireAdmin(context: Context): Promise<string> {
+    const userId = requireAuth(context);
+
+    const user = await context.prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true },
+    });
+
+    if (!user || user.role !== 'admin') {
+        throw new GraphQLError('Unauthorized - Admin access required', {
+            extensions: { code: 'FORBIDDEN' },
+        });
+    }
+
+    return userId;
+}
+
+// Helper function to create notifications
+async function createNotification(
+    context: Context,
+    type: 'LIKE' | 'COMMENT' | 'FOLLOW' | 'MENTION',
+    userId: string,
+    actorId: string,
+    postId?: string,
+    commentId?: string
+) {
+    // Don't create notification if user is acting on their own content
+    if (userId === actorId) return;
+
+    await context.prisma.notification.create({
+        data: {
+            type,
+            userId,
+            actorId,
+            postId,
+            commentId,
+        },
+    });
+}
+
+export const resolvers = {
+    Query: {
+        hello: () => {
+            return 'Hello from X API! 🚀';
+        },
+
+        // Get current authenticated user
+        me: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+            const user = await context.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            return user;
+        },
+
+        // Get user by ID
+        user: async (_: any, { id }: { id: string }, context: Context) => {
+            const user = await context.prisma.user.findUnique({
+                where: { id },
+            });
+            if (!user) {
+                throw new GraphQLError('User not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+            return user;
+        },
+
+        // Get user by username
+        userByUsername: async (_: any, { username }: { username: string }, context: Context) => {
+            const user = await context.prisma.user.findUnique({
+                where: { username },
+            });
+            if (!user) {
+                throw new GraphQLError('User not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+            return user;
+        },
+
+        // List users with pagination
+        users: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }, context: Context) => {
+            return context.prisma.user.findMany({
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Search users by username or name
+        searchUsers: async (_: any, { query, limit = 10 }: { query?: string; limit?: number }, context: Context) => {
+            // If no query provided, return all users (for when user types just '@')
+            if (!query || !query.trim()) {
+                return context.prisma.user.findMany({
+                    take: limit,
+                    orderBy: { username: 'asc' },
+                });
+            }
+
+            // Search by username or name
+            return context.prisma.user.findMany({
+                where: {
+                    OR: [
+                        { username: { contains: query, mode: 'insensitive' } },
+                        { name: { contains: query, mode: 'insensitive' } },
+                    ],
+                },
+                take: limit,
+                orderBy: { username: 'asc' },
+            });
+        },
+
+        // Get post by ID
+        post: async (_: any, { id }: { id: string }, context: Context) => {
+            const post = await context.prisma.post.findUnique({
+                where: { id },
+            });
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+            return post;
+        },
+
+        // List all posts with pagination
+        posts: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }, context: Context) => {
+            return context.prisma.post.findMany({
+                where: { isDeleted: false }, // Filter out deleted posts
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get posts by specific user
+        userPosts: async (
+            _: any,
+            { userId, limit = 20, offset = 0 }: { userId: string; limit?: number; offset?: number },
+            context: Context
+        ) => {
+            return context.prisma.post.findMany({
+                where: {
+                    userId,
+                    isDeleted: false, // Filter out deleted posts
+                },
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get personalized feed (posts from followed users)
+        feed: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }, context: Context) => {
+            const userId = requireAuth(context);
+
+            // Get IDs of users that the current user follows
+            const following = await context.prisma.follow.findMany({
+                where: { followerId: userId },
+                select: { followingId: true },
+            });
+
+            const followingIds = following.map((f) => f.followingId);
+
+            // Include own posts in the feed
+            followingIds.push(userId);
+
+            return context.prisma.post.findMany({
+                where: {
+                    userId: { in: followingIds },
+                    isDeleted: false, // Filter out deleted posts
+                },
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get trending hashtags
+        trendingHashtags: async (_: any, { limit = 10 }: { limit?: number }, context: Context) => {
+            // Calculate date 30 days ago for time-based trending
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            // Get hashtags with posts from the last 30 days
+            const hashtags = await context.prisma.hashtag.findMany({
+                where: {
+                    posts: {
+                        some: {
+                            post: {
+                                createdAt: {
+                                    gte: thirtyDaysAgo,
+                                },
+                            },
+                        },
+                    },
+                },
+                take: limit,
+                orderBy: {
+                    posts: {
+                        _count: 'desc',
+                    },
+                },
+                include: {
+                    _count: {
+                        select: { posts: true },
+                    },
+                },
+            });
+
+            return hashtags.map((hashtag) => ({
+                id: hashtag.id,
+                name: hashtag.name,
+                postsCount: hashtag._count.posts,
+                createdAt: hashtag.createdAt.toISOString(),
+            }));
+        },
+
+        // Search hashtags by name
+        searchHashtags: async (_: any, { query, limit = 10 }: { query: string; limit?: number }, context: Context) => {
+            const hashtags = await context.prisma.hashtag.findMany({
+                where: {
+                    name: {
+                        contains: query.toLowerCase(),
+                        mode: 'insensitive',
+                    },
+                },
+                take: limit,
+                include: {
+                    _count: {
+                        select: { posts: true },
+                    },
+                },
+                orderBy: {
+                    posts: {
+                        _count: 'desc',
+                    },
+                },
+            });
+
+            return hashtags.map((hashtag) => ({
+                id: hashtag.id,
+                name: hashtag.name,
+                postsCount: hashtag._count.posts,
+                createdAt: hashtag.createdAt.toISOString(),
+            }));
+        },
+
+        // Get posts by hashtag
+        postsByHashtag: async (
+            _: any,
+            { hashtag, limit = 20, offset = 0 }: { hashtag: string; limit?: number; offset?: number },
+            context: Context
+        ) => {
+            const normalizedHashtag = hashtag.toLowerCase().replace(/^#/, '');
+
+            const hashtagRecord = await context.prisma.hashtag.findUnique({
+                where: { name: normalizedHashtag },
+            });
+
+            if (!hashtagRecord) {
+                return [];
+            }
+
+            const postHashtags = await context.prisma.postHashtag.findMany({
+                where: { hashtagId: hashtagRecord.id },
+                take: limit,
+                skip: offset,
+                include: {
+                    post: true,
+                },
+                orderBy: {
+                    post: {
+                        createdAt: 'desc',
+                    },
+                },
+            });
+
+            return postHashtags.map((ph) => ph.post);
+        },
+
+        // Moderation queries (admin/moderator only)
+        reports: async (
+            _: any,
+            { status, limit = 20, offset = 0 }: { status?: string; limit?: number; offset?: number },
+            context: Context
+        ) => {
+            await requireModerator(context);
+
+            // Handle special filter for "Reviewed" tab - show all reviewed reports
+            let where: any = undefined;
+            if (status === 'all_reviewed') {
+                where = {
+                    status: {
+                        in: ['reviewed', 'actioned', 'dismissed']
+                    }
+                };
+            } else if (status) {
+                where = { status };
+            }
+
+            return context.prisma.report.findMany({
+                where,
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        report: async (_: any, { id }: { id: string }, context: Context) => {
+            await requireModerator(context);
+
+            const report = await context.prisma.report.findUnique({
+                where: { id },
+            });
+
+            if (!report) {
+                throw new GraphQLError('Report not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return report;
+        },
+
+        moderationActions: async (_: any, { userId }: { userId: string }, context: Context) => {
+            await requireModerator(context);
+
+            return context.prisma.moderationAction.findMany({
+                where: { targetUserId: userId },
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get current user's role
+        myRole: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+            const user = await context.prisma.user.findUnique({
+                where: { id: userId },
+                select: { role: true },
+            });
+            return user?.role || 'user';
+        },
+
+        // Get deleted posts (moderator only)
+        deletedPosts: async (
+            _: any,
+            { limit = 20, offset = 0 }: { limit?: number; offset?: number },
+            context: Context
+        ) => {
+            await requireModerator(context);
+
+            return context.prisma.post.findMany({
+                where: { isDeleted: true },
+                take: limit,
+                skip: offset,
+                orderBy: { deletedAt: 'desc' },
+            });
+        },
+
+        // Get deleted comments (moderator only)
+        deletedComments: async (
+            _: any,
+            { limit = 20, offset = 0 }: { limit?: number; offset?: number },
+            context: Context
+        ) => {
+            await requireModerator(context);
+
+            return context.prisma.comment.findMany({
+                where: { isDeleted: true },
+                take: limit,
+                skip: offset,
+                orderBy: { deletedAt: 'desc' },
+            });
+        },
+
+        // Get user notifications
+        notifications: async (
+            _: any,
+            { limit = 20, offset = 0 }: { limit?: number; offset?: number },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            return context.prisma.notification.findMany({
+                where: { userId },
+                take: limit,
+                skip: offset,
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        // Get unread notifications count
+        unreadNotificationsCount: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+
+            return context.prisma.notification.count({
+                where: {
+                    userId,
+                    read: false,
+                },
+            });
+        },
+    },
+
+    Mutation: {
+        // Register new user
+        register: async (
+            _: any,
+            { email, username, password, name }: { email: string; username: string; password: string; name?: string },
+            context: Context
+        ) => {
+            try {
+                // Validate inputs
+                validateEmail(email);
+                validateUsername(username);
+                validatePassword(password);
+
+                // Check if email already exists
+                const existingEmail = await context.prisma.user.findUnique({
+                    where: { email },
+                });
+                if (existingEmail) {
+                    throw new GraphQLError('Email already in use', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+
+                // Check if username already exists
+                const existingUsername = await context.prisma.user.findUnique({
+                    where: { username },
+                });
+                if (existingUsername) {
+                    throw new GraphQLError('Username already taken', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+
+                // Hash password
+                const hashedPassword = await hashPassword(password);
+
+                // Create user
+                const user = await context.prisma.user.create({
+                    data: {
+                        email,
+                        username,
+                        password: hashedPassword,
+                        name,
+                    },
+                });
+
+                // Generate token
+                const token = generateToken({
+                    userId: user.id,
+                    email: user.email,
+                });
+
+                return { token, user };
+            } catch (error) {
+                if (error instanceof ValidationError) {
+                    throw new GraphQLError(error.message, {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                throw error;
+            }
+        },
+
+        // Login user
+        login: async (_: any, { email, password }: { email: string; password: string }, context: Context) => {
+            // Find user by email
+            const user = await context.prisma.user.findUnique({
+                where: { email },
+            });
+
+            if (!user) {
+                throw new GraphQLError('Invalid credentials', {
+                    extensions: { code: 'UNAUTHENTICATED' },
+                });
+            }
+
+            // Verify password
+            const isValid = await comparePassword(password, user.password);
+            if (!isValid) {
+                throw new GraphQLError('Invalid credentials', {
+                    extensions: { code: 'UNAUTHENTICATED' },
+                });
+            }
+
+            // Generate token
+            const token = generateToken({
+                userId: user.id,
+                email: user.email,
+            });
+
+            return { token, user };
+        },
+
+        // Complete onboarding
+        completeOnboarding: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.user.update({
+                where: { id: userId },
+                data: { onboardingCompleted: true },
+            });
+
+            return true;
+        },
+
+        // Update user profile
+        updateProfile: async (
+            _: any,
+            { name, bio, avatar, coverImage }: { name?: string; bio?: string; avatar?: string; coverImage?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            // Validate name if provided
+            if (name !== undefined && name !== null) {
+                if (name.trim().length === 0) {
+                    throw new GraphQLError('Name cannot be empty', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                if (name.length > 50) {
+                    throw new GraphQLError('Name must be 50 characters or less', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+            }
+
+            // Validate bio if provided
+            if (bio !== undefined && bio !== null && bio.length > 160) {
+                throw new GraphQLError('Bio must be 160 characters or less', {
+                    extensions: { code: 'BAD_USER_INPUT' },
+                });
+            }
+
+            // Validate avatar URL if provided
+            if (avatar !== undefined && avatar !== null && avatar.trim() !== '') {
+                try {
+                    new URL(avatar);
+                    if (!avatar.startsWith('https://')) {
+                        throw new Error('Must be HTTPS');
+                    }
+                } catch {
+                    throw new GraphQLError('Avatar must be a valid HTTPS URL', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+            }
+
+            // Validate cover image URL if provided
+            if (coverImage !== undefined && coverImage !== null && coverImage.trim() !== '') {
+                try {
+                    new URL(coverImage);
+                    if (!coverImage.startsWith('https://')) {
+                        throw new Error('Must be HTTPS');
+                    }
+                } catch {
+                    throw new GraphQLError('Cover image must be a valid HTTPS URL', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+            }
+
+            // Build update data object with only provided fields
+            const updateData: any = {};
+            if (name !== undefined && name !== null) updateData.name = name.trim();
+            if (bio !== undefined) updateData.bio = bio !== null ? bio.trim() : null;
+            if (avatar !== undefined) updateData.avatar = avatar !== null ? (avatar.trim() || null) : null;
+            if (coverImage !== undefined) updateData.coverImage = coverImage !== null ? (coverImage.trim() || null) : null;
+
+            // Update user profile
+            const updatedUser = await context.prisma.user.update({
+                where: { id: userId },
+                data: updateData,
+            });
+
+            return updatedUser;
+        },
+
+        // Create a new post
+        createPost: async (
+            _: any,
+            { content, imageUrl }: { content: string; imageUrl?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            try {
+                validatePostContent(content);
+
+                // Extract hashtags from content
+                const hashtags = extractHashtags(content);
+
+                const post = await context.prisma.post.create({
+                    data: {
+                        content,
+                        imageUrl,
+                        userId,
+                    },
+                });
+
+                // Create or link hashtags
+                for (const hashtagName of hashtags) {
+                    // Find or create hashtag
+                    let hashtag = await context.prisma.hashtag.findUnique({
+                        where: { name: hashtagName },
+                    });
+
+                    if (!hashtag) {
+                        hashtag = await context.prisma.hashtag.create({
+                            data: { name: hashtagName },
+                        });
+                    }
+
+                    // Link hashtag to post
+                    await context.prisma.postHashtag.create({
+                        data: {
+                            postId: post.id,
+                            hashtagId: hashtag.id,
+                        },
+                    });
+                }
+
+                // Extract mentions and create notifications
+                const mentionRegex = /@(\w+)/g;
+                const mentions = content.match(mentionRegex);
+                if (mentions) {
+                    const uniqueMentions = [...new Set(mentions.map(m => m.slice(1)))]; // Remove @ and get unique
+                    for (const username of uniqueMentions) {
+                        const mentionedUser = await context.prisma.user.findUnique({
+                            where: { username },
+                            select: { id: true },
+                        });
+                        if (mentionedUser && mentionedUser.id !== userId) {
+                            await createNotification(context, 'MENTION', mentionedUser.id, userId, post.id);
+                        }
+                    }
+                }
+
+                return post;
+            } catch (error) {
+                if (error instanceof ValidationError) {
+                    throw new GraphQLError(error.message, {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                throw error;
+            }
+        },
+
+        // Delete a post
+        deletePost: async (_: any, { id }: { id: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            const post = await context.prisma.post.findUnique({
+                where: { id },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            if (post.userId !== userId) {
+                throw new GraphQLError('You can only delete your own posts', {
+                    extensions: { code: 'FORBIDDEN' },
+                });
+            }
+
+            await context.prisma.post.delete({
+                where: { id },
+            });
+
+            return true;
+        },
+
+        // Like a post
+        likePost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            // Check if already liked
+            const existingLike = await context.prisma.like.findUnique({
+                where: {
+                    userId_postId: {
+                        userId,
+                        postId,
+                    },
+                },
+            });
+
+            if (existingLike) {
+                return true; // Already liked
+            }
+
+            await context.prisma.like.create({
+                data: {
+                    userId,
+                    postId,
+                },
+            });
+
+            // Get post owner to create notification
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+                select: { userId: true },
+            });
+
+            if (post) {
+                await createNotification(context, 'LIKE', post.userId, userId, postId);
+            }
+
+            return true;
+        },
+
+        // Unlike a post
+        unlikePost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.like.deleteMany({
+                where: {
+                    userId,
+                    postId,
+                },
+            });
+
+            return true;
+        },
+
+        // Bookmark a post
+        bookmarkPost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            // Check if already bookmarked
+            const existingBookmark = await context.prisma.bookmark.findUnique({
+                where: {
+                    userId_postId: {
+                        userId,
+                        postId,
+                    },
+                },
+            });
+
+            if (existingBookmark) {
+                return true; // Already bookmarked
+            }
+
+            await context.prisma.bookmark.create({
+                data: {
+                    userId,
+                    postId,
+                },
+            });
+
+            return true;
+        },
+
+        // Remove bookmark
+        unbookmarkPost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.bookmark.deleteMany({
+                where: {
+                    userId,
+                    postId,
+                },
+            });
+
+            return true;
+        },
+
+        // Create a comment
+        createComment: async (
+            _: any,
+            { postId, content }: { postId: string; content: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            try {
+                validateCommentContent(content);
+
+                const comment = await context.prisma.comment.create({
+                    data: {
+                        content,
+                        userId,
+                        postId,
+                    },
+                });
+
+                // Get post owner to create notification
+                const post = await context.prisma.post.findUnique({
+                    where: { id: postId },
+                    select: { userId: true },
+                });
+
+                if (post) {
+                    await createNotification(context, 'COMMENT', post.userId, userId, postId, comment.id);
+                }
+
+                // Extract mentions and create notifications
+                const mentionRegex = /@(\w+)/g;
+                const mentions = content.match(mentionRegex);
+                if (mentions) {
+                    const uniqueMentions = [...new Set(mentions.map(m => m.slice(1)))]; // Remove @ and get unique
+                    for (const username of uniqueMentions) {
+                        const mentionedUser = await context.prisma.user.findUnique({
+                            where: { username },
+                            select: { id: true },
+                        });
+                        if (mentionedUser && mentionedUser.id !== userId) {
+                            await createNotification(context, 'MENTION', mentionedUser.id, userId, postId, comment.id);
+                        }
+                    }
+                }
+
+                return comment;
+            } catch (error) {
+                if (error instanceof ValidationError) {
+                    throw new GraphQLError(error.message, {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                throw error;
+            }
+        },
+
+        // Delete a comment
+        deleteComment: async (_: any, { id }: { id: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            const comment = await context.prisma.comment.findUnique({
+                where: { id },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            if (comment.userId !== userId) {
+                throw new GraphQLError('You can only delete your own comments', {
+                    extensions: { code: 'FORBIDDEN' },
+                });
+            }
+
+            await context.prisma.comment.delete({
+                where: { id },
+            });
+
+            return true;
+        },
+
+        // Follow a user
+        followUser: async (_: any, { userId: targetUserId }: { userId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            if (userId === targetUserId) {
+                throw new GraphQLError('You cannot follow yourself', {
+                    extensions: { code: 'BAD_USER_INPUT' },
+                });
+            }
+
+            // Check if already following
+            const existingFollow = await context.prisma.follow.findUnique({
+                where: {
+                    followerId_followingId: {
+                        followerId: userId,
+                        followingId: targetUserId,
+                    },
+                },
+            });
+
+            if (existingFollow) {
+                return true; // Already following
+            }
+
+            await context.prisma.follow.create({
+                data: {
+                    followerId: userId,
+                    followingId: targetUserId,
+                },
+            });
+
+            // Create follow notification
+            await createNotification(context, 'FOLLOW', targetUserId, userId);
+
+            return true;
+        },
+
+        // Unfollow a user
+        unfollowUser: async (_: any, { userId: targetUserId }: { userId: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.follow.deleteMany({
+                where: {
+                    followerId: userId,
+                    followingId: targetUserId,
+                },
+            });
+
+            return true;
+        },
+
+        // Moderation mutations
+        reportPost: async (
+            _: any,
+            { postId, reason, description }: { postId: string; reason: string; description?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            // Check if post exists
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.report.create({
+                data: {
+                    reason,
+                    description,
+                    postId,
+                    reporterId: userId,
+                },
+            });
+        },
+
+        reportComment: async (
+            _: any,
+            { commentId, reason, description }: { commentId: string; reason: string; description?: string },
+            context: Context
+        ) => {
+            const userId = requireAuth(context);
+
+            // Check if comment exists
+            const comment = await context.prisma.comment.findUnique({
+                where: { id: commentId },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.report.create({
+                data: {
+                    reason,
+                    description,
+                    commentId,
+                    reporterId: userId,
+                },
+            });
+        },
+
+        reviewReport: async (
+            _: any,
+            {
+                reportId,
+                action,
+                moderatorNotes,
+                duration,
+            }: { reportId: string; action: string; moderatorNotes?: string; duration?: number },
+            context: Context
+        ) => {
+            const userId = await requireModerator(context);
+
+            const report = await context.prisma.report.findUnique({
+                where: { id: reportId },
+                include: {
+                    post: true,
+                    comment: true,
+                },
+            });
+
+            if (!report) {
+                throw new GraphQLError('Report not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            // Update report
+            const updatedReport = await context.prisma.report.update({
+                where: { id: reportId },
+                data: {
+                    status: 'actioned',
+                    action,
+                    reviewedById: userId,
+                    reviewedAt: new Date(),
+                    moderatorNotes,
+                },
+            });
+
+            // Get target user ID
+            let targetUserId: string | null = null;
+            if (report.post) {
+                targetUserId = report.post.userId;
+            } else if (report.comment) {
+                targetUserId = report.comment.userId;
+            }
+
+            // Create moderation action if needed
+            if (targetUserId && action !== 'dismissed') {
+                await context.prisma.moderationAction.create({
+                    data: {
+                        type: action,
+                        reason: moderatorNotes || report.reason,
+                        duration,
+                        targetUserId,
+                        moderatorId: userId,
+                        reportId,
+                        expiresAt: duration ? new Date(Date.now() + duration * 24 * 60 * 60 * 1000) : null,
+                    },
+                });
+
+                // Handle content removal (soft delete)
+                if (action === 'content_removal') {
+                    if (report.postId) {
+                        await context.prisma.post.update({
+                            where: { id: report.postId },
+                            data: {
+                                isDeleted: true,
+                                deletedAt: new Date(),
+                                deletedById: userId,
+                            },
+                        });
+                    } else if (report.commentId) {
+                        await context.prisma.comment.update({
+                            where: { id: report.commentId },
+                            data: {
+                                isDeleted: true,
+                                deletedAt: new Date(),
+                                deletedById: userId,
+                            },
+                        });
+                    }
+                }
+            }
+
+            return updatedReport;
+        },
+
+        dismissReport: async (
+            _: any,
+            { reportId, moderatorNotes }: { reportId: string; moderatorNotes?: string },
+            context: Context
+        ) => {
+            const userId = await requireModerator(context);
+
+            const report = await context.prisma.report.findUnique({
+                where: { id: reportId },
+            });
+
+            if (!report) {
+                throw new GraphQLError('Report not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.report.update({
+                where: { id: reportId },
+                data: {
+                    status: 'dismissed',
+                    action: 'dismissed',
+                    reviewedById: userId,
+                    reviewedAt: new Date(),
+                    moderatorNotes,
+                },
+            });
+        },
+
+        // Update user role (admin only)
+        updateUserRole: async (
+            _: any,
+            { userId, role }: { userId: string; role: string },
+            context: Context
+        ) => {
+            await requireAdmin(context);
+
+            // Validate role
+            const validRoles = ['user', 'moderator', 'admin'];
+            if (!validRoles.includes(role)) {
+                throw new GraphQLError('Invalid role. Must be: user, moderator, or admin', {
+                    extensions: { code: 'BAD_USER_INPUT' },
+                });
+            }
+
+            // Check if user exists
+            const targetUser = await context.prisma.user.findUnique({
+                where: { id: userId },
+            });
+
+            if (!targetUser) {
+                throw new GraphQLError('User not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.user.update({
+                where: { id: userId },
+                data: { role },
+            });
+        },
+
+        // Generate upload URL for R2
+        generateUploadUrl: async (
+            _: any,
+            { filename, contentType }: { filename: string; contentType: string },
+            context: Context
+        ) => {
+            requireAuth(context); // Must be authenticated to upload
+
+            try {
+                const result = await generateUploadUrl(filename, contentType);
+                return result;
+            } catch (error) {
+                console.error('Error generating upload URL:', error);
+                throw new GraphQLError('Failed to generate upload URL', {
+                    extensions: { code: 'INTERNAL_SERVER_ERROR' },
+                });
+            }
+        },
+
+        // Permanently delete a post (moderator only)
+        permanentlyDeletePost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            await context.prisma.post.delete({
+                where: { id: postId },
+            });
+
+            return true;
+        },
+
+        // Permanently delete a comment (moderator only)
+        permanentlyDeleteComment: async (_: any, { commentId }: { commentId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const comment = await context.prisma.comment.findUnique({
+                where: { id: commentId },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            await context.prisma.comment.delete({
+                where: { id: commentId },
+            });
+
+            return true;
+        },
+
+        // Restore a soft-deleted post (moderator only)
+        restorePost: async (_: any, { postId }: { postId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const post = await context.prisma.post.findUnique({
+                where: { id: postId },
+            });
+
+            if (!post) {
+                throw new GraphQLError('Post not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.post.update({
+                where: { id: postId },
+                data: {
+                    isDeleted: false,
+                    deletedAt: null,
+                    deletedById: null,
+                },
+            });
+        },
+
+        // Restore a soft-deleted comment (moderator only)
+        restoreComment: async (_: any, { commentId }: { commentId: string }, context: Context) => {
+            await requireModerator(context);
+
+            const comment = await context.prisma.comment.findUnique({
+                where: { id: commentId },
+            });
+
+            if (!comment) {
+                throw new GraphQLError('Comment not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            return context.prisma.comment.update({
+                where: { id: commentId },
+                data: {
+                    isDeleted: false,
+                    deletedAt: null,
+                    deletedById: null,
+                },
+            });
+        },
+
+        // Mark a notification as read
+        markNotificationAsRead: async (_: any, { id }: { id: string }, context: Context) => {
+            const userId = requireAuth(context);
+
+            const notification = await context.prisma.notification.findUnique({
+                where: { id },
+            });
+
+            if (!notification) {
+                throw new GraphQLError('Notification not found', {
+                    extensions: { code: 'NOT_FOUND' },
+                });
+            }
+
+            if (notification.userId !== userId) {
+                throw new GraphQLError('You can only mark your own notifications as read', {
+                    extensions: { code: 'FORBIDDEN' },
+                });
+            }
+
+            return context.prisma.notification.update({
+                where: { id },
+                data: { read: true },
+            });
+        },
+
+        // Mark all notifications as read
+        markAllNotificationsAsRead: async (_: any, __: any, context: Context) => {
+            const userId = requireAuth(context);
+
+            await context.prisma.notification.updateMany({
+                where: {
+                    userId,
+                    read: false,
+                },
+                data: { read: true },
+            });
+
+            return true;
+        },
+    },
+
+    // Field resolvers for User type
+    User: {
+        posts: async (parent: any, _: any, context: Context) => {
+            return context.prisma.post.findMany({
+                where: { userId: parent.id },
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        followers: async (parent: any, _: any, context: Context) => {
+            const follows = await context.prisma.follow.findMany({
+                where: { followingId: parent.id },
+                include: { follower: true },
+            });
+            return follows.map((f) => f.follower);
+        },
+
+        following: async (parent: any, _: any, context: Context) => {
+            const follows = await context.prisma.follow.findMany({
+                where: { followerId: parent.id },
+                include: { following: true },
+            });
+            return follows.map((f) => f.following);
+        },
+
+        followersCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.follow.count({
+                where: { followingId: parent.id },
+            });
+        },
+
+        followingCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.follow.count({
+                where: { followerId: parent.id },
+            });
+        },
+
+        postsCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.post.count({
+                where: { userId: parent.id },
+            });
+        },
+
+        isFollowing: async (parent: any, _: any, context: Context) => {
+            if (!context.userId) return false;
+            const follow = await context.prisma.follow.findUnique({
+                where: {
+                    followerId_followingId: {
+                        followerId: context.userId,
+                        followingId: parent.id,
+                    },
+                },
+            });
+            return !!follow;
+        },
+
+        role: (parent: any) => {
+            return parent.role || 'user';
+        },
+    },
+
+    // Field resolvers for Post type
+    Post: {
+        user: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.userId },
+            });
+        },
+
+        likes: async (parent: any, _: any, context: Context) => {
+            return context.prisma.like.findMany({
+                where: { postId: parent.id },
+            });
+        },
+
+        comments: async (parent: any, _: any, context: Context) => {
+            return context.prisma.comment.findMany({
+                where: { postId: parent.id },
+                orderBy: { createdAt: 'desc' },
+            });
+        },
+
+        likesCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.like.count({
+                where: { postId: parent.id },
+            });
+        },
+
+        commentsCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.comment.count({
+                where: { postId: parent.id },
+            });
+        },
+
+        isLiked: async (parent: any, _: any, context: Context) => {
+            if (!context.userId) return false;
+
+            const like = await context.prisma.like.findUnique({
+                where: {
+                    userId_postId: {
+                        userId: context.userId,
+                        postId: parent.id,
+                    },
+                },
+            });
+
+            return !!like;
+        },
+
+        isBookmarked: async (parent: any, _: any, context: Context) => {
+            if (!context.userId) return false;
+
+            const bookmark = await context.prisma.bookmark.findUnique({
+                where: {
+                    userId_postId: {
+                        userId: context.userId,
+                        postId: parent.id,
+                    },
+                },
+            });
+
+            return !!bookmark;
+        },
+
+        deletedBy: async (parent: any, _: any, context: Context) => {
+            if (!parent.deletedById) return null;
+            return context.prisma.user.findUnique({
+                where: { id: parent.deletedById },
+            });
+        },
+
+        deletedAt: (parent: any) => {
+            return parent.deletedAt ? parent.deletedAt.getTime().toString() : null;
+        },
+    },
+
+    // Field resolvers for Comment type
+    Comment: {
+        user: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.userId },
+            });
+        },
+
+        post: async (parent: any, _: any, context: Context) => {
+            return context.prisma.post.findUnique({
+                where: { id: parent.postId },
+            });
+        },
+
+        deletedBy: async (parent: any, _: any, context: Context) => {
+            if (!parent.deletedById) return null;
+            return context.prisma.user.findUnique({
+                where: { id: parent.deletedById },
+            });
+        },
+
+        deletedAt: (parent: any) => {
+            return parent.deletedAt ? parent.deletedAt.getTime().toString() : null;
+        },
+    },
+
+    // Field resolvers for Like type
+    Like: {
+        user: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.userId },
+            });
+        },
+
+        post: async (parent: any, _: any, context: Context) => {
+            return context.prisma.post.findUnique({
+                where: { id: parent.postId },
+            });
+        },
+    },
+
+    // Field resolvers for Hashtag type
+    Hashtag: {
+        postsCount: async (parent: any, _: any, context: Context) => {
+            return context.prisma.postHashtag.count({
+                where: { hashtagId: parent.id },
+            });
+        },
+    },
+
+    // Field resolvers for Report type
+    Report: {
+        post: async (parent: any, _: any, context: Context) => {
+            if (!parent.postId) return null;
+            return context.prisma.post.findUnique({
+                where: { id: parent.postId },
+            });
+        },
+
+        comment: async (parent: any, _: any, context: Context) => {
+            if (!parent.commentId) return null;
+            return context.prisma.comment.findUnique({
+                where: { id: parent.commentId },
+            });
+        },
+
+        reporter: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.reporterId },
+            });
+        },
+
+        reviewedBy: async (parent: any, _: any, context: Context) => {
+            if (!parent.reviewedById) return null;
+            return context.prisma.user.findUnique({
+                where: { id: parent.reviewedById },
+            });
+        },
+    },
+
+    // Field resolvers for ModerationAction type
+    ModerationAction: {
+        targetUser: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.targetUserId },
+            });
+        },
+
+        moderator: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.moderatorId },
+            });
+        },
+
+        report: async (parent: any, _: any, context: Context) => {
+            if (!parent.reportId) return null;
+            return context.prisma.report.findUnique({
+                where: { id: parent.reportId },
+            });
+        },
+    },
+
+    // Field resolvers for Notification type
+    Notification: {
+        actor: async (parent: any, _: any, context: Context) => {
+            return context.prisma.user.findUnique({
+                where: { id: parent.actorId },
+            });
+        },
+
+        post: async (parent: any, _: any, context: Context) => {
+            if (!parent.postId) return null;
+            return context.prisma.post.findUnique({
+                where: { id: parent.postId },
+            });
+        },
+
+        comment: async (parent: any, _: any, context: Context) => {
+            if (!parent.commentId) return null;
+            return context.prisma.comment.findUnique({
+                where: { id: parent.commentId },
+            });
+        },
+
+        createdAt: (parent: any) => {
+            return parent.createdAt.getTime().toString();
+        },
+    },
+
+    // Merge DM resolvers
+    Conversation: dmResolvers.Conversation,
+    Message: dmResolvers.Message,
+};
+
+// Merge DM Query and Mutation resolvers
+resolvers.Query = { ...resolvers.Query, ...dmResolvers.Query };
+resolvers.Mutation = { ...resolvers.Mutation, ...dmResolvers.Mutation };

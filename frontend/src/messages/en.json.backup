@@ -1,0 +1,267 @@
+{
+    "Header": {
+        "home": "Home",
+        "trending": "Trending",
+        "moderation": "Moderation",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "profile": "Profile",
+        "editProfile": "Edit Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "theme": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+        }
+    },
+    "Home": {
+        "welcome": "Welcome back",
+        "happening": "What is happening?!",
+        "heroTitle": "Welcome to Open X",
+        "heroSubtitle": "A modern social platform built with cutting-edge technology",
+        "getStarted": "Get Started",
+        "signIn": "Sign In",
+        "features": {
+            "fast": "Lightning Fast",
+            "fastDesc": "Built with Next.js 14 and optimized for performance",
+            "design": "Beautiful Design",
+            "designDesc": "Modern UI with TailwindCSS and smooth animations",
+            "secure": "Secure & Scalable",
+            "secureDesc": "GraphQL API with JWT authentication and PostgreSQL"
+        },
+        "apiStatus": {
+            "title": "GraphQL API Status",
+            "connecting": "Connecting to API...",
+            "error": "Error",
+            "backendTip": "Make sure the backend server is running on port 4000",
+            "connected": "Backend is connected and responding!"
+        }
+    },
+    "ProfileCard": {
+        "joined": "Joined",
+        "posts": "Posts",
+        "followers": "Followers",
+        "following": "Following"
+    },
+    "CreatePost": {
+        "placeholder": "What's happening?",
+        "post": "Post",
+        "posting": "Posting...",
+        "uploading": "Uploading...",
+        "addImage": "Add image"
+    },
+    "Trending": {
+        "title": "Trending",
+        "trending": "Trending",
+        "post": "post",
+        "posts": "posts"
+    },
+    "Auth": {
+        "welcomeBack": "Welcome back",
+        "join": "Join Open X",
+        "signInTitle": "Sign in to your account",
+        "signUpTitle": "Create your account to get started",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "createAccount": "Create Account",
+        "processing": "Processing...",
+        "labels": {
+            "name": "Name (optional)",
+            "username": "Username",
+            "email": "Email",
+            "password": "Password"
+        },
+        "placeholders": {
+            "name": "John Doe",
+            "username": "johndoe",
+            "email": "john@example.com",
+            "password": "•••••••�?
+        },
+        "passwordHint": "Min 8 characters, with uppercase, lowercase, and number",
+        "footer": {
+            "noAccount": "Don't have an account? ",
+            "hasAccount": "Already have an account? "
+        },
+        "testTips": {
+            "title": "Testing Tips:",
+            "p1": "Password must have uppercase, lowercase, and number",
+            "p2": "Username: 3-20 chars, alphanumeric + underscores",
+            "p3": "Try creating an account and then logging in!"
+        }
+    },
+    "Comments": {
+        "title": "Comments",
+        "placeholder": "Write a comment...",
+        "reply": "Reply",
+        "delete": "Delete comment",
+        "deleteConfirm": "Are you sure you want to delete this comment?",
+        "deleteSuccess": "Comment deleted successfully",
+        "deleteError": "Failed to delete comment",
+        "noComments": "No comments yet",
+        "beFirst": "Be the first to comment!"
+    },
+    "Follow": {
+        "follow": "Follow",
+        "following": "Following",
+        "unfollow": "Unfollow",
+        "followers": "Followers",
+        "loading": "Loading...",
+        "followError": "Failed to follow user",
+        "unfollowError": "Failed to unfollow user",
+        "loadError": "Failed to load users",
+        "noFollowers": "No followers yet",
+        "noFollowersDesc": "When people follow you, they'll appear here",
+        "noFollowing": "Not following anyone yet",
+        "noFollowingDesc": "Start following people to see their posts in your feed"
+    },
+    "Mention": {
+        "loading": "Loading...",
+        "noUsers": "No users found"
+    },
+    "Moderation": {
+        "title": "Moderation Dashboard",
+        "subtitle": "Review and manage user reports and deleted content",
+        "tabs": {
+            "reports": "Reports",
+            "deletedContent": "Deleted Content"
+        },
+        "filters": {
+            "all": "All",
+            "pending": "Pending",
+            "reviewed": "Reviewed",
+            "actioned": "Actioned",
+            "dismissed": "Dismissed"
+        },
+        "accessDenied": {
+            "title": "Access Denied",
+            "message": "You don't have permission to access this page."
+        },
+        "loading": "Loading moderation dashboard...",
+        "error": {
+            "title": "Error Loading Data",
+            "retry": "Retry"
+        },
+        "noReports": {
+            "title": "No Reports Found",
+            "allReviewed": "No reviewed reports at this time.",
+            "filtered": "No {status} reports at this time.",
+            "none": "There are no reports to review."
+        },
+        "noDeleted": {
+            "title": "No Deleted Content",
+            "message": "There is no soft-deleted content to review."
+        },
+        "reportCard": {
+            "reportNumber": "Report",
+            "reportedBy": "Reported by:",
+            "reportedContent": "Reported {type}",
+            "reviewedBy": "Reviewed by",
+            "action": "Action:",
+            "notes": "Notes:",
+            "reviewAction": "Review & Take Action",
+            "post": "Post",
+            "comment": "Comment",
+            "by": "by",
+            "timeAgo": {
+                "justNow": "Just now",
+                "minutesAgo": "{count}m ago",
+                "hoursAgo": "{count}h ago",
+                "daysAgo": "{count}d ago",
+                "unknown": "Unknown"
+            },
+            "status": {
+                "pending": "Pending",
+                "reviewed": "Reviewed",
+                "actioned": "Actioned",
+                "dismissed": "Dismissed"
+            },
+            "reason": {
+                "SPAM": "Spam",
+                "HARASSMENT": "Harassment",
+                "HATE_SPEECH": "Hate Speech",
+                "VIOLENCE": "Violence",
+                "NUDITY": "Nudity",
+                "MISINFORMATION": "Misinformation",
+                "OTHER": "Other"
+            },
+            "actionType": {
+                "warning": "Warning",
+                "content_removal": "Content Removal",
+                "user_warning": "User Warning",
+                "user_suspension": "User Suspension",
+                "user_ban": "User Ban",
+                "no_action": "No Action"
+            }
+        },
+        "deletedContentCard": {
+            "deletedPost": "Deleted Post",
+            "deletedComment": "Deleted Comment",
+            "softDeleted": "Soft Deleted",
+            "deleted": "Deleted",
+            "originalAuthor": "Original author:",
+            "deletedByModerator": "Deleted by moderator:",
+            "onPost": "On post:",
+            "created": "Created:",
+            "likes": "likes",
+            "comments": "comments",
+            "restoreContent": "Restore Content",
+            "permanentlyDelete": "Permanently Delete",
+            "cancel": "Cancel",
+            "restore": "Restore",
+            "timeAgo": {
+                "justNow": "Just now",
+                "minutesAgo": "{count}m ago",
+                "hoursAgo": "{count}h ago",
+                "daysAgo": "{count}d ago",
+                "unknown": "Unknown"
+            },
+            "dialog": {
+                "deleteTitle": "Permanently Delete Content?",
+                "restoreTitle": "Restore Content?",
+                "deleteMessage": "This action cannot be undone. The content will be permanently removed from the database.",
+                "restoreMessage": "This will make the content visible to users again."
+            },
+            "alerts": {
+                "deleteSuccess": "Content permanently deleted from database",
+                "deleteError": "Failed to permanently delete content",
+                "restoreSuccess": "Content restored successfully",
+                "restoreError": "Failed to restore content"
+            }
+        }
+    },
+    "Error": {
+        "title": "Something went wrong!",
+        "description": "An unexpected error occurred. Please try again or return to the home page.",
+        "tryAgain": "Try Again",
+        "goHome": "Go Home"
+    },
+    "NotFound": {
+        "title": "Page Not Found",
+        "description": "The page you are looking for does not exist or has been moved.",
+        "goHome": "Go Home"
+    }
+,
+    "EditProfile": {
+        "title": "Edit Profile",
+        "coverImage": "Cover Image",
+        "avatar": "Avatar",
+        "name": "Name",
+        "nameRequired": "Name is required",
+        "nameTooLong": "Name must be 50 characters or less",
+        "bio": "Bio",\n        "bioTooLong": "Bio must be 160 characters or less",
+        "bioPlaceholder": "Tell us about yourself...",
+        "language": "Language",
+        "languageChangeNote": "Changes take effect immediately",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "noChanges": "No changes to save",
+        "unsavedChanges": {
+            "title": "Unsaved Changes",
+            "message": "You have unsaved changes. Are you sure you want to leave?",
+            "keepEditing": "Keep Editing",
+            "discard": "Discard Changes"
+        }
+    }
+}

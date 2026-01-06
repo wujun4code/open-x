@@ -1,0 +1,407 @@
+{
+    "Header": {
+        "home": "Inicio",
+        "trending": "Tendencias",
+        "moderation": "Moderación",
+        "signIn": "Iniciar Sesión",
+        "signUp": "Registrarse",
+        "profile": "Perfil",
+        "editProfile": "Editar Perfil",
+        "settings": "Configuración",
+        "logout": "Cerrar Sesión",
+        "messages": "Mensajes",
+        "theme": {
+            "light": "Claro",
+            "dark": "Oscuro",
+            "system": "Sistema"
+        }
+    },
+    "Messages": {
+        "title": "Mensajes",
+        "searchPlaceholder": "Buscar conversaciones...",
+        "noConversations": "Aún no hay conversaciones",
+        "noResults": "No se encontraron conversaciones",
+        "selectConversation": "Selecciona una conversación",
+        "selectConversationHint": "Elige una conversación de la lista para comenzar a enviar mensajes",
+        "conversation": "Conversación",
+        "noMessages": "Aún no hay mensajes. ¡Inicia la conversación!",
+        "inputPlaceholder": "Escribe un mensaje...",
+        "sendError": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+        "deleteConfirm": "¿Eliminar este mensaje?",
+        "messageDeleted": "Mensaje eliminado",
+        "endOfHistory": "Inicio de la conversación"
+    },
+    "Home": {
+        "welcome": "Bienvenido de nuevo",
+        "happening": "¿Qué está pasando?!",
+        "heroTitle": "Bienvenido a Open X",
+        "heroSubtitle": "Una plataforma social moderna construida con tecnología de punta",
+        "getStarted": "Empezar",
+        "signIn": "Iniciar Sesión",
+        "features": {
+            "fast": "Ultrarrápido",
+            "fastDesc": "Construido con Next.js 14 y optimizado para rendimiento",
+            "design": "Diseño Hermoso",
+            "designDesc": "UI moderna con TailwindCSS y animaciones fluidas",
+            "secure": "Seguro y Escalable",
+            "secureDesc": "API GraphQL con autenticación JWT y PostgreSQL"
+        },
+        "apiStatus": {
+            "title": "Estado de API GraphQL",
+            "connecting": "Conectando a la API...",
+            "error": "Error",
+            "backendTip": "Asegúrate que el servidor backend corra en el puerto 4000",
+            "connected": "¡Backend conectado y respondiendo!"
+        }
+    },
+    "ProfileCard": {
+        "joined": "Se unió",
+        "posts": "Publicaciones",
+        "followers": "Seguidores",
+        "following": "Siguiendo"
+    },
+    "CreatePost": {
+        "placeholder": "¿Qué está pasando?",
+        "post": "Publicar",
+        "posting": "Publicando...",
+        "uploading": "Subiendo...",
+        "addImage": "Agregar imagen"
+    },
+    "Trending": {
+        "backToHome": "Volver al Inicio",
+        "title": "Tendencias Ahora",
+        "subtitle": "Descubre lo que está de moda y sucediendo ahora mismo",
+        "trendingTopics": "Temas en Tendencia",
+        "allTime": "Todo el tiempo",
+        "errorLoading": "Error al cargar temas en tendencia",
+        "noTopics": "Aún no hay temas en tendencia",
+        "beFirst": "Sé el primero en iniciar una conversación!",
+        "post": "publicación",
+        "posts": "publicaciones"
+    },
+    "Auth": {
+        "welcomeBack": "Bienvenido de nuevo",
+        "join": "Únete a Open X",
+        "signInTitle": "Inicia sesión en tu cuenta",
+        "signUpTitle": "Crea tu cuenta para empezar",
+        "signIn": "Iniciar Sesión",
+        "signUp": "Registrarse",
+        "createAccount": "Crear Cuenta",
+        "processing": "Procesando...",
+        "labels": {
+            "name": "Nombre (opcional)",
+            "username": "Usuario",
+            "email": "Correo",
+            "password": "Contraseña"
+        },
+        "placeholders": {
+            "name": "Juan Pérez",
+            "username": "juanperez",
+            "email": "juan@ejemplo.com",
+            "password": "••••••••"
+        },
+        "passwordHint": "Mín 8 caracteres, mayúscula, minúscula y número",
+        "footer": {
+            "noAccount": "¿No tienes cuenta? ",
+            "hasAccount": "¿Ya tienes cuenta? "
+        },
+        "testTips": {
+            "title": "Tips de Prueba:",
+            "p1": "La contraseña debe tener mayúscula, minúscula y número",
+            "p2": "Usuario: 3-20 caracteres, alfanumérico + guiones bajos",
+            "p3": "¡Intenta crear una cuenta y luego iniciar sesión!"
+        }
+    },
+    "Comments": {
+        "title": "Comentarios",
+        "placeholder": "Escribe un comentario...",
+        "reply": "Responder",
+        "delete": "Eliminar comentario",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar este comentario?",
+        "deleteSuccess": "Comentario eliminado exitosamente",
+        "deleteError": "Error al eliminar el comentario",
+        "noComments": "No hay comentarios aún",
+        "beFirst": "¡Sé el primero en comentar!"
+    },
+    "Follow": {
+        "follow": "Seguir",
+        "following": "Siguiendo",
+        "unfollow": "Dejar de seguir",
+        "followers": "Seguidores",
+        "loading": "Cargando...",
+        "followError": "Error al seguir al usuario",
+        "unfollowError": "Error al dejar de seguir",
+        "loadError": "Error al cargar usuarios",
+        "noFollowers": "Aún no tienes seguidores",
+        "noFollowersDesc": "Cuando las personas te sigan, aparecerán aquí",
+        "noFollowing": "Aún no sigues a nadie",
+        "noFollowingDesc": "Comienza a seguir personas para ver sus publicaciones"
+    },
+    "Mention": {
+        "loading": "Cargando...",
+        "noUsers": "No se encontraron usuarios"
+    },
+    "Moderation": {
+        "title": "Panel de Moderación",
+        "subtitle": "Revisar y gestionar reportes de usuarios y contenido eliminado",
+        "tabs": {
+            "reports": "Reportes",
+            "deletedContent": "Contenido Eliminado"
+        },
+        "filters": {
+            "all": "Todos",
+            "pending": "Pendientes",
+            "reviewed": "Revisados",
+            "actioned": "Accionados",
+            "dismissed": "Desestimados"
+        },
+        "accessDenied": {
+            "title": "Acceso Denegado",
+            "message": "No tienes permiso para acceder a esta página."
+        },
+        "loading": "Cargando panel de moderación...",
+        "error": {
+            "title": "Error al Cargar Datos",
+            "retry": "Reintentar"
+        },
+        "noReports": {
+            "title": "No se Encontraron Reportes",
+            "allReviewed": "No hay reportes revisados en este momento.",
+            "filtered": "No hay reportes {status} en este momento.",
+            "none": "No hay reportes para revisar."
+        },
+        "noDeleted": {
+            "title": "Sin Contenido Eliminado",
+            "message": "No hay contenido eliminado suavemente para revisar."
+        },
+        "reportCard": {
+            "reportNumber": "Reporte",
+            "reportedBy": "Reportado por:",
+            "reportedContent": "{type} Reportado",
+            "reviewedBy": "Revisado por",
+            "action": "Acción:",
+            "notes": "Notas:",
+            "reviewAction": "Revisar y Tomar Acción",
+            "post": "Publicación",
+            "comment": "Comentario",
+            "by": "por",
+            "timeAgo": {
+                "justNow": "Justo ahora",
+                "minutesAgo": "Hace {count}m",
+                "hoursAgo": "Hace {count}h",
+                "daysAgo": "Hace {count}d",
+                "unknown": "Desconocido"
+            },
+            "status": {
+                "pending": "Pendiente",
+                "reviewed": "Revisado",
+                "actioned": "Accionado",
+                "dismissed": "Desestimado"
+            },
+            "reason": {
+                "SPAM": "Spam",
+                "HARASSMENT": "Acoso",
+                "HATE_SPEECH": "Discurso de Odio",
+                "VIOLENCE": "Violencia",
+                "NUDITY": "Desnudez",
+                "MISINFORMATION": "Desinformación",
+                "OTHER": "Otro"
+            },
+            "actionType": {
+                "warning": "Advertencia",
+                "content_removal": "Eliminación de Contenido",
+                "user_warning": "Advertencia al Usuario",
+                "user_suspension": "Suspensión del Usuario",
+                "user_ban": "Prohibición del Usuario",
+                "no_action": "Sin Acción"
+            }
+        },
+        "deletedContentCard": {
+            "deletedPost": "Publicación Eliminada",
+            "deletedComment": "Comentario Eliminado",
+            "softDeleted": "Eliminación Suave",
+            "deleted": "Eliminado",
+            "originalAuthor": "Autor original:",
+            "deletedByModerator": "Eliminado por moderador:",
+            "onPost": "En publicación:",
+            "created": "Creado:",
+            "likes": "me gusta",
+            "comments": "comentarios",
+            "restoreContent": "Restaurar Contenido",
+            "permanentlyDelete": "Eliminar Permanentemente",
+            "cancel": "Cancelar",
+            "restore": "Restaurar",
+            "timeAgo": {
+                "justNow": "Justo ahora",
+                "minutesAgo": "hace {count}m",
+                "hoursAgo": "hace {count}h",
+                "daysAgo": "hace {count}d",
+                "unknown": "Desconocido"
+            },
+            "dialog": {
+                "deleteTitle": "¿Eliminar Contenido Permanentemente?",
+                "restoreTitle": "¿Restaurar Contenido?",
+                "deleteMessage": "Esta acción no se puede deshacer. El contenido se eliminará permanentemente de la base de datos.",
+                "restoreMessage": "Esto hará que el contenido sea visible para los usuarios nuevamente."
+            },
+            "alerts": {
+                "deleteSuccess": "Contenido eliminado permanentemente de la base de datos",
+                "deleteError": "Error al eliminar permanentemente el contenido",
+                "restoreSuccess": "Contenido restaurado exitosamente",
+                "restoreError": "Error al restaurar el contenido"
+            }
+        }
+    },
+    "Error": {
+        "title": "¡Algo salió mal!",
+        "description": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo o vuelve a la página de inicio.",
+        "tryAgain": "Intentar de Nuevo",
+        "goHome": "Ir al Inicio"
+    },
+    "NotFound": {
+        "title": "Página No Encontrada",
+        "description": "La página que buscas no existe o ha sido movida.",
+        "goHome": "Ir al Inicio"
+    },
+    "EditProfile": {
+        "title": "Editar Perfil",
+        "coverImage": "Imagen de Portada",
+        "avatar": "Avatar",
+        "name": "Nombre",
+        "nameRequired": "El nombre es obligatorio",
+        "nameTooLong": "El nombre debe tener 50 caracteres o menos",
+        "bio": "Biografía",
+        "bioTooLong": "La biografía debe tener 160 caracteres o menos",
+        "bioPlaceholder": "Cuéntanos sobre ti...",
+        "language": "Idioma",
+        "languageChangeNote": "Los cambios surten efecto inmediatamente",
+        "cancel": "Cancelar",
+        "saveChanges": "Guardar Cambios",
+        "saving": "Guardando...",
+        "noChanges": "No hay cambios para guardar",
+        "unsavedChanges": {
+            "title": "Cambios sin Guardar",
+            "message": "Estás seguro de que quieres salir? Tienes cambios sin guardar.",
+            "keepEditing": "Seguir Editando",
+            "discard": "Descartar Cambios"
+        }
+    },
+    "Notifications": {
+        "title": "Notificaciones",
+        "markAllRead": "Marcar todo como leído",
+        "markAllAsRead": "Marcar todo como leído",
+        "noNotifications": "Aún no hay notificaciones",
+        "noNotificationsDesc": "Cuando alguien interactúe con tu contenido, lo verás aquí",
+        "seeAll": "Ver todas las notificaciones",
+        "types": {
+            "likedPost": "le gustó tu publicación",
+            "commentedPost": "comentó en tu publicación",
+            "startedFollowing": "comenzó a seguirte",
+            "mentionedYou": "te mencionó"
+        },
+        "timeAgo": {
+            "justNow": "Justo ahora",
+            "minutesAgo": "hace {count}m",
+            "hoursAgo": "hace {count}h",
+            "daysAgo": "hace {count}d"
+        },
+        "marking": "Marcando...",
+        "loadMore": "Cargar más"
+    },
+    "ImageUpload": {
+        "change": "Cambiar",
+        "upload": "Subir",
+        "uploading": "Subiendo...",
+        "aspectRatio16x9": "Proporción 16:9",
+        "aspectRatio1x1": "Cuadrado (1:1)",
+        "maxSize": "Máx {size}MB"
+    },
+    "Profile": {
+        "posts": "publicaciones",
+        "editProfile": "Editar perfil",
+        "follow": "Seguir",
+        "following": "Siguiendo",
+        "unfollow": "Dejar de seguir",
+        "followers": "Seguidores",
+        "joined": "Se unió",
+        "userNotFound": "Usuario no encontrado",
+        "userNotFoundDesc": "La cuenta que buscas no existe.",
+        "goHome": "Ir a inicio",
+        "tabPosts": "Publicaciones",
+        "tabReplies": "Respuestas",
+        "tabHighlights": "Destacados",
+        "tabMedia": "Multimedia",
+        "tabLikes": "Me gusta",
+        "noPosts": "Aún no hay publicaciones.",
+        "noBio": "Sin biografía aún. Haz clic en Editar perfil para agregar una!",
+        "startSharing": "Comienza a compartir tus pensamientos con el mundo!"
+    },
+    "Settings": {
+        "title": "Configuración",
+        "subtitle": "Administra las preferencias de tu cuenta",
+        "tabs": {
+            "account": "Cuenta",
+            "privacy": "Privacidad",
+            "notifications": "Notificaciones",
+            "appearance": "Apariencia",
+            "security": "Seguridad"
+        },
+        "account": {
+            "title": "Información de la cuenta",
+            "email": "Correo electrónico",
+            "username": "Nombre de usuario",
+            "displayName": "Nombre para mostrar",
+            "bio": "Biografía",
+            "bioPlaceholder": "Cuéntanos sobre ti..."
+        },
+        "privacy": {
+            "title": "Configuración de privacidad",
+            "profileVisibility": "Visibilidad del perfil",
+            "public": "Público",
+            "followersOnly": "Solo seguidores",
+            "private": "Privado",
+            "showEmail": "Mostrar correo en el perfil",
+            "showEmailDesc": "Permitir que otros vean tu dirección de correo",
+            "allowMessages": "Permitir mensajes directos",
+            "allowMessagesDesc": "Permitir que otros te envíen mensajes privados"
+        },
+        "notifications": {
+            "title": "Preferencias de notificación",
+            "emailNotifications": "Notificaciones por correo",
+            "emailNotificationsDesc": "Recibir notificaciones por correo electrónico",
+            "pushNotifications": "Notificaciones push",
+            "pushNotificationsDesc": "Recibir notificaciones push",
+            "likes": "Me gusta",
+            "likesDesc": "Cuando alguien le da me gusta a tu publicación",
+            "comments": "Comentarios",
+            "commentsDesc": "Cuando alguien comenta tu publicación",
+            "newFollowers": "Nuevos seguidores",
+            "newFollowersDesc": "Cuando alguien te sigue"
+        },
+        "appearance": {
+            "title": "Apariencia",
+            "theme": "Tema",
+            "light": "Claro",
+            "dark": "Oscuro",
+            "auto": "Automático (Sistema)",
+            "language": "Idioma"
+        },
+        "security": {
+            "title": "Seguridad",
+            "changePassword": "Cambiar contraseña",
+            "currentPassword": "Contraseña actual",
+            "newPassword": "Nueva contraseña",
+            "confirmPassword": "Confirmar nueva contraseña",
+            "currentPasswordPlaceholder": "Ingresa la contraseña actual",
+            "newPasswordPlaceholder": "Ingresa la nueva contraseña",
+            "confirmPasswordPlaceholder": "Confirma la nueva contraseña",
+            "updatePassword": "Actualizar contraseña",
+            "dangerZone": "Zona de peligro",
+            "logoutAll": "Cerrar sesión en todos los dispositivos"
+        },
+        "saveChanges": "Guardar cambios",
+        "saving": "Guardando...",
+        "changesNote": "Los cambios se guardarán en tu cuenta",
+        "saveSuccess": "Configuración guardada exitosamente!"
+    }
+}
