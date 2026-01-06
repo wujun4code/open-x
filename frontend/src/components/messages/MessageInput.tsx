@@ -41,35 +41,37 @@ export default function MessageInput({ onSend }: MessageInputProps) {
     const isOverLimit = charCount > charLimit;
 
     return (
-        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-dark-800">
-            <div className="flex items-end gap-2">
-                <div className="flex-1">
+        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-dark-800 bg-white dark:bg-dark-900">
+            <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 p-1.5 bg-gray-50 dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all">
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={t('inputPlaceholder')}
                         rows={1}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-dark-700 rounded-lg bg-white dark:bg-dark-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-h-32"
+                        className="flex-1 bg-transparent border-none focus:ring-0 px-3 py-2 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none max-h-32 text-[15px] leading-relaxed"
                         disabled={sending}
                     />
+                    <button
+                        type="submit"
+                        disabled={!content.trim() || sending || isOverLimit}
+                        className="p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:bg-gray-400 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+                    >
+                        {sending ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Send className="w-5 h-5" />
+                        )}
+                    </button>
+                </div>
+                <div className="h-4 flex items-center px-2">
                     {charCount > 0 && (
-                        <p className={`text-xs mt-1 ${isOverLimit ? 'text-red-600' : 'text-gray-500'}`}>
-                            {charCount} / {charLimit}
+                        <p className={`text-[10px] font-medium tracking-wider uppercase ${isOverLimit ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
+                            {charCount.toLocaleString()} / {charLimit.toLocaleString()}
                         </p>
                     )}
                 </div>
-                <button
-                    type="submit"
-                    disabled={!content.trim() || sending || isOverLimit}
-                    className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                    {sending ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                        <Send className="w-5 h-5" />
-                    )}
-                </button>
             </div>
         </form>
     );

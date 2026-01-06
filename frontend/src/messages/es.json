@@ -28,7 +28,8 @@
         "inputPlaceholder": "Escribe un mensaje...",
         "sendError": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
         "deleteConfirm": "¿Eliminar este mensaje?",
-        "messageDeleted": "Mensaje eliminado"
+        "messageDeleted": "Mensaje eliminado",
+        "endOfHistory": "Inicio de la conversación"
     },
     "Home": {
         "welcome": "Bienvenido de nuevo",

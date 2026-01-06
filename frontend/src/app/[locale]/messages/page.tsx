@@ -25,11 +25,14 @@ export default function MessagesPage() {
     });
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-dark-950">
-            <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-4 h-[calc(100vh-4rem)]">
+        <div className="fixed inset-0 bg-gray-50 dark:bg-dark-950 pt-20 sm:pt-24 overflow-hidden flex flex-col">
+            <div className="flex-1 max-w-7xl mx-auto w-full p-2 sm:p-4 overflow-hidden">
+                <main className="h-full bg-white dark:bg-dark-900 rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-dark-800 flex">
                     {/* Conversation List - Left Side */}
-                    <div className="md:col-span-1 border-r border-gray-200 dark:border-dark-800 bg-white dark:bg-dark-900">
+                    <div className={`
+                        ${selectedConversationId ? 'hidden md:flex' : 'flex'} 
+                        flex-col w-full md:w-80 lg:w-96 border-r border-gray-200 dark:border-dark-800 h-full
+                    `}>
                         <ConversationList
                             conversations={data?.myConversations || []}
                             loading={loading}
@@ -40,7 +43,10 @@ export default function MessagesPage() {
                     </div>
 
                     {/* Message Thread - Right Side */}
-                    <div className="md:col-span-2 bg-white dark:bg-dark-900">
+                    <div className={`
+                        ${selectedConversationId ? 'flex' : 'hidden md:flex'} 
+                        flex-col flex-1 h-full relative
+                    `}>
                         {selectedConversationId ? (
                             <MessageThread
                                 conversationId={selectedConversationId}
@@ -68,7 +74,7 @@ export default function MessagesPage() {
                             </div>
                         )}
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     );

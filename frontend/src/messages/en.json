@@ -28,7 +28,8 @@
         "inputPlaceholder": "Type a message...",
         "sendError": "Failed to send message. Please try again.",
         "deleteConfirm": "Delete this message?",
-        "messageDeleted": "Message deleted"
+        "messageDeleted": "Message deleted",
+        "endOfHistory": "Beginning of conversation"
     },
     "Home": {
         "welcome": "Welcome back",

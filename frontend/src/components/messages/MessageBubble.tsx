@@ -61,19 +61,9 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
                 {/* Avatar for received messages */}
                 {!isCurrentUser && (
                     <div className="flex items-start gap-2 mb-1">
-                        {message.sender.avatar ? (
-                            <Image
-                                src={message.sender.avatar}
-                                alt={message.sender.name}
-                                width={32}
-                                height={32}
-                                className="rounded-full"
-                            />
-                        ) : (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-                                {message.sender.name[0].toUpperCase()}
-                            </div>
-                        )}
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                            {message.sender.name[0].toUpperCase()}
+                        </div>
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             {message.sender.name}
                         </span>
@@ -102,7 +92,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
                 {/* Timestamp and actions */}
                 <div className="flex items-center gap-2 mt-1 px-2">
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatDistanceToNow(new Date(parseInt(message.createdAt)), {
+                        {formatDistanceToNow(new Date(message.createdAt), {
                             addSuffix: true,
                         })}
                     </span>
