@@ -1,0 +1,16 @@
+# Docker ignore patterns for frontend
+node_modules
+npm-debug.log
+.env
+.env*.local
+.next
+out
+*.log
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
+.git
+.gitignore
+README.md

@@ -1,0 +1,15 @@
+# Docker ignore patterns for backend
+node_modules
+npm-debug.log
+.env
+.env.local
+dist
+*.log
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
+.git
+.gitignore
+README.md
