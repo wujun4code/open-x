@@ -1,0 +1,89 @@
+name: Deploy to Azure VM
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🚀 Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            
+            echo "📦 Navigating to project directory..."
+            cd ~/open-x
+            
+            echo "📥 Pulling latest code from GitHub..."
+            git fetch origin
+            git reset --hard origin/main
+            
+            echo "📝 Updating environment variables..."
+            cat > .env << 'EOF'
+            # Database
+            DATABASE_URL=postgresql://postgres:postgres@postgres:5432/openx?schema=public
+            
+            # Server
+            PORT=4000
+            NODE_ENV=production
+            
+            # Security
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            
+            # URLs
+            FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            
+            # Cloudflare R2 Storage (Optional)
+            R2_ENDPOINT=${{ secrets.R2_ENDPOINT }}
+            R2_ACCESS_KEY_ID=${{ secrets.R2_ACCESS_KEY_ID }}
+            R2_SECRET_ACCESS_KEY=${{ secrets.R2_SECRET_ACCESS_KEY }}
+            R2_BUCKET_NAME=${{ secrets.R2_BUCKET_NAME }}
+            R2_PUBLIC_URL=${{ secrets.R2_PUBLIC_URL }}
+            EOF
+            
+            echo "🐳 Rebuilding and restarting Docker containers..."
+            docker-compose down
+            docker-compose up -d --build
+            
+            echo "⏳ Waiting for services to start..."
+            sleep 15
+            
+            echo "🔍 Checking service health..."
+            docker-compose ps
+            
+            echo "✅ Deployment complete!"
+            
+            # Test backend health
+            if curl -f http://localhost:4000/health > /dev/null 2>&1; then
+              echo "✅ Backend is healthy"
+            else
+              echo "⚠️  Backend health check failed"
+              exit 1
+            fi
+            
+            # Test frontend
+            if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              echo "✅ Frontend is healthy"
+            else
+              echo "⚠️  Frontend health check failed"
+              exit 1
+            fi
+
+      - name: 📊 Deployment Summary
+        if: success()
+        run: |
+          echo "🎉 Deployment successful!"
+          echo "Frontend: http://${{ secrets.VM_HOST }}:3000"
+          echo "Backend: http://${{ secrets.VM_HOST }}:4000/graphql"
