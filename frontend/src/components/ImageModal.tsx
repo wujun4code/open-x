@@ -28,31 +28,36 @@ export default function ImageModal({ imageUrl, onClose }: ImageModalProps) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 transition-opacity duration-300"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={onClose}
         >
-            <div className="relative max-w-7xl max-h-[90vh] w-full mx-4 flex items-center justify-center">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onClose();
-                    }}
-                    className="absolute -top-12 right-0 p-2 text-white hover:text-gray-300 transition-colors bg-white bg-opacity-10 rounded-full"
-                    aria-label="Close modal"
-                >
-                    <X className="w-8 h-8" />
-                </button>
+            {/* Close button - top right corner */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClose();
+                }}
+                className="fixed top-6 right-6 p-3 text-white hover:text-gray-300 transition-all duration-200 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full shadow-lg hover:scale-110 z-[101]"
+                aria-label="Close modal"
+            >
+                <X className="w-6 h-6" />
+            </button>
 
-                <div
-                    className="relative w-full h-full flex items-center justify-center animate-in zoom-in duration-300"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <img
-                        src={imageUrl}
-                        alt="Full size"
-                        className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
-                    />
-                </div>
+            {/* Image container */}
+            <div
+                className="relative max-w-7xl max-h-[90vh] w-full mx-4 flex items-center justify-center animate-in zoom-in-95 duration-300"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <img
+                    src={imageUrl}
+                    alt="Full size"
+                    className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                />
+            </div>
+
+            {/* Hint text */}
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm">
+                Press ESC or click outside to close
             </div>
         </div>
     );

@@ -319,5 +319,73 @@
         "noPosts": "No posts yet.",
         "noBio": "No bio yet. Click Edit profile to add one!",
         "startSharing": "Start sharing your thoughts with the world!"
+    },
+    "Settings": {
+        "title": "Settings",
+        "subtitle": "Manage your account preferences and settings",
+        "tabs": {
+            "account": "Account",
+            "privacy": "Privacy",
+            "notifications": "Notifications",
+            "appearance": "Appearance",
+            "security": "Security"
+        },
+        "account": {
+            "title": "Account Information",
+            "email": "Email",
+            "username": "Username",
+            "displayName": "Display Name",
+            "bio": "Bio",
+            "bioPlaceholder": "Tell us about yourself..."
+        },
+        "privacy": {
+            "title": "Privacy Settings",
+            "profileVisibility": "Profile Visibility",
+            "public": "Public",
+            "followersOnly": "Followers Only",
+            "private": "Private",
+            "showEmail": "Show Email on Profile",
+            "showEmailDesc": "Allow others to see your email address",
+            "allowMessages": "Allow Direct Messages",
+            "allowMessagesDesc": "Let others send you private messages"
+        },
+        "notifications": {
+            "title": "Notification Preferences",
+            "emailNotifications": "Email Notifications",
+            "emailNotificationsDesc": "Receive notifications via email",
+            "pushNotifications": "Push Notifications",
+            "pushNotificationsDesc": "Receive push notifications",
+            "likes": "Likes",
+            "likesDesc": "When someone likes your post",
+            "comments": "Comments",
+            "commentsDesc": "When someone comments on your post",
+            "newFollowers": "New Followers",
+            "newFollowersDesc": "When someone follows you"
+        },
+        "appearance": {
+            "title": "Appearance",
+            "theme": "Theme",
+            "light": "Light",
+            "dark": "Dark",
+            "auto": "Auto (System)",
+            "language": "Language"
+        },
+        "security": {
+            "title": "Security",
+            "changePassword": "Change Password",
+            "currentPassword": "Current Password",
+            "newPassword": "New Password",
+            "confirmPassword": "Confirm New Password",
+            "currentPasswordPlaceholder": "Enter current password",
+            "newPasswordPlaceholder": "Enter new password",
+            "confirmPasswordPlaceholder": "Confirm new password",
+            "updatePassword": "Update Password",
+            "dangerZone": "Danger Zone",
+            "logoutAll": "Logout from All Devices"
+        },
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "changesNote": "Changes will be saved to your account",
+        "saveSuccess": "Settings saved successfully!"
     }
 }

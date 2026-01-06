@@ -81,12 +81,12 @@ export default function ProfilePage() {
     });
 
     return (
-        <main className="min-h-screen bg-white dark:bg-dark-950">
+        <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
             {/* Header / Nav */}
-            <div className="sticky top-0 z-10 bg-white/80 dark:bg-dark-950/80 backdrop-blur-md border-b border-gray-100 dark:border-dark-800">
-                <div className="max-w-2xl mx-auto px-4 py-3 flex items-center space-x-4">
+            <div className="sticky top-20 z-10 bg-white/85 dark:bg-dark-900/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-dark-700/50 shadow-sm">
+                <div className="max-w-2xl mx-auto px-6 py-4 flex items-center space-x-4">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user.name || user.username}</h2>
+                        <h2 className="text-xl font-display font-bold text-gray-900 dark:text-white">{user.name || user.username}</h2>
                         <p className="text-sm text-gray-500 dark:text-gray-400">{user.postsCount} {t('posts')}</p>
                     </div>
                 </div>
@@ -105,23 +105,24 @@ export default function ProfilePage() {
                     )}
                 </div>
 
-                <div className="px-4 pb-4">
-                    <div className="flex justify-between items-end -mt-16 mb-4">
+                <div className="px-6 pb-6">
+                    <div className="flex justify-between items-end -mt-16 mb-6">
                         <div className="relative">
-                            <div className="w-32 h-32 bg-gray-300 dark:bg-dark-700 rounded-full border-4 border-white dark:border-dark-950 overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-purple-600 rounded-full blur-md opacity-40 w-32 h-32"></div>
+                            <div className="relative w-32 h-32 bg-gray-300 dark:bg-dark-700 rounded-full border-4 border-white dark:border-dark-900 overflow-hidden shadow-lg">
                                 {user.avatar ? (
                                     <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white text-4xl font-bold">
+                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-600 to-purple-600 text-white text-4xl font-bold">
                                         {user.username[0].toUpperCase()}
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        <button className="px-6 py-2 border border-gray-300 dark:border-dark-700 rounded-full font-bold hover:bg-gray-100 dark:hover:bg-dark-800 transition-colors text-gray-900 dark:text-white">
+                        <Link href="/profile/edit" className="px-6 py-2.5 border-2 border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-400 rounded-full font-semibold hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200 hover-lift">
                             {t('editProfile')}
-                        </button>
+                        </Link>
                     </div>
 
                     <div className="mb-4">

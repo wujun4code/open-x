@@ -58,7 +58,7 @@ export default function Home() {
 
                         {/* Right Sidebar - Trending */}
                         <div className="lg:col-span-1 hidden lg:block">
-                            <div className="sticky top-8">
+                            <div className="sticky top-24">
                                 <TrendingHashtags />
                             </div>
                         </div>

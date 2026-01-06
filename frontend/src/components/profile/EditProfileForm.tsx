@@ -5,7 +5,7 @@ import { useMutation, useQuery, gql } from '@apollo/client';
 import { useRouter, usePathname } from '@/navigation';
 import { UPDATE_PROFILE } from '@/lib/queries';
 import ImageUploadButton from './ImageUploadButton';
-import { Loader2, ArrowLeft, Languages, Check } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 const GET_CURRENT_USER = gql`
@@ -120,28 +120,6 @@ export default function EditProfileForm() {
         router.back();
     };
 
-    const handleLanguageChange = (locale: string) => {
-        router.replace({ pathname }, { locale: locale as any });
-    };
-
-    // Get current locale from pathname
-    const getCurrentLocale = () => {
-        if (typeof window !== 'undefined') {
-            const path = window.location.pathname;
-            if (path.startsWith('/en')) return 'en';
-            if (path.startsWith('/es')) return 'es';
-            if (path.startsWith('/zh-cn')) return 'zh-cn';
-        }
-        return 'en';
-    };
-
-    const currentLocale = getCurrentLocale();
-    const localeNames: Record<string, string> = {
-        'en': 'English',
-        'es': 'Español',
-        'zh-cn': '简体中文'
-    };
-
     if (loadingUser) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -231,52 +209,6 @@ export default function EditProfileForm() {
                     {errors.bio && <p className="mt-1 text-sm text-red-600">{errors.bio}</p>}
                     <p className={`mt-1 text-xs ${bioCharCount > bioCharLimit ? 'text-red-600' : 'text-gray-500'}`}>
                         {bioCharCount}/{bioCharLimit} characters
-                    </p>
-                </div>
-
-                {/* Language Preference */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        <Languages className="w-4 h-4 inline mr-2" />
-                        {t('language')}
-                    </label>
-                    <div className="grid grid-cols-1 gap-2">
-                        <button
-                            type="button"
-                            onClick={() => handleLanguageChange('en')}
-                            className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${currentLocale === 'en'
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                : 'border-gray-300 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-800'
-                                }`}
-                        >
-                            <span className="text-sm font-medium">English</span>
-                            {currentLocale === 'en' && <Check className="w-5 h-5 text-blue-600" />}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleLanguageChange('es')}
-                            className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${currentLocale === 'es'
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                : 'border-gray-300 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-800'
-                                }`}
-                        >
-                            <span className="text-sm font-medium">Español</span>
-                            {currentLocale === 'es' && <Check className="w-5 h-5 text-blue-600" />}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleLanguageChange('zh-cn')}
-                            className={`flex items-center justify-between px-4 py-3 rounded-lg border transition-colors ${currentLocale === 'zh-cn'
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                : 'border-gray-300 dark:border-dark-700 hover:bg-gray-50 dark:hover:bg-dark-800'
-                                }`}
-                        >
-                            <span className="text-sm font-medium">简体中文</span>
-                            {currentLocale === 'zh-cn' && <Check className="w-5 h-5 text-blue-600" />}
-                        </button>
-                    </div>
-                    <p className="mt-2 text-xs text-gray-500">
-                        {t('languageChangeNote')}
                     </p>
                 </div>
 

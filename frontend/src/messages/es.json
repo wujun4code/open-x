@@ -319,5 +319,73 @@
         "noPosts": "Aún no hay publicaciones.",
         "noBio": "Sin biografía aún. Haz clic en Editar perfil para agregar una!",
         "startSharing": "Comienza a compartir tus pensamientos con el mundo!"
+    },
+    "Settings": {
+        "title": "Configuración",
+        "subtitle": "Administra las preferencias de tu cuenta",
+        "tabs": {
+            "account": "Cuenta",
+            "privacy": "Privacidad",
+            "notifications": "Notificaciones",
+            "appearance": "Apariencia",
+            "security": "Seguridad"
+        },
+        "account": {
+            "title": "Información de la cuenta",
+            "email": "Correo electrónico",
+            "username": "Nombre de usuario",
+            "displayName": "Nombre para mostrar",
+            "bio": "Biografía",
+            "bioPlaceholder": "Cuéntanos sobre ti..."
+        },
+        "privacy": {
+            "title": "Configuración de privacidad",
+            "profileVisibility": "Visibilidad del perfil",
+            "public": "Público",
+            "followersOnly": "Solo seguidores",
+            "private": "Privado",
+            "showEmail": "Mostrar correo en el perfil",
+            "showEmailDesc": "Permitir que otros vean tu dirección de correo",
+            "allowMessages": "Permitir mensajes directos",
+            "allowMessagesDesc": "Permitir que otros te envíen mensajes privados"
+        },
+        "notifications": {
+            "title": "Preferencias de notificación",
+            "emailNotifications": "Notificaciones por correo",
+            "emailNotificationsDesc": "Recibir notificaciones por correo electrónico",
+            "pushNotifications": "Notificaciones push",
+            "pushNotificationsDesc": "Recibir notificaciones push",
+            "likes": "Me gusta",
+            "likesDesc": "Cuando alguien le da me gusta a tu publicación",
+            "comments": "Comentarios",
+            "commentsDesc": "Cuando alguien comenta tu publicación",
+            "newFollowers": "Nuevos seguidores",
+            "newFollowersDesc": "Cuando alguien te sigue"
+        },
+        "appearance": {
+            "title": "Apariencia",
+            "theme": "Tema",
+            "light": "Claro",
+            "dark": "Oscuro",
+            "auto": "Automático (Sistema)",
+            "language": "Idioma"
+        },
+        "security": {
+            "title": "Seguridad",
+            "changePassword": "Cambiar contraseña",
+            "currentPassword": "Contraseña actual",
+            "newPassword": "Nueva contraseña",
+            "confirmPassword": "Confirmar nueva contraseña",
+            "currentPasswordPlaceholder": "Ingresa la contraseña actual",
+            "newPasswordPlaceholder": "Ingresa la nueva contraseña",
+            "confirmPasswordPlaceholder": "Confirma la nueva contraseña",
+            "updatePassword": "Actualizar contraseña",
+            "dangerZone": "Zona de peligro",
+            "logoutAll": "Cerrar sesión en todos los dispositivos"
+        },
+        "saveChanges": "Guardar cambios",
+        "saving": "Guardando...",
+        "changesNote": "Los cambios se guardarán en tu cuenta",
+        "saveSuccess": "Configuración guardada exitosamente!"
     }
 }
