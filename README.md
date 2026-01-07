@@ -13,12 +13,28 @@ A modern, full-stack social media platform inspired by Twitter/X, built with cut
 
 ### Backend
 - **Apollo Server** - GraphQL server
+- **Node.js** - Runtime environment
+- **Prisma** - ORM for PostgreSQL
+- **PostgreSQL** - Database
+- **JWT** - Authentication
+- **Cloudflare R2** - Media storage (optional)
+
+### Deployment
+- **Docker Compose** - Container orchestration
+- **GitHub Actions** - CI/CD pipeline
+- **Azure VM** - Production hosting
+- **Nginx** - Reverse proxy (optional)
+
+### Features
 - **Social Features**: Create posts, like posts, and comment on posts
+- **Direct Messaging**: Real-time messaging with infinite scroll
 - **Comments System**: 
   - Real-time optimistic updates for creating and deleting comments
   - Delete own comments with confirmation dialog
   - Internationalized UI (EN/ES/ZH-CN)
 - **Profile System**: User profiles with avatar and bio
+- **Notifications**: Real-time notifications for likes, comments, follows, mentions
+- **Content Moderation**: Admin tools for content management
 - **Internationalization**: Support for English, Spanish, and Chinese
 - **Authentication**: JWT-based auth with secure password hashing
 
