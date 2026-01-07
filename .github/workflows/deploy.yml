@@ -54,14 +54,14 @@ jobs:
             EOF
             
             echo "🐳 Rebuilding and restarting Docker containers..."
-            docker-compose down
-            docker-compose up -d --build
+            docker compose down
+            docker compose up -d --build
             
             echo "⏳ Waiting for services to start..."
             sleep 15
             
             echo "🔍 Checking service health..."
-            docker-compose ps
+            docker compose ps
             
             echo "✅ Deployment complete!"
             
