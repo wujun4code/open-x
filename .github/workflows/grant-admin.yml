@@ -1,0 +1,24 @@
+name: Grant Admin Role
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Email of the user to grant admin role'
+        required: true
+        type: string
+
+jobs:
+  grant-admin:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Grant admin role via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd ~/open-x
+            docker compose exec -T backend npx tsx scripts/grant-admin.ts "${{ github.event.inputs.email }}"
