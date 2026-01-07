@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useMutation, gql } from '@apollo/client';
 import { X, Flag } from 'lucide-react';
 
@@ -74,14 +75,24 @@ export default function ReportDialog({ postId, commentId, onClose }: ReportDialo
         }
     };
 
-    return (
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
+
+    const modalContent = (
         <div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 isolate"
             onClick={onClose}
+            style={{ transform: 'translateZ(0)' }}
         >
             <div
-                className="bg-white dark:bg-dark-900 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+                className="bg-white dark:bg-dark-900 rounded-2xl p-6 max-w-md w-full shadow-2xl relative z-[10000] max-h-[90vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
+                style={{ transform: 'translateZ(0)' }}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -162,4 +173,6 @@ export default function ReportDialog({ postId, commentId, onClose }: ReportDialo
             </div>
         </div>
     );
+
+    return typeof window !== 'undefined' ? createPortal(modalContent, document.body) : null;
 }
